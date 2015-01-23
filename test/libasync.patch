@@ -1,0 +1,51 @@
+diff --git a/source/libasync/posix2.d b/source/libasync/posix2.d
+index 11e2cdb..7055019 100644
+--- a/source/libasync/posix2.d
++++ b/source/libasync/posix2.d
+@@ -10,8 +10,10 @@ mixin template RunKill()
+ 		m_status = StatusInfo.init;
+ 		import libasync.internals.socket_compat : socket, SOCK_STREAM;
+ 		import core.sys.posix.unistd : close;
+-		
+-		fd_t fd = socket(cast(int)ctxt.peer.family, SOCK_STREAM, 0);
++		fd_t fd = ctxt.readySocket;
++
++		if (fd == fd_t.init)
++			fd = socket(cast(int)ctxt.peer.family, SOCK_STREAM, 0);
+ 		
+ 		if (catchError!("run AsyncTCPConnection")(fd)) 
+ 			return 0;
+diff --git a/source/libasync/tcp.d b/source/libasync/tcp.d
+index b1fa714..c6294a5 100644
+--- a/source/libasync/tcp.d
++++ b/source/libasync/tcp.d
+@@ -17,13 +17,17 @@ private:
+ 
+ nothrow:
+ 	fd_t m_socket;
++	fd_t m_readySocket;
+ 	bool m_noDelay;
+ 	bool m_inbound;
+ 	debug bool m_dataRemaining;
+ public:
+-	this(EventLoop evl)
++	this(EventLoop evl, fd_t readySocket = 0)
+ 	in { assert(evl !is null); }
+-	body { m_evLoop = evl; }
++	body {
++		m_evLoop = evl;
++		m_readySocket = readySocket;
++	}
+ 
+ 	mixin DefStatus;
+ 
+@@ -175,6 +179,9 @@ package:
+ 		m_socket = sock;
+ 	}
+ 
++	@property fd_t readySocket() const {
++		return m_readySocket;
++	}
+ }
+ 
+ /// Accepts connections on a single IP:PORT tuple by sending a new inbound AsyncTCPConnection 

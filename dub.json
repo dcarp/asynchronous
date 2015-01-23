@@ -1,0 +1,17 @@
+{
+    "name": "asynchronous",
+    "description": "Asynchonous IO library for D",
+    "license": "Boost 1.0",
+    "copyright": "Copyright © 2014 Dragoş Carp",
+    "authors": ["Dragoş Carp"],
+    "targetType": "library",
+    "targetPath": "bin",
+    "dependencies": {
+        "libasync": ">=0.6.6"
+    },
+    "buildTypes": {
+        "unittest": {
+            "buildOptions": ["debugInfoC", "unittests"]
+        }
+    }
+}

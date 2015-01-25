@@ -4,8 +4,10 @@ import std.array;
 import std.datetime;
 import std.process;
 import std.socket;
+import std.stdio; // TODO remove this
 import std.string;
 import std.traits;
+import std.typecons;
 import libasync.events : EventLoop_ = EventLoop;
 import libasync.timer : AsyncTimer;
 import libasync.tcp : AsyncTCPConnection, NetworkAddress, TCPEvent;
@@ -29,7 +31,7 @@ package class LibasyncEventLoop : EventLoop
     private Appender!(CallbackHandle[]) nextCallbacks2;
     private Appender!(CallbackHandle[])* currentAppender;
 
-    private TCPConnection[] pendingConnections;
+    private LibasyncTcpTransport[] pendingConnections;
 
     this()
     {
@@ -117,17 +119,13 @@ package class LibasyncEventLoop : EventLoop
     @Coroutine
     override void socketConnect(Socket socket, Address address)
     {
-        auto thisTask = TaskHandle.currentTask;
         auto asyncTCPConnection = new AsyncTCPConnection(this.eventLoop, socket.handle);
         NetworkAddress peerAddress;
 
         (cast(byte*) peerAddress.sockAddr)[0 .. address.nameLen] = (cast(byte*) address.name)[0 .. address.nameLen];
         asyncTCPConnection.peer = peerAddress;
 
-        assert(thisTask !is null);
-        auto connection = TCPConnection(socket, asyncTCPConnection, {
-            thisTask.resume;
-        });
+        auto connection = new LibasyncTcpTransport(socket, asyncTCPConnection);
 
         asyncTCPConnection.run(&connection.handleTCPEvent);
         getEventLoop.yield;
@@ -202,62 +200,94 @@ class LibasyncEventLoopPolicy : EventLoopPolicy
     //}
 }
 
-private struct TCPConnection
+private final class LibasyncTcpTransport : Transport
 {
     private Socket socket;
     private AsyncTCPConnection connection;
-    private void delegate() onConnect;
-    private Transport transport;
+    private Protocol protocol;
+    private TaskHandle task;
+    private uint connectionLost = 0;
+    private bool closing = false;
+    private bool readingPaused = false;
+    private bool writingPaused = false;
+    private void[] writeBuffer;
+    private BufferLimits writeBufferLimits;
 
-    this(Socket socket, AsyncTCPConnection connection, void delegate() onConnect)
+    this(Socket socket, AsyncTCPConnection connection)
     in
     {
         assert(socket !is null);
         assert(connection !is null);
-        assert(onConnect !is null);
+        // assert(socket.handle == connection.socket);
     }
     body
     {
         this.socket = socket;
         this.connection = connection;
-        this.onConnect = onConnect;
+        this.task = TaskHandle.currentTask;
+        setWriteBufferLimits;
     }
 
-    void setTransport(Transport transport)
+    void setProtocol(Protocol protocol)
     in
     {
-        assert(this.transport is null);
-        assert(transport !is null);
+        assert(protocol !is null);
+        assert(this.protocol is null);
     }
     body
     {
-        this.transport = transport;
+        this.protocol = protocol;
+    }
+
+    private void onConnect()
+    in
+    {
+        assert(this.protocol is null);
+        assert(this.connection.isConnected);
+    }
+    body
+    {
+        this.task.resume;
     }
 
     private void onRead()
     in
     {
-        assert(this.transport !is null);
+        assert(this.protocol !is null);
     }
     body
     {
+        if (this.readingPaused)
+            return;
 
+        //this.protocol.dataReceived(this.connection)
     }
 
     private void onWrite()
     in
     {
-        assert(this.transport !is null);
+        assert(this.protocol !is null);
     }
     body
     {
+        if (!this.writeBuffer.empty)
+        {
+            auto sent = this.connection.send(cast(const ubyte[]) this.writeBuffer);
+            this.writeBuffer = this.writeBuffer[sent .. $];
+        }
+
+        if (this.writingPaused && this.writeBuffer.length <= this.writeBufferLimits.low)
+        {
+            this.protocol.resumeWriting;
+            this.writingPaused = false;
+        }
 
     }
 
     private void onClose()
     in
     {
-        assert(this.transport !is null);
+        assert(this.protocol !is null);
     }
     body
     {
@@ -284,27 +314,119 @@ private struct TCPConnection
                 assert(0, connection.error());
         }
     }
-}
 
-private class LibasyncTcpTransport : Transport
-{
-    private AsyncTCPConnection connection;
-    private Protocol protocol;
+
+    /**
+     * Transport interface
+     */
 
     string getExtraInfo(string name)
     {
         assert(0, "Unknown transport information " ~ name);
     }
 
-    void close();
-    void pauseReading();
-    void resumeReading();
-    void abort();
-    bool canWriteEof();
-    size_t getWriteBufferSize();
-    BufferLimits getWriteBufferLimits();
-    void setWriteBufferLimits(size_t high = 0, size_t low = 0);
-    void write(const(void)[] data);
-    void writeEof();
+    void close()
+    {
+        if (this.closing)
+            return;
 
+        this.closing = true;
+        writeln("trying to close the connection");
+        this.connection.kill;
+        getEventLoop.yield;
+    }
+
+    void pauseReading()
+    {
+        if (this.closing || this.connectionLost)
+            throw new Exception("Cannot pauseReading() when closing");
+        if (this.readingPaused)
+            throw new Exception("Reading is already paused");
+
+        this.readingPaused = true;
+    }
+
+    void resumeReading()
+    {
+        if (!this.readingPaused)
+            throw new Exception("Reading is not paused");
+        this.readingPaused = false;
+    }
+
+    void abort()
+    {
+        if (this.connectionLost)
+            return;
+
+        writeln("trying to abort the connection");
+        this.connection.kill(true);
+        ++this.connectionLost;
+        getEventLoop.yield;
+    }
+
+    bool canWriteEof()
+    {
+        return true;
+    }
+
+    size_t getWriteBufferSize()
+    {
+        return writeBuffer.length;
+    }
+
+    BufferLimits getWriteBufferLimits()
+    {
+        return writeBufferLimits;
+    }
+
+    void setWriteBufferLimits(Nullable!size_t high = Nullable!size_t(), Nullable!size_t low = Nullable!size_t())
+    {
+        if (high.isNull)
+        {
+            if (low.isNull)
+                high = 64 * 1024;
+            else
+                high = 4 * low;
+        }
+
+        if (low.isNull)
+            low = high / 4;
+
+        if (high < low)
+            low = high;
+
+        this.writeBufferLimits.high = high;
+        this.writeBufferLimits.low = low;
+    }
+
+    void write(const(void)[] data)
+    in
+    {
+        assert(this.protocol !is null);
+        assert(!this.writingPaused);
+    }
+    body
+    {
+        if (this.writeBuffer.empty)
+        {
+            auto sent = this.connection.send(cast(const ubyte[]) data);
+            if (sent < data.length)
+                this.writeBuffer = data[sent .. $].dup;
+        }
+        else
+        {
+            this.writeBuffer ~= data;
+        }
+
+        if (this.writeBuffer.length >= this.writeBufferLimits.high)
+        {
+            this.protocol.pauseWriting;
+            this.writingPaused = true;
+        }
+    }
+
+    void writeEof()
+    {
+        close;
+    }
 }

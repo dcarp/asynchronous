@@ -95,12 +95,9 @@ class Callback(Dg, Args...) : CallbackHandle
 
     override public string toString()
     {
-        string res = "Callback(" ~ __traits(identifier, callback) ~ ")";
+        import std.string;
 
-        if (cancelled)
-            res ~= "<cancelled>";
-
-        return res;
+        return "%s(dg: %s, cancelled: %s".format(typeid(this),  __traits(identifier, dg), cancelled);
     }
 }
 

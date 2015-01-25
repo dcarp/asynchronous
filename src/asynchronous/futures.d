@@ -2,7 +2,6 @@ module asynchronous.futures;
 
 import std.algorithm;
 import std.array;
-import std.string;
 import asynchronous.events;
 import asynchronous.types;
 
@@ -165,7 +164,9 @@ abstract class FutureBase : FutureHandle
 
     override string toString()
     {
-        return "%s(%s, %s done callbacks)".format(typeid(this), this.state, this.callbacks.length);
+        import std.string;
+
+        return "%s(done: %s, cancelled: %s)".format(typeid(this), done, cancelled);
     }
 }
 

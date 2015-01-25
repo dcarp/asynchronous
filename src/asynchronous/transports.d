@@ -93,7 +93,7 @@ interface WriteTransport : BaseTransport
      * buffer is empty. Use of zero for either limit is generally sub-optimal as it reduces opportunities for doing I/O
      * and computation concurrently.
      */
-    void setWriteBufferLimits(size_t high = 0, size_t low = 0);
+    void setWriteBufferLimits(Nullable!size_t high = Nullable!size_t(), Nullable!size_t low = Nullable!size_t());
 
     /**
      * Write some data bytes to the transport.

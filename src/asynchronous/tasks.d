@@ -259,6 +259,13 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
     {
         this.eventLoop.callSoon(&step, null);
     }
+
+    override string toString()
+    {
+        import std.string;
+
+        return "%s(done: %s, cancelled: %s)".format(typeid(this), done, cancelled);
+    }
 }
 
 @Coroutine
@@ -400,6 +407,9 @@ auto wait(Future)(EventLoop eventLoop, Future[] futures, Duration timeout = 0.se
     {
         eventLoop.yield;
 
+        if (completed)
+            break;
+
         final switch (returnWhen)
         {
             case ReturnWhen.FIRST_COMPLETED:
@@ -448,7 +458,6 @@ unittest
             return add(12, 13);
         }),
     ];
-
 
     auto waitTask = eventLoop.createTask({
         return eventLoop.wait(tasks, 50.msecs);

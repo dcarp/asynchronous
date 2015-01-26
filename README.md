@@ -2,7 +2,8 @@ This module provides infrastructure for writing single-threaded concurrent code 
 
 *It starts as a port of python3 asyncio module.*
 
-Content:
+Implementation status:
+
 1. Timers (done)
 2. Futures, Tasks (done)
 3. Sockets (in progress)

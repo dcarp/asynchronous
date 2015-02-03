@@ -171,12 +171,10 @@ abstract class FutureBase : FutureHandle
 }
 
 /*
- * Encapsulates the asynchronous execution of a list of callbacks.
+ * Encapsulates the asynchronous execution of a callable.
  */
 class Future(ResultType) : FutureBase
 {
-    alias Callback = void delegate(Future!ResultType);
-
     private ResultType result_;
 
     public this(EventLoop eventLoo = null)

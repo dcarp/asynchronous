@@ -1,3 +1,4 @@
+import std.conv;
 import std.datetime;
 import std.functional;
 import std.stdio;
@@ -43,6 +44,7 @@ class MyProtocol : Protocol
     void connectionLost(Exception exception)
     {
         writeln("connectionLost");
+        getEventLoop.stop;
     }
 
     void pauseWriting()
@@ -57,7 +59,7 @@ class MyProtocol : Protocol
 
     void dataReceived(const(void)[] data)
     {
-        writeln("dataReceived");
+        writeln("dataReceived ", data.to!string);
     }
 
     bool eofReceived()
@@ -84,14 +86,11 @@ void myTask()
     auto loop = getEventLoop;
 
     auto result = loop.createConnection(&protocolFactory, "127.0.0.1", "50000");
-    writeln(result);
     result[0].write("gugu");
-    writeln("jj");
 }
 
 void main()
 {
     auto task = getEventLoop.async(toDelegate(&myTask));
-    //getEventLoop.runUntilComplete(task);
     getEventLoop.runForever;
 }

@@ -642,6 +642,8 @@ private:
             transport = makeSocketTransport(socket, protocol, waiter);
         }
 
+        this.waitFor(waiter);
+
         return tuple(transport, protocol);
     }
 }

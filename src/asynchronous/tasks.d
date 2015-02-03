@@ -535,7 +535,7 @@ auto waitFor(Future)(EventLoop eventLoop, Future future, Duration timeout = 0.se
     if (timeoutCallback !is null)
         timeoutCallback.cancel;
 
-    static if (!is(future.ReturnType == void))
+    static if (is(future.result))
     {
         return future.result;
     }

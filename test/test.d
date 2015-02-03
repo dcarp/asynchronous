@@ -84,10 +84,14 @@ void myTask()
     auto loop = getEventLoop;
 
     auto result = loop.createConnection(&protocolFactory, "127.0.0.1", "50000");
+    writeln(result);
+    result[0].write("gugu");
+    writeln("jj");
 }
 
 void main()
 {
-    auto task = new Task!void(&myTask, getEventLoop);
-    getEventLoop.runUntilComplete(task);
+    auto task = getEventLoop.async(toDelegate(&myTask));
+    //getEventLoop.runUntilComplete(task);
+    getEventLoop.runForever;
 }

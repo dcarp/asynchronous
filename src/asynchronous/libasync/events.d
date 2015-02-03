@@ -1,5 +1,6 @@
 module asynchronous.libasync.events;
 
+import std.algorithm;
 import std.array;
 import std.datetime;
 import std.process;
@@ -129,15 +130,27 @@ package class LibasyncEventLoop : EventLoop
 
         asyncTCPConnection.run(&connection.handleTCPEvent);
         getEventLoop.yield;
+
+        pendingConnections ~= connection;
     }
 
     override Transport makeSocketTransport(Socket socket, Protocol protocol, Future!void waiter)
     {
-        import std.stdio;
+        auto index = this.pendingConnections.countUntil!(a => a.socket == socket);
 
-        writeln("ggjkdjksgjlkgjs;gjs");
+        enforce(index >= 0, "Internal error");
 
-        return null;
+        auto result = this.pendingConnections[index];
+
+        if (this.pendingConnections.length > 1)
+        {
+            this.pendingConnections[index] = this.pendingConnections[$ - 1];
+        }
+        this.pendingConnections.length -= 1;
+
+        result.setProtocol(protocol);
+
+        return result;
     }
 
     @Coroutine
@@ -202,7 +215,7 @@ class LibasyncEventLoopPolicy : EventLoopPolicy
 
 private final class LibasyncTcpTransport : Transport
 {
-    private Socket socket;
+    private Socket _socket;
     private AsyncTCPConnection connection;
     private Protocol protocol;
     private TaskHandle task;
@@ -222,10 +235,16 @@ private final class LibasyncTcpTransport : Transport
     }
     body
     {
-        this.socket = socket;
+        this._socket = socket;
         this.connection = connection;
         this.task = TaskHandle.currentTask;
         setWriteBufferLimits;
+    }
+
+    @property
+    Socket socket()
+    {
+        return this._socket;
     }
 
     void setProtocol(Protocol protocol)
@@ -260,6 +279,8 @@ private final class LibasyncTcpTransport : Transport
         if (this.readingPaused)
             return;
 
+        writeln("gugug");
+
         //this.protocol.dataReceived(this.connection)
     }
 
@@ -281,7 +302,6 @@ private final class LibasyncTcpTransport : Transport
             this.protocol.resumeWriting;
             this.writingPaused = false;
         }
-
     }
 
     private void onClose()
@@ -299,18 +319,23 @@ private final class LibasyncTcpTransport : Transport
         final switch (event)
         {
             case TCPEvent.CONNECT:
+                writeln("connect");
                 onConnect();
                 break;
             case TCPEvent.READ:
+                writeln("read");
                 onRead();
                 break;
             case TCPEvent.WRITE:
+                writeln("write");
                 onWrite();
                 break;
             case TCPEvent.CLOSE:
+                writeln("close");
                 onClose();
                 break;
             case TCPEvent.ERROR:
+                writeln("error");
                 assert(0, connection.error());
         }
     }

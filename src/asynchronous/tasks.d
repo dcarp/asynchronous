@@ -346,8 +346,8 @@ enum ReturnWhen
  * Wait for the Future instances given by $(PARAM futures) to complete.
  *
  * Params:
- *  futures    = futures to wait for.
  *  eventLoop  = event loop, $(D_PSYMBOL getEventLoop) if not specified.
+ *  futures    = futures to wait for.
  *  timeout    = can be used to control the maximum number of seconds to wait before returning. If $(PARAM timeout) is
  *               0 or negative there is no limit to the wait time.
  *  returnWhen = indicates when this function should return. It must be one of the following constants:
@@ -474,4 +474,108 @@ unittest
 
     assert(result.done == tasks[0..2]);
     assert(result.notDone == tasks[2..$]);
+}
+
+
+/**
+ * Wait for the single Future to complete with timeout. If timeout is None, block until the future completes.
+ *
+ * Params:
+ *  eventLoop = event loop, $(D_PSYMBOL getEventLoop) if not specified.
+ *  future    = future to wait for.
+ *  timeout   = can be used to control the maximum number of seconds to wait before returning. If $(PARAM timeout) is
+ *               0 or negative, block until the future completes.
+ *
+ * Returns: result of the future. When a timeout occurs, it cancels the task and raises $(D_PSYMBOL TimeoutException).
+ *          To avoid the task cancellation, wrap it in $(D_SYMBOL shield().
+ */
+@Coroutine
+auto waitFor(Future)(EventLoop eventLoop, Future future, Duration timeout = 0.seconds)
+    if (is(Future : FutureHandle))
+{
+    if (eventLoop is null)
+        eventLoop = getEventLoop;
+
+    auto thisTask = TaskRepository.currentTask(eventLoop);
+
+    assert(thisTask !is null);
+
+    future.addDoneCallback(&thisTask.scheduleStep);
+
+    scope (exit)
+    {
+        future.removeDoneCallback(&thisTask.scheduleStep);
+    }
+
+    bool cancelFuture = false;
+    CallbackHandle timeoutCallback;
+
+    if (timeout > 0.seconds)
+    {
+        timeoutCallback = eventLoop.callLater(timeout, {
+            cancelFuture = true;
+            eventLoop.callSoon(&thisTask.scheduleStep);
+        });
+    }
+
+    while (true)
+    {
+        eventLoop.yield;
+
+        if (cancelFuture)
+        {
+            future.cancel;
+            throw new TimeoutException;
+        }
+
+        if (future.done)
+            break;
+    }
+
+    if (timeoutCallback !is null)
+        timeoutCallback.cancel;
+
+    static if (!is(future.ReturnType == void))
+    {
+        return future.result;
+    }
+}
+
+unittest
+{
+    auto eventLoop = getEventLoop;
+
+    int add(int a, int b)
+    {
+        return a + b;
+    }
+
+    auto task1 = eventLoop.createTask({
+        eventLoop.sleep(10.msecs);
+        return add(10, 11);
+    });
+
+    auto task2 = eventLoop.createTask({
+        eventLoop.sleep(50.msecs);
+        return add(10, 11);
+    });
+
+    auto waitTask = eventLoop.createTask({
+        eventLoop.waitFor(task1, 20.msecs);
+        assert(task1.done);
+        assert(task1.result == 21);
+        try
+        {
+            eventLoop.waitFor(task2, 10.msecs);
+            assert(0, "Should not get hier");
+        }
+        catch (TimeoutException timeoutException)
+        {
+            eventLoop.sleep(40.msecs);
+            assert(task2.done);
+            assert(task2.cancelled);
+        }
+    });
+
+    eventLoop.runUntilComplete(waitTask);
 }

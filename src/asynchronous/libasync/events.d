@@ -43,16 +43,10 @@ package class LibasyncEventLoop : EventLoop
 
     override void runForever()
     {
-        final switch (this.state)
-        {
-            case State.STOPPED:
-                this.state = State.RUNNING;
-                break;
-            case State.STOPPING:
-            case State.RUNNING:
-            case State.CLOSED:
-                throw new Exception("Unexpected event loop state %s".format(this.state));
-        }
+        enforce(this.state == State.STOPPED,
+                "Unexpected event loop state %s".format(this.state));
+
+        this.state = State.RUNNING;
 
         while (true)
         {
@@ -120,20 +114,24 @@ package class LibasyncEventLoop : EventLoop
     @Coroutine
     override void socketConnect(Socket socket, Address address)
     {
-        auto asyncTCPConnection = new AsyncTCPConnection(this.eventLoop, socket.handle);
+        auto asyncTCPConnection = new AsyncTCPConnection(this.eventLoop,
+                                                         socket.handle);
         NetworkAddress peerAddress;
 
-        (cast(byte*) peerAddress.sockAddr)[0 .. address.nameLen] = (cast(byte*) address.name)[0 .. address.nameLen];
+        (cast(byte*) peerAddress.sockAddr)[0 .. address.nameLen] =
+            (cast(byte*) address.name)[0 .. address.nameLen];
         asyncTCPConnection.peer = peerAddress;
 
-        auto connection = new LibasyncTcpTransport(this, socket, asyncTCPConnection);
+        auto connection = new LibasyncTcpTransport(this, socket,
+                                                   asyncTCPConnection);
 
         asyncTCPConnection.run(&connection.handleTCPEvent);
 
-        pendingConnections ~= connection;
+        this.pendingConnections ~= connection;
     }
 
-    override Transport makeSocketTransport(Socket socket, Protocol protocol, Future!void waiter)
+    override Transport makeSocketTransport(Socket socket, Protocol protocol,
+                                           Future!void waiter)
     {
         auto index = this.pendingConnections.countUntil!(a => a.socket == socket);
 
@@ -155,11 +153,14 @@ package class LibasyncEventLoop : EventLoop
     @Coroutine
     override AddressInfo[] getAddressInfo(in char[] host, in char[] service,
             AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
-            SocketType socketType = UNSPECIFIED!SocketType, ProtocolType protocolType = UNSPECIFIED!ProtocolType,
+            SocketType socketType = UNSPECIFIED!SocketType,
+            ProtocolType protocolType = UNSPECIFIED!ProtocolType,
             AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags)
     {
         // no async implementation in libasync yet, use the std.socket.getAddresInfo implementation;
-        return std.socket.getAddressInfo(host, service, addressFamily, socketType, protocolType, addressInfoFlags);
+        return std.socket.getAddressInfo(host, service, addressFamily,
+                                         socketType, protocolType,
+                                         addressInfoFlags);
     }
 
     version(Posix)
@@ -291,7 +292,8 @@ private final class LibasyncTcpTransport : Transport
 
         if (len)
         {
-            this.eventLoop.callSoon(&this.protocol.dataReceived, buff[0 .. len]);
+            this.eventLoop.callSoon(&this.protocol.dataReceived,
+                                    buff[0 .. len]);
         }
         else
         {
@@ -311,11 +313,12 @@ private final class LibasyncTcpTransport : Transport
     {
         if (!this.writeBuffer.empty)
         {
-            auto sent = this.connection.send(cast(const ubyte[]) this.writeBuffer);
+            auto sent = this.connection.send(cast(ubyte[]) this.writeBuffer);
             this.writeBuffer = this.writeBuffer[sent .. $];
         }
 
-        if (this.writingPaused && this.writeBuffer.length <= this.writeBufferLimits.low)
+        if (this.writingPaused &&
+            this.writeBuffer.length <= this.writeBufferLimits.low)
         {
             this.protocol.resumeWriting;
             this.writingPaused = false;
@@ -414,7 +417,8 @@ private final class LibasyncTcpTransport : Transport
         return writeBufferLimits;
     }
 
-    void setWriteBufferLimits(Nullable!size_t high = Nullable!size_t(), Nullable!size_t low = Nullable!size_t())
+    void setWriteBufferLimits(Nullable!size_t high = Nullable!size_t(),
+                              Nullable!size_t low = Nullable!size_t())
     {
         if (high.isNull)
         {

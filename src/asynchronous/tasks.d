@@ -52,7 +52,8 @@ package class TaskRepository
         currentTasks[eventLoop] = task;
     }
 
-    package static void registerTask(EventLoop eventLoop, TaskHandle task, void delegate() dg)
+    package static void registerTask(EventLoop eventLoop, TaskHandle task,
+        void delegate() dg)
     in
     {
         assert(eventLoop !is null);
@@ -113,7 +114,8 @@ interface TaskHandle : FutureHandle
     }
 
     /**
-     * Returns: the currently running task in an event loop or $(D_KEYWORD null).
+     * Returns: the currently running task in an event loop or
+     *          $(D_KEYWORD null).
      *
      * By default the current task for the current event loop is returned.
      *
@@ -129,25 +131,32 @@ interface TaskHandle : FutureHandle
 }
 
 /**
- * Schedule the execution of a fiber: wrap it in a future. A task is a subclass of Future.
+ * Schedule the execution of a fiber: wrap it in a future. A task is a
+ * subclass of Future.
  *
- * A task is responsible for executing a fiber object in an event loop. If the wrapped fiber yields from a future, the
- * task suspends the execution of the wrapped fiber and waits for the completion of the future. When the future is
- * done, the execution of the wrapped fiber restarts with the result or the exception of the fiber.
+ * A task is responsible for executing a fiber object in an event loop. If the
+ * wrapped fiber yields from a future, the task suspends the execution of the
+ * wrapped fiber and waits for the completion of the future. When the future
+ * is done, the execution of the wrapped fiber restarts with the result or the
+ * exception of the fiber.
  *
- * Event loops use cooperative scheduling: an event loop only runs one task at a time. Other tasks may run in parallel
- * if other event loops are running in different threads. While a task waits for the completion of a future, the event
- * loop executes a new task.
+ * Event loops use cooperative scheduling: an event loop only runs one task at
+ * a time. Other tasks may run in parallel if other event loops are running in
+ * different threads. While a task waits for the completion of a future, the
+ * event loop executes a new task.
  *
- * The cancellation of a task is different from the cancelation of a future. Calling $(D_PSYMBOL cancel()) will throw a
- * $(D_PSYMBOL CancelledException) to the wrapped fiber. $(D_PSYMBOL cancelled()) only returns $(D_KEYWORD true) if the
- * wrapped fiber did not catch the $(D_PSYMBOL CancelledException), or raised a $(D_PSYMBOL CancelledException).
+ * The cancellation of a task is different from the cancelation of a future.
+ * Calling $(D_PSYMBOL cancel()) will throw a $(D_PSYMBOL CancelledException)
+ * to the wrapped fiber. $(D_PSYMBOL cancelled()) only returns $(D_KEYWORD
+ * true) if the wrapped fiber did not catch the $(D_PSYMBOL
+ * CancelledException), or raised a $(D_PSYMBOL CancelledException).
  *
- * If a pending task is destroyed, the execution of its wrapped fiber did not complete. It is probably a bug and a
- * warning is logged: see Pending task destroyed.
+ * If a pending task is destroyed, the execution of its wrapped fiber did not
+ * complete. It is probably a bug and a warning is logged: see Pending task
+ * destroyed.
  *
- * Don’t directly create $(D_PSYMBOL Task) instances: use the $(D_PSYMBOL async()) function or the
- * $(D_PSYMBOL EventLoop.create_task()) method.
+ * Don’t directly create $(D_PSYMBOL Task) instances: use the $(D_PSYMBOL
+ * async()) function or the $(D_PSYMBOL EventLoop.create_task()) method.
  */
 class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
     if (isDelegate!Coroutine)
@@ -163,7 +172,8 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
 
     protected override @property Fiber fiber(Fiber fiber_)
     {
-        enforce(this.fiber_ is null && fiber_ !is null || this.fiber_.state == Fiber.State.TERM && fiber_ is null);
+        enforce(this.fiber_ is null && fiber_ !is null ||
+                this.fiber_.state == Fiber.State.TERM && fiber_ is null);
         return this.fiber_ = fiber_;
     }
 
@@ -195,17 +205,22 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
     /**
      * Request that this task cancel itself.
      *
-     * This arranges for a $(D_PSYMBOL CancelledException) to be thrown into the wrapped coroutine on the next cycle
-     * through the event loop. The coroutine then has a chance to clean up or even deny the request using
+     * This arranges for a $(D_PSYMBOL CancelledException) to be thrown into
+     * the wrapped coroutine on the next cycle through the event loop. The
+     * coroutine then has a chance to clean up or even deny the request using
      * try/catch/finally.
      *
-     * Unlike $(D_PSYMBOL Future.cancel()), this does not guarantee that the task will be cancelled: the exception
-     * might be caught and acted upon, delaying cancellation of the task or preventing cancellation completely. The
-     * task may also return a value or raise a different exception.
+     * Unlike $(D_PSYMBOL Future.cancel()), this does not guarantee that the
+     * task will be cancelled: the exception might be caught and acted upon,
+     * delaying cancellation of the task or preventing cancellation
+     * completely. The task may also return a value or raise a different
+     * exception.
      *
-     * Immediately after this method is called, $(D_PSYMBOL cancelled()) will not return $(D_KEYWORD true) (unless the
-     * task was already cancelled). A task will be marked as cancelled when the wrapped coroutine terminates with a
-     * $(D_PSYMBOL CancelledException) (even if cancel() was not called).
+     * Immediately after this method is called, $(D_PSYMBOL cancelled()) will
+     * not return $(D_KEYWORD true) (unless the task was already cancelled). A
+     * task will be marked as cancelled when the wrapped coroutine terminates
+     * with a $(D_PSYMBOL CancelledException) (even if cancel() was not
+     * called).
      */
     override public bool cancel()
     {
@@ -264,7 +279,8 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
     {
         import std.string;
 
-        return "%s(done: %s, cancelled: %s)".format(typeid(this), done, cancelled);
+        return "%s(done: %s, cancelled: %s)".format(typeid(this), done,
+                                                    cancelled);
     }
 }
 
@@ -282,7 +298,8 @@ auto sleep(EventLoop eventLoop, Duration delay)
     eventLoop.yield;
 }
 
-auto async(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine, Args args)
+auto async(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
+                               Args args)
 {
     return new Task!(Coroutine, Args)(eventLoop, coroutine, args);
 }
@@ -348,21 +365,29 @@ enum ReturnWhen
  * Params:
  *  eventLoop  = event loop, $(D_PSYMBOL getEventLoop) if not specified.
  *  futures    = futures to wait for.
- *  timeout    = can be used to control the maximum number of seconds to wait before returning. If $(PARAM timeout) is
- *               0 or negative there is no limit to the wait time.
- *  returnWhen = indicates when this function should return. It must be one of the following constants:
- *               FIRST_COMPLETED  The function will return when any future finishes or is cancelled.
- *               FIRST_EXCEPTION  The function will return when any future finishes by raising an exception. If no
- *                                future raises an exception then it is equivalent to ALL_COMPLETED.
- *               ALL_COMPLETED    The function will return when all futures finish or are cancelled.
+ *  timeout    = can be used to control the maximum number of seconds to wait
+ *               before returning. If $(PARAM timeout) is 0 or negative there
+ *               is no limit to the wait time.
+ *  returnWhen = indicates when this function should return. It must be one of
+ *               the following constants:
+ *               FIRST_COMPLETED  The function will return when any future
+ *                                finishes or is cancelled.
+ *               FIRST_EXCEPTION  The function will return when any future
+ *                                finishes by raising an exception. If no
+ *                                future raises an exception then it is
+ *                                equivalent to ALL_COMPLETED.
+ *               ALL_COMPLETED    The function will return when all futures
+ *                                finish or are cancelled.
  *
- * Returns: a named 2-tuple of sets. The first set, named $(D_PSYMBOL done), contains the futures that completed
- *          (finished or were cancelled) before the wait completed. The second set, named $(D_PSYMBOL notDone),
- *          contains uncompleted futures.
+ * Returns: a named 2-tuple of sets. The first set, named $(D_PSYMBOL done),
+ *          contains the futures that completed (finished or were cancelled)
+ *          before the wait completed. The second set, named
+ *          $(D_PSYMBOL notDone), contains uncompleted futures.
  */
 @Coroutine
-auto wait(Future)(EventLoop eventLoop, Future[] futures, Duration timeout = 0.seconds,
-        ReturnWhen returnWhen = ReturnWhen.ALL_COMPLETED)
+auto wait(Future)(EventLoop eventLoop, Future[] futures,
+                  Duration timeout = 0.seconds,
+                  ReturnWhen returnWhen = ReturnWhen.ALL_COMPLETED)
     if (is(Future : FutureHandle))
 {
     if (eventLoop is null)
@@ -416,7 +441,8 @@ auto wait(Future)(EventLoop eventLoop, Future[] futures, Duration timeout = 0.se
                 completed = futures.any!"a.done";
                 break;
             case ReturnWhen.FIRST_EXCEPTION:
-                completed = futures.any!"a.exception !is null" || futures.all!"a.done";
+                completed = futures.any!"a.exception !is null" ||
+                            futures.all!"a.done";
                 break;
             case ReturnWhen.ALL_COMPLETED:
                 completed = futures.all!"a.done";
@@ -478,19 +504,23 @@ unittest
 
 
 /**
- * Wait for the single Future to complete with timeout. If timeout is None, block until the future completes.
+ * Wait for the single Future to complete with timeout. If timeout is None,
+ * block until the future completes.
  *
  * Params:
  *  eventLoop = event loop, $(D_PSYMBOL getEventLoop) if not specified.
  *  future    = future to wait for.
- *  timeout   = can be used to control the maximum number of seconds to wait before returning. If $(PARAM timeout) is
- *               0 or negative, block until the future completes.
+ *  timeout   = can be used to control the maximum number of seconds to wait
+ *              before returning. If $(PARAM timeout) is 0 or negative, block
+ *              until the future completes.
  *
- * Returns: result of the future. When a timeout occurs, it cancels the task and raises $(D_PSYMBOL TimeoutException).
- *          To avoid the task cancellation, wrap it in $(D_SYMBOL shield().
+ * Returns: result of the future. When a timeout occurs, it cancels the task
+ *          and raises $(D_PSYMBOL TimeoutException). To avoid the task
+ *          cancellation, wrap it in $(D_SYMBOL shield().
  */
 @Coroutine
-auto waitFor(Future)(EventLoop eventLoop, Future future, Duration timeout = 0.seconds)
+auto waitFor(Future)(EventLoop eventLoop, Future future,
+                     Duration timeout = 0.seconds)
     if (is(Future : FutureHandle))
 {
     if (eventLoop is null)

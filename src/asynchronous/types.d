@@ -21,8 +21,8 @@ template UNSPECIFIED(E)
  */
 class CancelledException : Exception
 {
-    this(string message = null, string file = __FILE__, size_t line = __LINE__, Throwable next = null)
-        @safe pure nothrow
+    this(string message = null, string file = __FILE__, size_t line = __LINE__,
+         Throwable next = null) @safe pure nothrow
     {
         super(message, file, line, next);
     }
@@ -33,8 +33,8 @@ class CancelledException : Exception
  */
 class InvalidStateException : Exception
 {
-    this(string message = null, string file = __FILE__, size_t line = __LINE__, Throwable next = null)
-        @safe pure nothrow
+    this(string message = null, string file = __FILE__, size_t line = __LINE__,
+         Throwable next = null) @safe pure nothrow
     {
         super(message, file, line, next);
     }
@@ -45,8 +45,8 @@ class InvalidStateException : Exception
  */
 class TimeoutException : Exception
 {
-    this(string message = null, string file = __FILE__, size_t line = __LINE__, Throwable next = null)
-        @safe pure nothrow
+    this(string message = null, string file = __FILE__, size_t line = __LINE__,
+         Throwable next = null) @safe pure nothrow
     {
         super(message, file, line, next);
     }

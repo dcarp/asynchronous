@@ -43,7 +43,8 @@ interface CallbackHandle
 }
 
 /**
- * A callback wrapper object returned by $(D_PSYMBOL EventLoop.callSoon), $(D_PSYMBOL EventLoop.callSoonThreadsafe),
+ * A callback wrapper object returned by $(D_PSYMBOL EventLoop.callSoon),
+ * $(D_PSYMBOL EventLoop.callSoonThreadsafe),
  * $(D_PSYMBOL BaseEventLoop.callLater), and $(D_PSYMBOL BaseEventLoop.callAt).
  */
 class Callback(Dg, Args...) : CallbackHandle
@@ -97,7 +98,8 @@ class Callback(Dg, Args...) : CallbackHandle
     {
         import std.string;
 
-        return "%s(dg: %s, cancelled: %s".format(typeid(this),  __traits(identifier, dg), cancelled);
+        return "%s(dg: %s, cancelled: %s".format(typeid(this),
+                                                 __traits(identifier, dg), cancelled);
     }
 }
 
@@ -144,8 +146,8 @@ public:
     /**
      * Run until $(PARAM future) is done.
      *
-     * If the argument is a $(I coroutine object), it is wrapped by
-     * $(D_PSYMBOL async()).
+     * If the argument is a $(I coroutine object), it is wrapped by $(D_PSYMBOL
+     * async()).
      *
      * Returns: the Future's result, or throws its exception.
      */
@@ -311,10 +313,12 @@ public:
     /// Fibers
 
     /**
-     * Schedule the execution of a fiber object: wrap it in a future. Return a $(D_PSYMBOL Task) object.
+     * Schedule the execution of a fiber object: wrap it in a future.
      *
-     * Third-party event loops can use their own subclass of Task for interoperability. In this case, the result type
-     * is a subclass of Task.
+     * Third-party event loops can use their own subclass of Task for
+     * interoperability. In this case, the result type is a subclass of Task.
+     *
+     * Returns: a $(D_PSYMBOL Task) object.
      *
      * See_Also: $(D_PSYMBOL async()).
      */
@@ -339,34 +343,97 @@ public:
 
     /// Creating connections
 
-    // Tuple!(Transport, Protocol)
+    /**
+     * Create a streaming transport connection to a given Internet host and
+     * port: socket family $(D_PSYMBOL AddressFamily.INET) or $(D_PSYMBOL
+     * AF_INET6) depending on host (or family if specified), socket type
+     * $(D_PSYMBOL SocketType.STREAM). protocol_factory must be a callable
+     * returning a protocol instance.
+     *
+     * This method is a coroutine which will try to establish the connection in
+     * the background. When successful, the coroutine returns a (transport,
+     * protocol) tuple.
+     *
+     * The chronological synopsis of the underlying operation is as follows:
+     *
+     * The connection is established, and a transport is created to represent
+     * it. $(D_PSYMBOL protocolFactory) is called without arguments and must
+     * return a protocol instance.
+     * The protocol instance is tied to the transport, and its $(D_PSYMBOL
+     * connectionMade()) method is called.
+     * The coroutine returns successfully with the (transport, protocol) tuple.
+     *
+     * The created transport is an implementation-dependent bidirectional
+     * stream.
+     *
+     * Options allowing to change how the connection is created:
+     * Params:
+     *  ssl = if not false, a SSL/TLS transport is created (by default a plain
+     *        TCP transport is created). If ssl is a ssl.SSLContext object, this
+     *        context is used to create the transport; if ssl is True, a context
+     *        with some unspecified default settings is used.
+     * serverHostname = is only for use together with ssl, and sets or overrides
+     *                  the hostname that the target server’s certificate will
+     *                  be matched against. By default the value of the host
+     *                  argument is used. If host is empty, there is no default
+     *                  and you must pass a value for $(D_PSYMBOL serverHostname).
+     *                  If $(D_PSYMBOL serverHostname) is an empty, hostname
+     *                  matching is disabled (which is a serious security risk,
+     *                  allowing for man-in-the-middle-attacks).
+     * addressFamily = optional adress family.
+     * protocolType = optional protocol.
+     * addressInfoFlags = optional flags.
+     * socket = if not $(D_KEYWORD null), should be an existing, already
+     *          connected $(D_PSYMBOL Socket) object to be used by the
+     *          transport. If $(D_PSYMBOL socket) is given, none of $(D_PSYMBOL
+     *          host), $(D_PSYMBOL service), $(D_PSYMBOL addressFamily),
+     *          $(D_PSYMBOL protocolType), $(D_PSYMBOL addressInfoFlags) and
+     *          $(D_PSYMBOL localAddress) should be specified.
+     * localHost = if given, together with $(D_PSYMBOL localService) is used to
+     *             bind the socket to locally. The $(D_PSYMBOL localHost) and
+     *             $(D_PSYMBOL localService are looked up using $(D_PSYMBOL
+     *             getAddressInfo()), similarly to host and service.
+     * localService = see $(D_PSYMBOL localHost).
+     *
+     * Returns: Tuple!(Transport, Protocol)
+     */
     @Coroutine
-    auto createConnection(ProtocolFactory protocolFactory, in char[] host = null, in char[] service = null,
-            bool ssl = false, AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
+    auto createConnection(ProtocolFactory protocolFactory,
+            in char[] host = null, in char[] service = null, bool ssl = false,
+            AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
             ProtocolType protocolType = UNSPECIFIED!ProtocolType,
-            AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags, Socket socket = null,
-            in char[] localAddress = null, in char[] serverHostname = null)
+            AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags,
+            Socket socket = null, in char[] localHost = null,
+            in char[] localService = null, in char[] serverHostname = null)
     {
-        enforce(serverHostname.empty || ssl, "serverHostname is only meaningful with ssl");
+        enforce(serverHostname.empty || ssl,
+                "serverHostname is only meaningful with ssl");
         enforce(!(serverHostname.empty && ssl && host.empty),
-            "You must set serverHostname when using ssl without a host");
+                "You must set serverHostname when using ssl without a host");
 
         if (!host.empty || !service.empty)
         {
-            enforce(socket is null, "host/service and socket can not be specified at the same time");
+            enforce(socket is null,
+                    "host/service and socket can not be specified at the same time");
 
-            Future!(AddressInfo[])[] fs = [createTask(&this.getAddressInfo, host, service, addressFamily,
-                SocketType.STREAM, protocolType, addressInfoFlags)];
+            Future!(AddressInfo[])[] fs = [createTask(&this.getAddressInfo,
+                                                      host, service,
+                                                      addressFamily,
+                                                      SocketType.STREAM,
+                                                      protocolType,
+                                                      addressInfoFlags)];
 
-            if (!localAddress.empty)
-                fs ~= createTask(&this.getAddressInfo, localAddress, null, addressFamily, SocketType.STREAM,
-                    protocolType, addressInfoFlags);
+            if (!localHost.empty)
+                fs ~= createTask(&this.getAddressInfo, localHost, localService,
+                                 addressFamily, SocketType.STREAM, protocolType,
+                                 addressInfoFlags);
 
             this.wait(fs);
 
             auto addressInfos = fs.map!"a.result";
 
-            enforceEx!SocketOSException(addressInfos.all!(a => !a.empty), "getAddressInfo() returned empty list"); 
+            enforceEx!SocketOSException(addressInfos.all!(a => !a.empty),
+                                        "getAddressInfo() returned empty list"); 
 
             SocketOSException[] exceptions = null;
             bool connected = false;
@@ -375,7 +442,8 @@ public:
             {
                 try
                 {
-                    socket = new Socket(addressInfo.family, addressInfo.type, addressInfo.protocol);
+                    socket = new Socket(addressInfo.family, addressInfo.type,
+                                        addressInfo.protocol);
                     socket.blocking(false);
 
                     if (addressInfos.length > 1)
@@ -392,8 +460,10 @@ public:
                             }
                             catch (SocketOSException socketOSException)
                             {
-                                exceptions ~= new SocketOSException("error while attempting to bind on address '%s'"
-                                    .format(localAddressInfo.address), socketOSException);
+                                exceptions ~= new SocketOSException(
+                                    "error while attempting to bind on address '%s'"
+                                        .format(localAddressInfo.address),
+                                    socketOSException);
                             }
                         }
                         if (!bound)
@@ -437,18 +507,21 @@ public:
                     if (exceptions.all!(a => a.msg == exceptions[0].msg))
                         throw exceptions[0];
 
-                    throw new SocketOSException("Multiple exceptions: %(%s, %)".format(exceptions));
+                    throw new SocketOSException("Multiple exceptions: %(%s, %)"
+                        .format(exceptions));
                 }
             }
         }
         else
         {
-            enforce(socket !is null, "host and port was not specified and no socket specified");
+            enforce(socket !is null,
+                    "host and port was not specified and no socket specified");
         }
 
         socket.blocking(false);
 
-        return createConnectionTransport(socket, protocolFactory, ssl, serverHostname.empty ? serverHostname : host);
+        return createConnectionTransport(socket, protocolFactory, ssl,
+                                         serverHostname.empty ? serverHostname : host);
     }
 
 
@@ -577,7 +650,8 @@ public:
     @Coroutine
     AddressInfo[] getAddressInfo(in char[] host, in char[] service,
             AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
-            SocketType socketType = UNSPECIFIED!SocketType, ProtocolType protocolType = UNSPECIFIED!ProtocolType,
+            SocketType socketType = UNSPECIFIED!SocketType,
+            ProtocolType protocolType = UNSPECIFIED!ProtocolType,
             AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags);
 
 
@@ -617,13 +691,15 @@ protected:
 
     void socketConnect(Socket socket, Address address);
 
-    Transport makeSocketTransport(Socket socket, Protocol protocol, Future!void waiter);
+    Transport makeSocketTransport(Socket socket, Protocol protocol,
+        Future!void waiter);
 
 private:
 
     @Coroutine
-    auto createConnectionTransport(Socket socket, ProtocolFactory protocolFactory, bool ssl,
-        in char[] serverHostname = null)
+    auto createConnectionTransport(Socket socket,
+                                   ProtocolFactory protocolFactory,
+                                   bool ssl, in char[] serverHostname = null)
     {
         Protocol protocol = protocolFactory();
         Transport transport = null;

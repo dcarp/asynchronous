@@ -82,7 +82,7 @@ class Callback(Dg, Args...) : CallbackHandle
         {
             enforceEx!CancelledException(!this.cancelled, "Callback cancelled");
 
-            this.dg(this.args);            
+            this.dg(this.args);
         }
         catch (Throwable throwable)
         {
@@ -327,7 +327,7 @@ public:
     {
         return new Task!(Coroutine, Args)(this, coroutine, args);
     }
-   
+
     //// Methods for interacting with threads.
 
     //ReturnType!callback runInExecutor(alias callback, Args...)(executor, Args args);
@@ -346,8 +346,8 @@ public:
     /**
      * Create a streaming transport connection to a given Internet host and
      * port: socket family $(D_PSYMBOL AddressFamily.INET) or $(D_PSYMBOL
-     * AF_INET6) depending on host (or family if specified), socket type
-     * $(D_PSYMBOL SocketType.STREAM). protocol_factory must be a callable
+     * AddressFamily.INET6) depending on host (or family if specified), socket
+     * type $(D_PSYMBOL SocketType.STREAM). protocol_factory must be a callable
      * returning a protocol instance.
      *
      * This method is a coroutine which will try to establish the connection in
@@ -433,7 +433,7 @@ public:
             auto addressInfos = fs.map!"a.result";
 
             enforceEx!SocketOSException(addressInfos.all!(a => !a.empty),
-                                        "getAddressInfo() returned empty list"); 
+                                        "getAddressInfo() returned empty list");
 
             SocketOSException[] exceptions = null;
             bool connected = false;
@@ -450,7 +450,7 @@ public:
                     {
                         bool bound = false;
 
-                        foreach(localAddressInfo; addressInfos[1])
+                        foreach (localAddressInfo; addressInfos[1])
                         {
                             try
                             {
@@ -522,6 +522,118 @@ public:
 
         return createConnectionTransport(socket, protocolFactory, ssl,
                                          serverHostname.empty ? serverHostname : host);
+    }
+
+
+    /**
+     * Create datagram connection: socket family $(D_PSYMBOL AddressFamily.INET)
+     * or $(D_PSYMBOL AddressFamily.INET6) depending on host (or family if
+     * specified), socket type $(D_PSYMBOL SocketType.DGRAM).
+     *
+     * This method is a coroutine which will try to establish the connection in
+     * the background.
+     *
+     * See the create_connection() method for parameters.
+     *
+     * Returns: Tuple!(DatagramTransport, DatagramProtocol)
+     */
+    @Coroutine
+    auto createDatagramEndpoint(DatagramProtocolFactory datagramProtocolFactory,
+            in char[] localHost = null, in char[] localService = null,
+            in char[] remoteHost = null, in char[] remoteService = null,
+            AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
+            ProtocolType protocolType = UNSPECIFIED!ProtocolType,
+            AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags)
+    {
+        alias AddressPairInfo = Tuple!(AddressFamily, "addressFamily",
+                                       ProtocolType, "protocolType",
+                                       Address, "localAddress",
+                                       Address, "remoteAddress");
+
+        AddressPairInfo[] addressPairInfos = null;
+
+
+        if (localHost.empty && remoteHost.empty)
+        {
+            enforce(addressFamily != UNSPECIFIED!AddressFamily,
+                    "Unexpected address family");
+            addressPairInfos ~= AddressPairInfo(addressFamily, protocolType,
+                                                null, null);
+        }
+        else
+        {
+            enforce(remoteHost.empty, "Remote host parameter not supportored yet");
+
+            auto addressInfos = getAddressInfo(localHost, localService,
+                                               addressFamily, SocketType.DGRAM,
+                                               protocolType, addressInfoFlags);
+
+            enforceEx!SocketOSException(!addressInfos.empty,
+                                        "getAddressInfo() returned empty list");
+
+            foreach (addressInfo; addressInfos)
+            {
+                addressPairInfos ~= AddressPairInfo(addressInfo.family,
+                                                    addressInfo.protocol,
+                                                    addressInfo.address, null);
+            }
+        }
+
+        Socket socket = null;
+        Address remoteAddress = null;
+        SocketOSException[] exceptions = null;
+
+        foreach (addressPairInfo; addressPairInfos)
+        {
+            try
+            {
+                socket = new Socket(addressPairInfo.addressFamily,
+                                    SocketType.DGRAM,
+                                    addressPairInfo.protocolType);
+                socket.setOption(SocketOptionLevel.SOCKET,
+                                 SocketOption.REUSEADDR, 1);
+                socket.blocking(false);
+
+                if (addressPairInfo.localAddress)
+                    socket.bind(addressPairInfo.localAddress);
+
+
+                remoteAddress = addressPairInfo.remoteAddress;
+                enforce(remoteAddress is null, "remote connect not supported yet");
+
+                break;
+            }
+            catch (SocketOSException socketOSException)
+            {
+                if (socket !is null)
+                    socket.close;
+
+                exceptions ~= socketOSException;
+            }
+            catch (Throwable throwable)
+            {
+                if (socket !is null)
+                    socket.close;
+
+                throw throwable;
+            }
+        }
+
+        auto protocol = datagramProtocolFactory();
+        auto waiter = new Future!void(this);
+        auto transport = makeDatagramTransport(socket, protocol, remoteAddress,
+                                               waiter);
+        try
+        {
+            this.waitFor(waiter);
+        }
+        catch (Throwable throwable)
+        {
+            transport.close;
+            throw throwable;
+        }
+
+        return tuple(transport, protocol);
     }
 
 
@@ -692,8 +804,11 @@ protected:
     void socketConnect(Socket socket, Address address);
 
     Transport makeSocketTransport(Socket socket, Protocol protocol,
-        Future!void waiter);
+            Future!void waiter);
 
+    DatagramTransport makeDatagramTransport(Socket socket,
+            DatagramProtocol datagramProtocol, Address remoteAddress,
+            Future!void waiter);
 private:
 
     @Coroutine
@@ -718,7 +833,15 @@ private:
             transport = makeSocketTransport(socket, protocol, waiter);
         }
 
-        this.waitFor(waiter);
+        try
+        {
+            this.waitFor(waiter);
+        }
+        catch (Throwable throwable)
+        {
+            transport.close;
+            throw throwable;
+        }
 
         return tuple(transport, protocol);
     }
@@ -806,7 +929,7 @@ EventLoopPolicy getEventLoopPolicy()
                 eventLoopPolicy = new DefaultEventLoopPolicy;
         }
     }
-    
+
     return eventLoopPolicy;
 }
 

@@ -2,8 +2,6 @@ module asynchronous.protocols;
 
 import asynchronous.transports;
 
-alias ProtocolFactory = Protocol function();
-
 /**
  * Common interface for protocol interfaces.
  *
@@ -63,6 +61,7 @@ interface BaseProtocol
     void resumeWriting();
 }
 
+alias ProtocolFactory = Protocol function();
 
 /**
  * Interface for stream protocol.
@@ -96,6 +95,7 @@ interface Protocol : BaseProtocol
      */
 }
 
+alias DatagramProtocolFactory = DatagramProtocol function();
 
 /**
  * Interface for datagram protocol.

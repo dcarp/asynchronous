@@ -7,7 +7,7 @@
     "targetType": "library",
     "targetPath": "bin",
     "dependencies": {
-        "libasync": ">=0.6.6"
+        "libasync": ">=0.7.0"
     },
     "buildTypes": {
         "unittest": {

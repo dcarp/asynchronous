@@ -9,9 +9,10 @@ import std.stdio; // TODO remove this
 import std.string;
 import std.traits;
 import std.typecons;
-import libasync.events : EventLoop_ = EventLoop;
+import libasync.events : EventLoop_ = EventLoop, NetworkAddress;
 import libasync.timer : AsyncTimer;
-import libasync.tcp : AsyncTCPConnection, NetworkAddress, TCPEvent;
+import libasync.tcp : AsyncTCPConnection, TCPEvent;
+import libasync.udp : AsyncUDPSocket, UDPEvent;
 import asynchronous.events;
 import asynchronous.futures;
 import asynchronous.protocols;
@@ -32,7 +33,7 @@ package class LibasyncEventLoop : EventLoop
     private Appender!(CallbackHandle[]) nextCallbacks2;
     private Appender!(CallbackHandle[])* currentAppender;
 
-    private LibasyncTcpTransport[] pendingConnections;
+    private LibasyncTransport[] pendingConnections;
 
     this()
     {
@@ -122,8 +123,8 @@ package class LibasyncEventLoop : EventLoop
             (cast(byte*) address.name)[0 .. address.nameLen];
         asyncTCPConnection.peer = peerAddress;
 
-        auto connection = new LibasyncTcpTransport(this, socket,
-                                                   asyncTCPConnection);
+        auto connection = new LibasyncTransport(this, socket,
+                                                asyncTCPConnection);
 
         asyncTCPConnection.run(&connection.handleTCPEvent);
 
@@ -137,7 +138,7 @@ package class LibasyncEventLoop : EventLoop
 
         enforce(index >= 0, "Internal error");
 
-        auto result = this.pendingConnections[index];
+        auto transport = this.pendingConnections[index];
 
         if (this.pendingConnections.length > 1)
         {
@@ -145,9 +146,28 @@ package class LibasyncEventLoop : EventLoop
         }
         this.pendingConnections.length -= 1;
 
-        result.setProtocol(protocol, waiter);
+        transport.setProtocol(protocol, waiter);
 
-        return result;
+        return transport;
+    }
+
+    override DatagramTransport makeDatagramTransport(Socket socket,
+            DatagramProtocol datagramProtocol, Address remoteAddress,
+            Future!void waiter)
+    {
+        auto asyncUDPSocket = new AsyncUDPSocket(this.eventLoop, socket.handle);
+
+        auto datagramTransport = new LibasyncDatagramTransport(this, socket,
+                                                               asyncUDPSocket);
+
+        asyncUDPSocket.run(&datagramTransport.handleUDPEvent);
+
+        datagramTransport.setProtocol(datagramProtocol, waiter);
+
+        if (waiter !is null)
+            this.callSoon(&waiter.setResultUnlessCancelled);
+
+        return datagramTransport;
     }
 
     @Coroutine
@@ -213,12 +233,12 @@ class LibasyncEventLoopPolicy : EventLoopPolicy
     //}
 }
 
-private final class LibasyncTcpTransport : Transport
+private final class LibasyncTransport : Transport
 {
     private EventLoop eventLoop;
     private Socket _socket;
     private AsyncTCPConnection connection;
-    private Future!void waiter;
+    private Future!void waiter = null;
     private Protocol protocol;
     private uint connectionLost = 0;
     private bool closing = false;
@@ -240,7 +260,6 @@ private final class LibasyncTcpTransport : Transport
         this.eventLoop = eventLoop;
         this._socket = socket;
         this.connection = connection;
-        this.waiter = waiter;
         setWriteBufferLimits;
     }
 
@@ -287,13 +306,23 @@ private final class LibasyncTcpTransport : Transport
         if (this.readingPaused)
             return;
 
-        static ubyte[] buff = new ubyte[4092];
-        auto len = this.connection.recv(buff);
+        ubyte[] readBuffer = new ubyte[4096];
+        Appender!(ubyte[]) receivedData;
 
-        if (len)
+        while (true)
+        {
+            auto length = this.connection.recv(readBuffer);
+
+            receivedData ~= readBuffer[0 .. length];
+
+            if (length < readBuffer.length)
+                break;
+        }
+
+        if (!receivedData.data.empty)
         {
             this.eventLoop.callSoon(&this.protocol.dataReceived,
-                                    buff[0 .. len]);
+                                    receivedData.data);
         }
         else
         {
@@ -355,7 +384,6 @@ private final class LibasyncTcpTransport : Transport
                 assert(0, connection.error());
         }
     }
-
 
     /**
      * Transport interface
@@ -467,5 +495,131 @@ private final class LibasyncTcpTransport : Transport
     void writeEof()
     {
         close;
+    }
+}
+
+private final class LibasyncDatagramTransport : DatagramTransport
+{
+    private EventLoop eventLoop;
+    private Socket _socket;
+    private AsyncUDPSocket udpSocket;
+    private Future!void waiter = null;
+    private DatagramProtocol datagramProtocol = null;
+
+    this(EventLoop eventLoop, Socket socket, AsyncUDPSocket udpSocket)
+    in
+    {
+        assert(eventLoop !is null);
+        assert(socket !is null);
+        assert(udpSocket !is null);
+    }
+    body
+    {
+        this.eventLoop = eventLoop;
+        this._socket = socket;
+        this.udpSocket = udpSocket;
+    }
+
+    @property
+    Socket socket()
+    {
+        return this._socket;
+    }
+
+    void setProtocol(DatagramProtocol datagramProtocol, Future!void waiter = null)
+    in
+    {
+        assert(datagramProtocol !is null);
+        assert(this.datagramProtocol is null);
+        assert(this.waiter is null);
+    }
+    body
+    {
+        this.datagramProtocol = datagramProtocol;
+        this.waiter = waiter;
+    }
+
+    private void onRead()
+    in
+    {
+        assert(this.datagramProtocol !is null);
+    }
+    body
+    {
+        ubyte[] readBuffer = new ubyte[1501];
+        NetworkAddress networkAddress;
+
+        auto length = this.udpSocket.recvFrom(readBuffer, networkAddress);
+
+        enforce(length < readBuffer.length,
+                "Unexpected UDP package size > 1500 bytes");
+
+        Address tmp;
+        Address address = new UnknownAddressReference(
+                cast(typeof(tmp.name)) networkAddress.sockAddr,
+                cast(uint) networkAddress.sockAddrLen);
+
+        this.eventLoop.callSoon(&this.datagramProtocol.datagramReceived,
+                                readBuffer[0 .. length], address);
+    }
+
+    private void onWrite()
+    in
+    {
+        assert(this.datagramProtocol !is null);
+    }
+    body
+    {
+    }
+
+    void handleUDPEvent(UDPEvent event)
+    {
+        final switch (event)
+        {
+            case UDPEvent.READ:
+                onRead();
+                break;
+            case UDPEvent.WRITE:
+                onWrite();
+                break;
+            case UDPEvent.ERROR:
+                assert(0, udpSocket.error());
+        }
+    }
+
+    /**
+     * DatagramTransport interface
+     */
+
+    string getExtraInfo(string name)
+    {
+        assert(0, "Unknown transport information " ~ name);
+    }
+
+    void close()
+    {
+        this.eventLoop.callSoon(&this.udpSocket.kill);
+    }
+
+    void sendTo(const(void)[] data, Address address = null)
+    in
+    {
+        assert(this.datagramProtocol !is null);
+    }
+    body
+    {
+        enforce(address !is null, "default remote not supported yet");
+
+        NetworkAddress networkAddress;
+
+        (cast(byte*) networkAddress.sockAddr)[0 .. address.nameLen] =
+            (cast(byte*) address.name)[0 .. address.nameLen];
+
+        this.udpSocket.sendTo(cast(const ubyte[]) data, networkAddress);
+    }
+
+    void abort()
+    {
+        this.eventLoop.callSoon(&this.udpSocket.kill);
     }
 }

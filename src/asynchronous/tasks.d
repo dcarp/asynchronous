@@ -5,6 +5,7 @@ import std.algorithm;
 import std.array;
 import std.exception;
 import std.traits;
+import std.typecons;
 import asynchronous.events;
 import asynchronous.futures;
 import asynchronous.types;

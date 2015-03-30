@@ -232,6 +232,7 @@ class Future(ResultType) : FutureBase
     }
 }
 
+alias Waiter = Future!void;
 
 class Future(ResultType : void) : FutureBase
 {

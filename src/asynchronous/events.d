@@ -42,6 +42,10 @@ interface CallbackHandle
     protected void opCallImpl();
 }
 
+interface SslContext
+{
+}
+
 /**
  * A callback wrapper object returned by $(D_PSYMBOL EventLoop.callSoon),
  * $(D_PSYMBOL EventLoop.callSoonThreadsafe),
@@ -107,6 +111,90 @@ auto callback(Dg, Args...)(EventLoop eventLoop, Dg dg, Args args)
 {
     return new Callback!(Dg, Args)(eventLoop, dg, args);
 }
+
+
+class ServerImpl : Server
+{
+    private EventLoop eventLoop;
+
+    private Socket[] sockets;
+
+    private size_t activeCount;
+
+    private Waiter[] waiters;
+
+    this(EventLoop eventLoop, Socket[] sockets)
+    {
+        this.eventLoop = eventLoop;
+        this.sockets = sockets;
+    }
+
+    package void attach()
+    in
+    {
+        assert(!this.sockets.empty);
+    }
+    body
+    {
+        ++this.activeCount;
+    }
+
+    package void detach()
+    in
+    {
+        assert(this.activeCount > 0);
+    }
+    body
+    {
+        --activeCount;
+
+        if (this.activeCount == 0 && this.sockets.empty)
+            wakeup;
+    }
+
+    void close()
+    {
+        Socket[] sockets = this.sockets;
+
+        if (sockets.empty)
+            return;
+
+        this.sockets = null;
+
+        foreach (socket; sockets)
+            this.eventLoop.stopServing(socket);
+
+        if (this.activeCount == 0)
+            wakeup;
+    }
+
+    private void wakeup()
+    {
+        Waiter[] waiters = this.waiters;
+
+        this.waiters = null;
+
+        foreach (waiter; waiters)
+        {
+            if (!waiter.done)
+                waiter.setResult;
+        }
+    }
+
+    @Coroutine
+    void waitClosed()
+    {
+        if (this.sockets.empty && this.waiters.empty)
+            return;
+
+        Waiter waiter = new Waiter(this.eventLoop);
+
+        this.waiters ~= waiter;
+
+        this.eventLoop.waitFor(waiter);
+    }
+}
+
 
 /**
  * Interface of event loop.
@@ -368,10 +456,8 @@ public:
      *
      * Options allowing to change how the connection is created:
      * Params:
-     *  ssl = if not false, a SSL/TLS transport is created (by default a plain
-     *        TCP transport is created). If ssl is a ssl.SSLContext object, this
-     *        context is used to create the transport; if ssl is True, a context
-     *        with some unspecified default settings is used.
+     * sslContext = if not $(D_KEYWORD null), a SSL/TLS transport is created (by
+     *        default a plain TCP transport is created).
      * serverHostname = is only for use together with ssl, and sets or overrides
      *                  the hostname that the target server’s certificate will
      *                  be matched against. By default the value of the host
@@ -399,17 +485,18 @@ public:
      */
     @Coroutine
     auto createConnection(ProtocolFactory protocolFactory,
-            in char[] host = null, in char[] service = null, bool ssl = false,
+            in char[] host = null, in char[] service = null,
+            SslContext sslContext = null,
             AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
             ProtocolType protocolType = UNSPECIFIED!ProtocolType,
             AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags,
             Socket socket = null, in char[] localHost = null,
             in char[] localService = null, in char[] serverHostname = null)
     {
-        enforce(serverHostname.empty || ssl,
-                "serverHostname is only meaningful with ssl");
-        enforce(!(serverHostname.empty && ssl && host.empty),
-                "You must set serverHostname when using ssl without a host");
+        enforce(serverHostname.empty || sslContext !is null,
+                "serverHostname is only meaningful with SSL");
+        enforce(serverHostname.empty || sslContext is null || !host.empty,
+                "You must set serverHostname when using SSL without a host");
 
         if (!host.empty || !service.empty)
         {
@@ -442,8 +529,7 @@ public:
             {
                 try
                 {
-                    socket = new Socket(addressInfo.family, addressInfo.type,
-                                        addressInfo.protocol);
+                    socket = new Socket(addressInfo);
                     socket.blocking(false);
 
                     if (addressInfos.length > 1)
@@ -520,7 +606,7 @@ public:
 
         socket.blocking(false);
 
-        return createConnectionTransport(socket, protocolFactory, ssl,
+        return createConnectionTransport(socket, protocolFactory, sslContext,
                                          serverHostname.empty ? serverHostname : host);
     }
 
@@ -620,7 +706,7 @@ public:
         }
 
         auto protocol = datagramProtocolFactory();
-        auto waiter = new Future!void(this);
+        auto waiter = new Waiter(this);
         auto transport = makeDatagramTransport(socket, protocol, remoteAddress,
                                                waiter);
         try
@@ -637,39 +723,120 @@ public:
     }
 
 
-    ////"""A coroutine which creates a TCP server bound to host and port.
+    /**
+     * A coroutine which creates a TCP server bound to host and port.
+     *
+     * Params:
+     * host = if empty then all interfaces are assumed and a list of multiple
+     *        sockets will be returned (most likely one for IPv4 and another one
+     *        for IPv6).
+     *
+     * addressFamily = can be set to either $(D_PSYMBOL AddressFamily.INET) or
+     *                 $(D_PSYMBOL AddressFamily.INET6) to force the socket to
+     *                 use IPv4 or IPv6. If not set it will be determined from
+     *                 host (defaults to $(D_PSYMBOL AddressFamily.UNSPEC)).
+     *
+     * flags = a bitmask for getAddressInfo().
+     *
+     * socket = can optionally be specified in order to use a preexisting
+     *          socket object.
+     *
+     * backlog = the maximum number of queued connections passed to listen()
+     *           (defaults to 100).
+     *
+     * sslContext = can be set to an SSLContext to enable SSL over the accepted
+     *              connections.
+     *
+     * reuseAddress = tells the kernel to reuse a local socket in TIME_WAIT
+     *                state, without waiting for its natural timeout to expire.
+     *                If not specified will automatically be set to $(D_KEYWORD
+     *                true) on UNIX.
+     *
+     * Returns: a Server object which can be used to stop the service.
+     */
+    @Coroutine
+    Server createServer(ProtocolFactory protocolFactory,
+            in char[] host = null, in char[] service = null,
+            AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
+            AddressInfoFlags addressInfoFlags = AddressInfoFlags.PASSIVE,
+            Socket socket = null, int backlog = 100, SslContext sslContext = null,
+            bool reuseAddress = true)
+    {
+        enforce(sslContext is null, "SSL support not implemented yet");
 
-    ////The return value is a Server object which can be used to stop
-    ////the service.
+        Socket[] sockets;
 
-    ////If host is an empty string or None all interfaces are assumed
-    ////and a list of multiple sockets will be returned (most likely
-    ////one for IPv4 and another one for IPv6).
+        scope (failure)
+        {
+            foreach (socket1; sockets)
+                socket1.close;
+        }
 
-    ////family can be set to either AF_INET or AF_INET6 to force the
-    ////socket to use IPv4 or IPv6. If not set it will be determined
-    ////from host (defaults to AF_UNSPEC).
+        if (!host.empty || !service.empty)
+        {
+            enforce(socket is null,
+                    "host/service and socket can not be specified at the same time");
 
-    ////flags is a bitmask for getaddrinfo().
+            AddressInfo[] addressInfos = getAddressInfo(host, service,
+                                                        addressFamily,
+                                                        SocketType.STREAM,
+                                                        UNSPECIFIED!ProtocolType,
+                                                        addressInfoFlags);
 
-    ////sock can optionally be specified in order to use a preexisting
-    ////socket object.
+            enforceEx!SocketOSException(!addressInfos.empty,
+                                        "getAddressInfo() returned empty list");
 
-    ////backlog is the maximum number of queued connections passed to
-    ////listen() (defaults to 100).
+            foreach (addressInfo; addressInfos)
+            {
+                try
+                {
+                    socket = new Socket(addressInfo);
+                }
+                catch (SocketOSException socketOSException)
+                {
+                    continue;
+                }
 
-    ////ssl can be set to an SSLContext to enable SSL over the
-    ////accepted connections.
+                sockets ~= socket;
 
-    ////reuse_address tells the kernel to reuse a local socket in
-    ////TIME_WAIT state, without waiting for its natural timeout to
-    ////expire. If not specified will automatically be set to True on
-    ////UNIX.
-    ////"""
-    //AbstractServer createServer(Protocol function() protocol_factory,
-    //    in char[] host = null, ushort port = 0, AddressFamily family = AddressFamily.UNSPEC,
-    //    AddressInfoFlags flags = AddressInfoFlags.PASSIVE, Socket sock = null,
-    //    int backlog = 100, bool ssl = false, bool reuseAddress = true);
+                if (reuseAddress)
+                    socket.setOption(SocketOptionLevel.SOCKET,
+                                     SocketOption.REUSEADDR, true);
+
+                if (addressInfo.family == AddressFamily.INET6)
+                    socket.setOption(SocketOptionLevel.IPV6,
+                                     SocketOption.IPV6_V6ONLY, true);
+
+                try
+                {
+                    socket.bind(addressInfo.address);
+                }
+                catch (SocketException socketException)
+                {
+                    throw new SocketException("error while attempting to bind to address %s: %s"
+                                              .format(addressInfo.address, socketException.msg));
+                }
+            }
+        }
+        else
+        {
+            enforce(socket !is null, "Neither host/service nor sock were specified");
+
+            sockets ~= socket;
+        }
+
+        Server server = new ServerImpl(this, sockets);
+
+        foreach (socket1; sockets)
+        {
+            socket1.listen(backlog);
+            socket1.blocking(false);
+
+            startServing(protocolFactory, socket1, sslContext, server);
+        }
+
+        return server;
+    }
 
     //Tuple!(Transport, Protocol) createUnixConnection(Protocol function() protocol_factory,
     //    in char[] path, bool ssl = false, Socket sock = null, in char[] serverHostname = null);
@@ -693,10 +860,6 @@ public:
     ////"""
     //AbstractServer createUnixServer(Protocol function() protocol_factory,
     //    in char[] path, Socket sock = null, int backlog = 100, bool ssl = false);
-
-    //Tuple!(Transport, Protocol) createDatagramEndpoint(Protocol function() protocol_factory,
-    //    in char[] localAddr = null, in char[] remoteAddr = null, AddressFamily family = AddressFamily.UNSPEC,
-    //    SocketType proto = SocketType.STREAM, AddressInfoFlags flags = AddressInfoFlags.PASSIVE);
 
     //// Pipes and subprocesses.
 
@@ -804,23 +967,23 @@ protected:
     void socketConnect(Socket socket, Address address);
 
     Transport makeSocketTransport(Socket socket, Protocol protocol,
-            Future!void waiter);
+            Waiter waiter);
 
     DatagramTransport makeDatagramTransport(Socket socket,
             DatagramProtocol datagramProtocol, Address remoteAddress,
-            Future!void waiter);
+            Waiter waiter);
 private:
 
     @Coroutine
     auto createConnectionTransport(Socket socket,
-                                   ProtocolFactory protocolFactory,
-                                   bool ssl, in char[] serverHostname = null)
+            ProtocolFactory protocolFactory, SslContext sslContext,
+            in char[] serverHostname = null)
     {
         Protocol protocol = protocolFactory();
         Transport transport = null;
-        auto waiter = new Future!void(this);
+        auto waiter = new Waiter(this);
 
-        if (ssl)
+        if (sslContext !is null)
         {
             assert(0, "SSL support not implemented yet");
             //sslcontext = None if isinstance(ssl, bool) else ssl

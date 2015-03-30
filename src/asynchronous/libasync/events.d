@@ -12,6 +12,7 @@ import std.typecons;
 import libasync.events : EventLoop_ = EventLoop, NetworkAddress;
 import libasync.timer : AsyncTimer;
 import libasync.tcp : AsyncTCPConnection, TCPEvent;
+import libasync.threads : destroyAsyncThreads;
 import libasync.udp : AsyncUDPSocket, UDPEvent;
 import asynchronous.events;
 import asynchronous.futures;
@@ -21,6 +22,8 @@ import asynchronous.transports;
 import asynchronous.types;
 
 alias Protocol = asynchronous.protocols.Protocol;
+
+shared static ~this() { destroyAsyncThreads(); }
 
 package class LibasyncEventLoop : EventLoop
 {
@@ -132,7 +135,7 @@ package class LibasyncEventLoop : EventLoop
     }
 
     override Transport makeSocketTransport(Socket socket, Protocol protocol,
-                                           Future!void waiter)
+                                           Waiter waiter)
     {
         auto index = this.pendingConnections.countUntil!(a => a.socket == socket);
 
@@ -153,7 +156,7 @@ package class LibasyncEventLoop : EventLoop
 
     override DatagramTransport makeDatagramTransport(Socket socket,
             DatagramProtocol datagramProtocol, Address remoteAddress,
-            Future!void waiter)
+            Waiter waiter)
     {
         auto asyncUDPSocket = new AsyncUDPSocket(this.eventLoop, socket.handle);
 
@@ -238,7 +241,7 @@ private final class LibasyncTransport : Transport
     private EventLoop eventLoop;
     private Socket _socket;
     private AsyncTCPConnection connection;
-    private Future!void waiter = null;
+    private Waiter waiter = null;
     private Protocol protocol;
     private uint connectionLost = 0;
     private bool closing = false;
@@ -269,7 +272,7 @@ private final class LibasyncTransport : Transport
         return this._socket;
     }
 
-    void setProtocol(Protocol protocol, Future!void waiter = null)
+    void setProtocol(Protocol protocol, Waiter waiter = null)
     in
     {
         assert(protocol !is null);
@@ -503,7 +506,7 @@ private final class LibasyncDatagramTransport : DatagramTransport
     private EventLoop eventLoop;
     private Socket _socket;
     private AsyncUDPSocket udpSocket;
-    private Future!void waiter = null;
+    private Waiter waiter = null;
     private DatagramProtocol datagramProtocol = null;
 
     this(EventLoop eventLoop, Socket socket, AsyncUDPSocket udpSocket)
@@ -526,7 +529,7 @@ private final class LibasyncDatagramTransport : DatagramTransport
         return this._socket;
     }
 
-    void setProtocol(DatagramProtocol datagramProtocol, Future!void waiter = null)
+    void setProtocol(DatagramProtocol datagramProtocol, Waiter waiter = null)
     in
     {
         assert(datagramProtocol !is null);

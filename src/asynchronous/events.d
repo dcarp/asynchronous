@@ -113,7 +113,7 @@ auto callback(Dg, Args...)(EventLoop eventLoop, Dg dg, Args args)
 }
 
 
-class ServerImpl : Server
+package class ServerImpl : Server
 {
     private EventLoop eventLoop;
 
@@ -825,7 +825,7 @@ public:
             sockets ~= socket;
         }
 
-        Server server = new ServerImpl(this, sockets);
+        auto server = new ServerImpl(this, sockets);
 
         foreach (socket1; sockets)
         {
@@ -972,6 +972,11 @@ protected:
     DatagramTransport makeDatagramTransport(Socket socket,
             DatagramProtocol datagramProtocol, Address remoteAddress,
             Waiter waiter);
+
+    void startServing(ProtocolFactory protocolFactory, Socket socket,
+            SslContext sslContext, ServerImpl server);
+
+    void stopServing(Socket socket);
 private:
 
     @Coroutine

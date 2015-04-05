@@ -11,7 +11,7 @@ import std.traits;
 import std.typecons;
 import libasync.events : EventLoop_ = EventLoop, NetworkAddress;
 import libasync.timer : AsyncTimer;
-import libasync.tcp : AsyncTCPConnection, TCPEvent;
+import libasync.tcp : AsyncTCPConnection, AsyncTCPListener, TCPEvent;
 import libasync.threads : destroyAsyncThreads;
 import libasync.udp : AsyncUDPSocket, UDPEvent;
 import asynchronous.events;
@@ -37,6 +37,8 @@ package class LibasyncEventLoop : EventLoop
     private Appender!(CallbackHandle[])* currentAppender;
 
     private LibasyncTransport[] pendingConnections;
+
+    private AsyncTCPListener[] activeListeners;
 
     this()
     {
@@ -186,6 +188,40 @@ package class LibasyncEventLoop : EventLoop
                                          addressInfoFlags);
     }
 
+    override void startServing(ProtocolFactory protocolFactory, Socket socket,
+            SslContext sslContext, ServerImpl server)
+    {
+        auto asyncTCPListener = new AsyncTCPListener(this.eventLoop,
+                                                     socket.handle);
+
+        this.activeListeners ~= asyncTCPListener;
+
+        asyncTCPListener.run((AsyncTCPConnection connection)
+        {
+            auto socket1 = new Socket(cast(socket_t) connection.socket,
+                                      socket.addressFamily);
+
+            auto transport = new LibasyncTransport(this, socket1, connection);
+
+            return &transport.handleTCPEvent;
+        });
+    }
+
+    override void stopServing(Socket socket)
+    {
+        auto found = this.activeListeners.find!(s => s.socket == socket.handle);
+
+        assert(!found.empty);
+
+        auto asyncTCPListener = found[0];
+
+        found[0] = found[$ - 1];
+        --this.activeListeners.length;
+
+        asyncTCPListener.kill;
+    }
+
+
     version(Posix)
     {
         override void addSignalHandler(int sig, void delegate() handler)
@@ -256,7 +292,7 @@ private final class LibasyncTransport : Transport
         assert(eventLoop !is null);
         assert(socket !is null);
         assert(connection !is null);
-        // assert(socket.handle == connection.socket);
+        assert(socket.handle == connection.socket);
     }
     body
     {
@@ -515,6 +551,7 @@ private final class LibasyncDatagramTransport : DatagramTransport
         assert(eventLoop !is null);
         assert(socket !is null);
         assert(udpSocket !is null);
+        assert(socket.handle == udpSocket.socket);
     }
     body
     {

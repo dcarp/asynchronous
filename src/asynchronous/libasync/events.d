@@ -193,6 +193,12 @@ package class LibasyncEventLoop : EventLoop
     {
         auto asyncTCPListener = new AsyncTCPListener(this.eventLoop,
                                                      socket.handle);
+        NetworkAddress localAddress;
+        Address address = socket.localAddress;
+
+        (cast(byte*) localAddress.sockAddr)[0 .. address.nameLen] =
+            (cast(byte*) address.name)[0 .. address.nameLen];
+        asyncTCPListener.local(localAddress);
 
         this.activeListeners ~= asyncTCPListener;
 
@@ -203,6 +209,7 @@ package class LibasyncEventLoop : EventLoop
 
             auto transport = new LibasyncTransport(this, socket1, connection);
 
+            transport.setProtocol(protocolFactory());
             return &transport.handleTCPEvent;
         });
     }
@@ -292,7 +299,6 @@ private final class LibasyncTransport : Transport
         assert(eventLoop !is null);
         assert(socket !is null);
         assert(connection !is null);
-        assert(socket.handle == connection.socket);
     }
     body
     {
@@ -325,6 +331,7 @@ private final class LibasyncTransport : Transport
     in
     {
         assert(this.connection.isConnected);
+        assert(this._socket.handle == this.connection.socket);
         assert(this.protocol !is null);
     }
     body

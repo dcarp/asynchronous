@@ -27,6 +27,7 @@ interface Server
     void close();
 
     /// Coroutine to wait until service is closed.
+    @Coroutine
     void waitClosed();
 }
 
@@ -152,7 +153,7 @@ package class ServerImpl : Server
             wakeup;
     }
 
-    void close()
+    override void close()
     {
         Socket[] sockets = this.sockets;
 
@@ -182,7 +183,7 @@ package class ServerImpl : Server
     }
 
     @Coroutine
-    void waitClosed()
+    override void waitClosed()
     {
         if (this.sockets.empty && this.waiters.empty)
             return;

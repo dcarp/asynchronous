@@ -1,9 +1,9 @@
 import std.array;
 import std.conv;
+import std.functional;
 import std.string;
 
-import asynchronous.protocols;
-import asynchronous.transports;
+import asynchronous;
 
 Appender!(string[]) actualEvents;
 
@@ -76,9 +76,35 @@ class ClientProtocol : Protocol
 }
 
 
+@Coroutine
+Server createServer()
+{
+    return getEventLoop.createServer(() => new ServerProtocol(), "localhost", "8038");
+}
+
+auto connectClient()
+{
+    return getEventLoop.createConnection(() => new ClientProtocol(), "localhost", "8038");
+}
+
+
 unittest
 {
     // setup
+    auto eventLoop = getEventLoop;
     actualEvents.clear;
+    string[] expectedEvents = [
+        "client: connected to server",
+        "server: client connected",
+    ];
 
+    // execute
+    auto server = eventLoop.async(toDelegate(&createServer));
+    eventLoop.runUntilComplete(server);
+
+    auto client = eventLoop.async(toDelegate(&connectClient));
+    eventLoop.runUntilComplete(client);
+
+    // verify
+    assert(actualEvents.data == expectedEvents);
 }

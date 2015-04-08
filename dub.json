@@ -5,13 +5,21 @@
     "copyright": "Copyright © 2014 Dragoş Carp",
     "authors": ["Dragoş Carp"],
     "targetType": "library",
-    "targetPath": "bin",
+    "targetPath": "build",
+    "workingDirectory": "build",
     "dependencies": {
         "libasync": "~master"
     },
-    "buildTypes": {
-        "unittest": {
-            "buildOptions": ["debugInfoC", "unittests"]
+    "configurations": [
+        {
+            "name": "library"
+        },
+        {
+            "name": "unittest",
+            "targetType": "executable",
+            "sourcePaths": ["test"],
+            "buildOptions": ["debugInfoC", "unittests"],
+            "dflags": ["-main"]
         }
-    }
+    ]
 }

@@ -482,7 +482,7 @@ public:
      *             getAddressInfo()), similarly to host and service.
      * localService = see $(D_PSYMBOL localHost).
      *
-     * Returns: Tuple!(Transport, Protocol)
+     * Returns: Tuple!(Transport, "transport", Protocol, "protocol")
      */
     @Coroutine
     auto createConnection(ProtocolFactory protocolFactory,
@@ -622,7 +622,8 @@ public:
      *
      * See the create_connection() method for parameters.
      *
-     * Returns: Tuple!(DatagramTransport, DatagramProtocol)
+     * Returns: Tuple!(DatagramTransport, "datagramTransport",
+     *                 DatagramProtocol, "datagramProtocol")
      */
     @Coroutine
     auto createDatagramEndpoint(DatagramProtocolFactory datagramProtocolFactory,
@@ -720,7 +721,8 @@ public:
             throw throwable;
         }
 
-        return tuple(transport, protocol);
+        return tuple!("datagramTransport", "datagramProtocol")(transport,
+                                                               protocol);
     }
 
 
@@ -1012,7 +1014,7 @@ private:
             throw throwable;
         }
 
-        return tuple(transport, protocol);
+        return tuple!("transport", "protocol")(transport, protocol);
     }
 }
 

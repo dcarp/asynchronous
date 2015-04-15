@@ -435,7 +435,7 @@ private final class LibasyncTransport : Transport
      * Transport interface
      */
 
-    string getExtraInfo(string name)
+    override string getExtraInfo(string name)()
     {
         assert(0, "Unknown transport information " ~ name);
     }

@@ -1,110 +1,172 @@
+import std.algorithm;
 import std.array;
 import std.conv;
-import std.functional;
+import std.datetime;
 import std.string;
 
 import asynchronous;
 
-Appender!(string[]) actualEvents;
 
-class ServerProtocol : Protocol
+class TestHelper
 {
+    private Appender!(string[]) actualEvents_;
+
+    private Connection[] connections_;
+
+    private Server server_;
+
+    public void putEvent(string event)
+    {
+        actualEvents_.put(event);
+    }
+
+    public void addConnection(Connection connection)
+    {
+        connections_ ~= connection;
+    }
+
+    @property
+    public Server server()
+    {
+        return server_;
+    }
+
+    @property
+    public void server(Server server)
+    in
+    {
+        assert(server !is null);
+        assert(server_ is null);
+    }
+    body
+    {
+        server_ = server;
+    }
+
+    public string[] actualEvents()
+    {
+       import std.stdio;
+       writeln(actualEvents_.data);
+
+       return actualEvents_.data;
+    }
+
+    public Connection[] connections()
+    {
+        return connections_;
+    }
+}
+
+class Connection : Protocol
+{
+    string name;
+    Transport transport;
+    TestHelper testHelper;
+
+    this(string name, TestHelper testHelper)
+    {
+        this.name = name;
+        this.testHelper = testHelper;
+    }
+
     void connectionMade(BaseTransport transport)
     {
-        actualEvents.put("server: client connected");
+        this.transport = cast(Transport) transport;
+        testHelper.addConnection(this);
+        testHelper.putEvent(name ~ ": connected");
     }
 
     void connectionLost(Exception exception)
     {
-        actualEvents.put("server: client disconnected");
+        testHelper.putEvent(name ~ ": disconnected");
     }
 
     void pauseWriting()
     {
-        actualEvents.put("server: pause writing");
+        testHelper.putEvent(name ~ ": pause writing");
     }
 
     void resumeWriting()
     {
-        actualEvents.put("server: resume writing");
+        testHelper.putEvent(name ~ ": resume writing");
     }
 
     void dataReceived(const(void)[] data)
     {
-        actualEvents.put("server: dataReceived '%s'".format(data.to!string));
+        testHelper.putEvent(name ~ ": dataReceived '%s'".format(data.to!string));
     }
 
     bool eofReceived()
     {
-        actualEvents.put("server: eof received");
+        testHelper.putEvent(name ~ ": eof received");
         return false;
     }
 }
-
-class ClientProtocol : Protocol
-{
-    void connectionMade(BaseTransport transport)
-    {
-        actualEvents.put("client: connected to server");
-    }
-
-    void connectionLost(Exception exception)
-    {
-        actualEvents.put("client: disconnected from server");
-    }
-
-    void pauseWriting()
-    {
-        actualEvents.put("client: pause writing");
-    }
-
-    void resumeWriting()
-    {
-        actualEvents.put("client: resume writing");
-    }
-
-    void dataReceived(const(void)[] data)
-    {
-        actualEvents.put("client: dataReceived '%s'".format(data.to!string));
-    }
-
-    bool eofReceived()
-    {
-        actualEvents.put("client: eof received");
-        return false;
-    }
-}
-
 
 @Coroutine
-Server createServer()
+void tearDown(TestHelper testHelper)
 {
-    return getEventLoop.createServer(() => new ServerProtocol(), "localhost", "8038");
+    testHelper.server.close;
+    testHelper.server.waitClosed;
 }
 
-auto connectClient()
+@Coroutine
+void createConnection(TestHelper testHelper)
 {
-    return getEventLoop.createConnection(() => new ClientProtocol(), "localhost", "8038");
+    auto loop = getEventLoop;
+    auto server = loop.createServer(() => cast(Protocol) new Connection("server", testHelper), "localhost", "8038");
+    testHelper.server = server;
+    auto client = loop.createConnection(() => new Connection("client", testHelper), "localhost", "8038");
 }
-
 
 unittest
 {
     // setup
-    auto eventLoop = getEventLoop;
-    actualEvents.clear;
+    auto loop = getEventLoop;
+    auto testHelper = new TestHelper();
     string[] expectedEvents = [
-        "client: connected to server",
-        "server: client connected",
+        "client: connected",
+        "server: connected",
     ];
 
     // execute
-    auto server = eventLoop.async(toDelegate(&createServer));
-    eventLoop.runUntilComplete(server);
-
-    auto client = eventLoop.async(toDelegate(&connectClient));
-    eventLoop.runUntilComplete(client);
+    loop.runUntilComplete(loop.async(() => testHelper.createConnection));
 
     // verify
-    assert(actualEvents.data == expectedEvents);
+    assert(testHelper.actualEvents == expectedEvents);
+
+    // tear down
+    loop.runUntilComplete(loop.async(() => testHelper.tearDown));
+}
+
+@Coroutine
+void sendToServer(TestHelper testHelper, string message)
+{
+    createConnection(testHelper);
+
+    Connection clientConnection = testHelper.connections.find!(c => c.name == "client")[0];
+
+    clientConnection.transport.write(message);
+
+    getEventLoop.sleep(10.msecs);
+}
+
+unittest
+{
+    // setup
+    auto loop = getEventLoop;
+    auto testHelper = new TestHelper();
+    string[] expectedEvents = [
+        "client: connected",
+        "server: connected",
+    ];
+
+    // execute
+    loop.runUntilComplete(loop.async(() => testHelper.sendToServer("foo")));
+
+    // verify
+    assert(testHelper.actualEvents == expectedEvents);
+
+    // tear down
+    loop.runUntilComplete(loop.async(() => testHelper.tearDown));
 }

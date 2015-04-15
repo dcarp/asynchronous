@@ -380,9 +380,9 @@ enum ReturnWhen
  *               ALL_COMPLETED    The function will return when all futures
  *                                finish or are cancelled.
  *
- * Returns: a named 2-tuple of sets. The first set, named $(D_PSYMBOL done),
+ * Returns: a named 2-tuple of arrays. The first array, named $(D_PSYMBOL done),
  *          contains the futures that completed (finished or were cancelled)
- *          before the wait completed. The second set, named
+ *          before the wait completed. The second array, named
  *          $(D_PSYMBOL notDone), contains uncompleted futures.
  */
 @Coroutine

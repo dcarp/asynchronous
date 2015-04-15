@@ -12,7 +12,7 @@ interface BaseTransport
     /**
      * Get optional transport information.
      */
-    string getExtraInfo(string name);
+    string getExtraInfo(string name)();
 
     /**
      * Close the transport.

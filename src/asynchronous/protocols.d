@@ -61,7 +61,7 @@ interface BaseProtocol
     void resumeWriting();
 }
 
-alias ProtocolFactory = Protocol function();
+alias ProtocolFactory = Protocol delegate();
 
 /**
  * Interface for stream protocol.
@@ -95,7 +95,7 @@ interface Protocol : BaseProtocol
      */
 }
 
-alias DatagramProtocolFactory = DatagramProtocol function();
+alias DatagramProtocolFactory = DatagramProtocol delegate();
 
 /**
  * Interface for datagram protocol.

@@ -1,3 +1,4 @@
 dub.selections.json
 bin/
+build/
 .dub

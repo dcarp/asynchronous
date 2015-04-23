@@ -108,13 +108,16 @@ void tearDown(TestHelper testHelper)
 {
     testHelper.server.close;
     testHelper.server.waitClosed;
+
+    foreach (connection; testHelper.connections)
+        connection.transport.close;
 }
 
 @Coroutine
 void createConnection(TestHelper testHelper)
 {
     auto loop = getEventLoop;
-    auto server = loop.createServer(() => cast(Protocol) new Connection("server", testHelper), "localhost", "8038");
+    auto server = loop.createServer(() => new Connection("server", testHelper), "localhost", "8038");
     testHelper.server = server;
     auto client = loop.createConnection(() => new Connection("client", testHelper), "localhost", "8038");
 }
@@ -159,10 +162,44 @@ unittest
     string[] expectedEvents = [
         "client: connected",
         "server: connected",
+        "server: dataReceived 'foo'",
     ];
 
     // execute
     loop.runUntilComplete(loop.async(() => testHelper.sendToServer("foo")));
+
+    // verify
+    assert(testHelper.actualEvents == expectedEvents);
+
+    // tear down
+    loop.runUntilComplete(loop.async(() => testHelper.tearDown));
+}
+
+@Coroutine
+void sendToClient(TestHelper testHelper, string message)
+{
+    createConnection(testHelper);
+
+    Connection serverConnection = testHelper.connections.find!(c => c.name == "server")[0];
+
+    serverConnection.transport.write(message);
+
+    getEventLoop.sleep(10.msecs);
+}
+
+unittest
+{
+    // setup
+    auto loop = getEventLoop;
+    auto testHelper = new TestHelper();
+    string[] expectedEvents = [
+        "client: connected",
+        "server: connected",
+        "client: dataReceived 'foo'",
+    ];
+
+    // execute
+    loop.runUntilComplete(loop.async(() => testHelper.sendToClient("foo")));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);

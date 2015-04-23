@@ -12,7 +12,7 @@ import std.typecons;
 import libasync.events : EventLoop_ = EventLoop, NetworkAddress;
 import libasync.timer : AsyncTimer;
 import libasync.tcp : AsyncTCPConnection, AsyncTCPListener, TCPEvent;
-import libasync.threads : destroyAsyncThreads;
+import libasync.threads : destroyAsyncThreads, gs_threads;
 import libasync.udp : AsyncUDPSocket, UDPEvent;
 import asynchronous.events;
 import asynchronous.futures;
@@ -23,7 +23,11 @@ import asynchronous.types;
 
 alias Protocol = asynchronous.protocols.Protocol;
 
-shared static ~this() { destroyAsyncThreads(); }
+shared static ~this()
+{
+    destroyAsyncThreads;
+    gs_threads.joinAll;
+}
 
 package class LibasyncEventLoop : EventLoop
 {
@@ -370,13 +374,6 @@ private final class LibasyncTransport : Transport
             this.eventLoop.callSoon(&this.protocol.dataReceived,
                                     receivedData.data);
         }
-        else
-        {
-            this.eventLoop.callSoon({
-                if (!this.protocol.eofReceived)
-                    close;
-            });
-        }
     }
 
     private void onWrite()
@@ -400,14 +397,14 @@ private final class LibasyncTransport : Transport
         }
     }
 
-    private void onClose()
+    private void onClose(SocketOSException socketOSException)
     in
     {
         assert(this.protocol !is null);
     }
     body
     {
-        this.eventLoop.callSoon(&this.protocol.connectionLost, null);
+        this.eventLoop.callSoon(&this.protocol.connectionLost, socketOSException);
     }
 
     void handleTCPEvent(TCPEvent event)
@@ -424,10 +421,10 @@ private final class LibasyncTransport : Transport
                 onWrite();
                 break;
             case TCPEvent.CLOSE:
-                onClose();
+                onClose(null);
                 break;
             case TCPEvent.ERROR:
-                assert(0, connection.error());
+                onClose(new SocketOSException(connection.error()));
         }
     }
 

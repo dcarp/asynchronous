@@ -5,7 +5,6 @@ import std.array;
 import std.datetime;
 import std.process;
 import std.socket;
-import std.stdio; // TODO remove this
 import std.string;
 import std.traits;
 import std.typecons;
@@ -26,7 +25,6 @@ alias Protocol = asynchronous.protocols.Protocol;
 shared static ~this()
 {
     destroyAsyncThreads;
-    gs_threads.joinAll;
 }
 
 package class LibasyncEventLoop : EventLoop
@@ -468,7 +466,6 @@ private final class LibasyncTransport : Transport
         if (this.connectionLost)
             return;
 
-        writeln("trying to abort the connection");
         this.eventLoop.callSoon(&this.connection.kill, true);
         ++this.connectionLost;
     }

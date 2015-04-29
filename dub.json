@@ -8,7 +8,7 @@
     "targetPath": "build",
     "workingDirectory": "build",
     "dependencies": {
-        "libasync": "~master"
+        "libasync": "~>0.7.3"
     },
     "configurations": [
         {

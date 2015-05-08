@@ -190,6 +190,9 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
         super(eventLoop);
 
         TaskRepository.registerTask(this.eventLoop, this, {
+            debug(tasks) std.stdio.writefln("Start task %s",
+                cast(void*) cast(TaskHandle) this);
+
             static if (is(ResultType : void))
             {
                 coroutine(args);
@@ -199,8 +202,14 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
             {
                 setResult(coroutine(args));
             }
+
+            debug(tasks) std.stdio.writefln("End task %s",
+                cast(void*) cast(TaskHandle) this);
         });
         this.eventLoop.callSoon(&step, null);
+
+        debug(tasks) std.stdio.writefln("Create task %s",
+            cast(void*) cast(TaskHandle) this);
     }
 
     /**
@@ -234,6 +243,9 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
 
     protected override void step(Throwable throwable = null)
     {
+        debug(tasks) std.stdio.writefln("Resume task %s",
+            cast(void*) cast(TaskHandle) this);
+
         final switch (this.fiber.state)
         {
             case Fiber.State.HOLD:
@@ -269,10 +281,16 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
                 TaskRepository.unregisterTask(this.eventLoop, this);
                 break;
         }
+
+        debug(tasks) std.stdio.writefln("Suspend task %s",
+            cast(void*) cast(TaskHandle) this);
     }
 
     protected override void scheduleStep()
     {
+        debug(tasks) std.stdio.writefln("Schedule task %s",
+            cast(void*) cast(TaskHandle) this);
+
         this.eventLoop.callSoon(&step, null);
     }
 

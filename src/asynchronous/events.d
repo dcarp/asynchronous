@@ -185,7 +185,7 @@ package class ServerImpl : Server
     @Coroutine
     override void waitClosed()
     {
-        if (this.sockets.empty && this.waiters.empty)
+        if (this.sockets.empty && this.activeCount == 0)
             return;
 
         Waiter waiter = new Waiter(this.eventLoop);

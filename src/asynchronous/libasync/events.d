@@ -40,7 +40,9 @@ package class LibasyncEventLoop : EventLoop
 
     private LibasyncTransport[] pendingConnections;
 
-    private AsyncTCPListener[] activeListeners;
+    alias Listener = Tuple!(ServerImpl, "server", AsyncTCPListener, "listener");
+
+    private Listener[] activeListeners;
 
     this()
     {
@@ -202,7 +204,7 @@ package class LibasyncEventLoop : EventLoop
             (cast(byte*) address.name)[0 .. address.nameLen];
         asyncTCPListener.local(localAddress);
 
-        this.activeListeners ~= asyncTCPListener;
+        this.activeListeners ~= Listener(server, asyncTCPListener);
 
         asyncTCPListener.run((AsyncTCPConnection connection)
         {
@@ -214,20 +216,29 @@ package class LibasyncEventLoop : EventLoop
             transport.setProtocol(protocolFactory());
             return &transport.handleTCPEvent;
         });
+        server.attach;
     }
 
     override void stopServing(Socket socket)
     {
-        auto found = this.activeListeners.find!(s => s.socket == socket.handle);
+        auto found = this.activeListeners.find!(
+            l => l.listener.socket == socket.handle);
 
         assert(!found.empty);
 
-        auto asyncTCPListener = found[0];
+        auto server = found[0].server;
+        auto listener = found[0].listener;
 
         found[0] = found[$ - 1];
+        found[$ - 1] = Listener(null, null);
         --this.activeListeners.length;
 
-        asyncTCPListener.kill;
+        listener.kill;
+
+        // normally detach should be called on closing event of the listening
+        // socket, but libasync does not have such an event. so just call it
+        // 10 milliseconds later.
+        scheduleCallback(10.msecs, callback(this, &server.detach));
     }
 
 
@@ -354,7 +365,7 @@ private final class LibasyncTransport : Transport
         if (this.readingPaused)
             return;
 
-        ubyte[] readBuffer = new ubyte[4096];
+        static ubyte[] readBuffer = new ubyte[64 * 1024];
         Appender!(ubyte[]) receivedData;
 
         while (true)

@@ -117,8 +117,7 @@ void tearDown(TestHelper testHelper)
 void createConnection(TestHelper testHelper)
 {
     auto loop = getEventLoop;
-    auto server = loop.createServer(() => new Connection("server", testHelper), "localhost", "8038");
-    testHelper.server = server;
+    testHelper.server = loop.createServer(() => new Connection("server", testHelper), "localhost", "8038");
     auto client = loop.createConnection(() => new Connection("client", testHelper), "localhost", "8038");
 }
 

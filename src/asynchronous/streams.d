@@ -1,26 +1,20 @@
 module asynchronous.streams;
 
-//"""Stream-related things."""
-
-//__all__ = ['StreamReader', 'StreamWriter', 'StreamReaderProtocol',
-//           'open_connection', 'start_server',
-//           'IncompleteReadError',
-//           ]
-
-//import socket
-
-//if hasattr(socket, 'AF_UNIX'):
-//    __all__.extend(['open_unix_connection', 'start_unix_server'])
-
-//from . import coroutines
-//from . import events
-//from . import futures
-//from . import protocols
-//from .coroutines import coroutine
-//from .log import logger
+import std.algorithm : findSplit;
+import std.array : Appender, empty;
+import std.exception : enforce, enforceEx;
+import std.socket : AddressFamily, AddressInfoFlags, ProtocolType, Socket,
+    SocketOSException;
+import std.string : format;
+import std.typecons : tuple;
+import asynchronous.events;
+import asynchronous.futures;
+import asynchronous.tasks;
+import asynchronous.transports;
+import asynchronous.types;
 
 
-enum DEFAULT_LIMIT = 2 ** 16;
+enum DEFAULT_LIMIT = 1 << 16; // 2 ** 16
 
 
 /**
@@ -39,21 +33,22 @@ class IncompleteReadError : Exception
     const size_t expected;
 
     this(const(void)[] partial, size_t expected, string file = __FILE__,
-        size_t line = __LINE__, Throwable next = null) @safe pure nothrow
+        size_t line = __LINE__, Throwable next = null) @safe pure
     {
         import std.string;
 
         this.partial = partial;
         this.expected = expected;
 
-        super(format("%s bytes read on a total of %s expected bytes",
-            partial.length, expected), line, next);
+        super("%s bytes read on a total of %s expected bytes".format(
+            partial.length, expected), file, line, next);
     }
 }
 
 
 /**
- * A wrapper for $(D_PSYMBOL createConnection()) returning a (reader, writer) pair.
+ * A wrapper for $(D_PSYMBOL createConnection()) returning a (reader, writer)
+ * pair.
  *
  * The reader returned is a $(D_PSYMBOL StreamReader) instance; the writer is a
  * $(D_PSYMBOL StreamWriter) instance.
@@ -83,435 +78,667 @@ auto openConnection(EventLoop eventLoop, in char[] host = null,
     if (eventLoop is null)
         eventLoop = getEventLoop;
 
-    auto reader = new StreamReader(eventLoop, limit);
+    auto streamReader = new StreamReader(eventLoop, limit);
     auto connection = eventLoop.createConnection(
-        () => new StreamReaderProtocol(eventLoop, reader),
+        () => new StreamReaderProtocol(eventLoop, streamReader),
         host, service, sslContext, addressFamily, protocolType,
         addressInfoFlags, socket, localHost, localService, serverHostname);
-    auto writer = new StreamWriter(eventLoop, connection.transport,
-        connection.protocol, reader);
+    auto streamWriter = new StreamWriter(eventLoop, connection.transport,
+        connection.protocol, streamReader);
 
-    return Tuple!("reader", "writer")(reader, writer);
+    return tuple!("reader", "writer")(streamReader, streamWriter);
+}
+
+alias ClientConnectedCallback = void delegate(StreamReader, StreamWriter);
+/**
+ * Start a socket server, call back for each client connected.
+ *
+ * The first parameter, $(D_PSYMBOL clientConnectedCallback), takes two
+ * parameters: $(D_PSYMBOL clientReader), $(D_PSYMBOL clientWriter). $(D_PSYMBOL
+ * clientReader) is a $(D_PSYMBOL StreamReader) object, while $(D_PSYMBOL
+ * clientWriter) is a $(D_PSYMBOL StreamWriter) object.  This parameter is a
+ * coroutine, that will be automatically converted into a $(D_PSYMBOL Task).
+ *
+ * The rest of the arguments are all the usual arguments to $(D_PSYMBOL
+ * eventLoop.createServer()) except $(D_PSYMBOL protocolFactory). The return
+ * value is the same as $(D_PSYMBOL eventLoop.create_server()).
+ *
+ * Additional optional keyword arguments are loop (to set the event loop
+ * instance to use) and limit (to set the buffer limit passed to the
+ * $(D_PSYMBOL StreamReader)).
+ *
+ * The return value is the same as $(D_PSYMBOL loop.createServer()), i.e. a
+ * $(D_PSYMBOL Server) object which can be used to stop the service.
+ */
+@Coroutine
+auto startServer(EventLoop eventLoop,
+    ClientConnectedCallback clientConnectedCallback, in char[] host = null,
+    in char[] service = null, size_t limit = DEFAULT_LIMIT,
+    AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
+    AddressInfoFlags addressInfoFlags = AddressInfoFlags.PASSIVE,
+    Socket socket = null, int backlog = 100, SslContext sslContext = null,
+    bool reuseAddress = true)
+{
+    if (eventLoop is null)
+        eventLoop = getEventLoop;
+
+    Protocol protocolFactory()
+    {
+        auto reader = new StreamReader(eventLoop, limit);
+        return new StreamReaderProtocol(eventLoop, reader,
+            clientConnectedCallback);
+    }
+
+    return eventLoop.createServer(&protocolFactory, host, service, addressFamily,
+        addressInfoFlags, socket, backlog, sslContext, reuseAddress);
+}
+
+//if hasattr(socket, 'AF_UNIX'):
+//    # UNIX Domain Sockets are supported on this platform
+
+//    @coroutine
+//    def open_unix_connection(path=None, *,
+//                             loop=None, limit=_DEFAULT_LIMIT, **kwds):
+//        """Similar to `open_connection` but works with UNIX Domain Sockets."""
+//        if loop is None:
+//            loop = events.get_event_loop()
+//        reader = StreamReader(limit=limit, loop=loop)
+//        protocol = StreamReaderProtocol(reader, loop=loop)
+//        transport, _ = yield from loop.create_unix_connection(
+//            lambda: protocol, path, **kwds)
+//        writer = StreamWriter(transport, protocol, reader, loop)
+//        return reader, writer
+
+
+//    @coroutine
+//    def start_unix_server(client_connected_cb, path=None, *,
+//                          loop=None, limit=_DEFAULT_LIMIT, **kwds):
+//        """Similar to `start_server` but works with UNIX Domain Sockets."""
+//        if loop is None:
+//            loop = events.get_event_loop()
+
+//        def factory():
+//            reader = StreamReader(limit=limit, loop=loop)
+//            protocol = StreamReaderProtocol(reader, client_connected_cb,
+//                                            loop=loop)
+//            return protocol
+
+//        return (yield from loop.create_unix_server(factory, path, **kwds))
+
+
+/**
+ * Reusable flow control logic for $(D_PSYMBOL StreamWriter.drain()).
+ *
+ * This implements the protocol methods $(D_PSYMBOL pauseWriting()), $(D_PSYMBOL
+ * resumeReading()) and $(D_PSYMBOL connectionLost()).  If the subclass
+ * overrides these it must call the super methods.
+ *
+ * $(D_PSYMBOL StreamWriter.drain()) must wait for $(D_PSYMBOL drainHelper())
+ * coroutine.
+ */
+private abstract class FlowControlProtocol : Protocol
+{
+    private EventLoop eventLoop;
+    private bool paused = false;
+    private Waiter drainWaiter = null;
+    private bool connectionLost_ = false;
+
+    this(EventLoop eventLoop)
+    {
+        if (eventLoop is null)
+            this.eventLoop = getEventLoop;
+        else
+            this.eventLoop = eventLoop;
+
+    }
+
+    override void pauseWriting()
+    in
+    {
+        assert(!paused);
+    }
+    body
+    {
+        paused = true;
+    }
+
+    override void resumeWriting()
+    in
+    {
+        assert(paused);
+    }
+    body
+    {
+        paused = false;
+
+        if (drainWaiter !is null)
+        {
+            auto waiter = drainWaiter;
+
+            drainWaiter = null;
+            if (!waiter.done)
+                waiter.setResult;
+        }
+    }
+
+    override void connectionMade(BaseTransport transport)
+    {
+        throw new NotImplementedException;
+    }
+
+    override void connectionLost(Exception exception)
+    {
+        connectionLost_ = true;
+
+        if (!paused || drainWaiter is null || drainWaiter.done)
+            return;
+
+        auto waiter = drainWaiter;
+
+        drainWaiter = null;
+        if (exception is null)
+            waiter.setResult;
+        else
+            waiter.setException(exception);
+    }
+
+    @Coroutine
+    protected void drainHelper()
+    {
+        enforceEx!SocketOSException(!connectionLost_, "Connection lost");
+
+        if (!paused)
+            return;
+
+        assert(drainWaiter is null || drainWaiter.cancelled);
+
+        drainWaiter = new Waiter(eventLoop);
+        eventLoop.waitFor(drainWaiter);
+    }
+
+    override void dataReceived(const(void)[] data)
+    {
+        throw new NotImplementedException;
+    }
+
+    override bool eofReceived()
+    {
+        throw new NotImplementedException;
+    }
 }
 
 
-@coroutine
-def start_server(client_connected_cb, host=None, port=None, *,
-                 loop=None, limit=_DEFAULT_LIMIT, **kwds):
-    """Start a socket server, call back for each client connected.
-
-    The first parameter, `client_connected_cb`, takes two parameters:
-    client_reader, client_writer.  client_reader is a StreamReader
-    object, while client_writer is a StreamWriter object.  This
-    parameter can either be a plain callback function or a coroutine;
-    if it is a coroutine, it will be automatically converted into a
-    Task.
-
-    The rest of the arguments are all the usual arguments to
-    loop.create_server() except protocol_factory; most common are
-    positional host and port, with various optional keyword arguments
-    following.  The return value is the same as loop.create_server().
-
-    Additional optional keyword arguments are loop (to set the event loop
-    instance to use) and limit (to set the buffer limit passed to the
-    StreamReader).
-
-    The return value is the same as loop.create_server(), i.e. a
-    Server object which can be used to stop the service.
-    """
-    if loop is None:
-        loop = events.get_event_loop()
-
-    def factory():
-        reader = StreamReader(limit=limit, loop=loop)
-        protocol = StreamReaderProtocol(reader, client_connected_cb,
-                                        loop=loop)
-        return protocol
-
-    return (yield from loop.create_server(factory, host, port, **kwds))
-
-
-if hasattr(socket, 'AF_UNIX'):
-    # UNIX Domain Sockets are supported on this platform
-
-    @coroutine
-    def open_unix_connection(path=None, *,
-                             loop=None, limit=_DEFAULT_LIMIT, **kwds):
-        """Similar to `open_connection` but works with UNIX Domain Sockets."""
-        if loop is None:
-            loop = events.get_event_loop()
-        reader = StreamReader(limit=limit, loop=loop)
-        protocol = StreamReaderProtocol(reader, loop=loop)
-        transport, _ = yield from loop.create_unix_connection(
-            lambda: protocol, path, **kwds)
-        writer = StreamWriter(transport, protocol, reader, loop)
-        return reader, writer
-
-
-    @coroutine
-    def start_unix_server(client_connected_cb, path=None, *,
-                          loop=None, limit=_DEFAULT_LIMIT, **kwds):
-        """Similar to `start_server` but works with UNIX Domain Sockets."""
-        if loop is None:
-            loop = events.get_event_loop()
-
-        def factory():
-            reader = StreamReader(limit=limit, loop=loop)
-            protocol = StreamReaderProtocol(reader, client_connected_cb,
-                                            loop=loop)
-            return protocol
-
-        return (yield from loop.create_unix_server(factory, path, **kwds))
-
-
-class FlowControlMixin(protocols.Protocol):
-    """Reusable flow control logic for StreamWriter.drain().
-
-    This implements the protocol methods pause_writing(),
-    resume_reading() and connection_lost().  If the subclass overrides
-    these it must call the super methods.
-
-    StreamWriter.drain() must wait for _drain_helper() coroutine.
-    """
-
-    def __init__(self, loop=None):
-        if loop is None:
-            self._loop = events.get_event_loop()
-        else:
-            self._loop = loop
-        self._paused = False
-        self._drain_waiter = None
-        self._connection_lost = False
-
-    def pause_writing(self):
-        assert not self._paused
-        self._paused = True
-        if self._loop.get_debug():
-            logger.debug("%r pauses writing", self)
-
-    def resume_writing(self):
-        assert self._paused
-        self._paused = False
-        if self._loop.get_debug():
-            logger.debug("%r resumes writing", self)
-
-        waiter = self._drain_waiter
-        if waiter is not None:
-            self._drain_waiter = None
-            if not waiter.done():
-                waiter.set_result(None)
-
-    def connection_lost(self, exc):
-        self._connection_lost = True
-        # Wake up the writer if currently paused.
-        if not self._paused:
-            return
-        waiter = self._drain_waiter
-        if waiter is None:
-            return
-        self._drain_waiter = None
-        if waiter.done():
-            return
-        if exc is None:
-            waiter.set_result(None)
-        else:
-            waiter.set_exception(exc)
-
-    @coroutine
-    def _drain_helper(self):
-        if self._connection_lost:
-            raise ConnectionResetError('Connection lost')
-        if not self._paused:
-            return
-        waiter = self._drain_waiter
-        assert waiter is None or waiter.cancelled()
-        waiter = futures.Future(loop=self._loop)
-        self._drain_waiter = waiter
-        yield from waiter
-
-
-class StreamReaderProtocol(FlowControlMixin, protocols.Protocol):
-    """Helper class to adapt between Protocol and StreamReader.
-
-    (This is a helper class instead of making StreamReader itself a
-    Protocol subclass, because the StreamReader has other potential
-    uses, and to prevent the user of the StreamReader to accidentally
-    call inappropriate methods of the protocol.)
-    """
-
-    def __init__(self, stream_reader, client_connected_cb=None, loop=None):
-        super().__init__(loop=loop)
-        self._stream_reader = stream_reader
-        self._stream_writer = None
-        self._client_connected_cb = client_connected_cb
-
-    def connection_made(self, transport):
-        self._stream_reader.set_transport(transport)
-        if self._client_connected_cb is not None:
-            self._stream_writer = StreamWriter(transport, self,
-                                               self._stream_reader,
-                                               self._loop)
-            res = self._client_connected_cb(self._stream_reader,
-                                            self._stream_writer)
-            if coroutines.iscoroutine(res):
-                self._loop.create_task(res)
-
-    def connection_lost(self, exc):
-        if exc is None:
-            self._stream_reader.feed_eof()
-        else:
-            self._stream_reader.set_exception(exc)
-        super().connection_lost(exc)
-
-    def data_received(self, data):
-        self._stream_reader.feed_data(data)
-
-    def eof_received(self):
-        self._stream_reader.feed_eof()
-
-
-class StreamWriter:
-    """Wraps a Transport.
-
-    This exposes write(), writelines(), [can_]write_eof(),
-    get_extra_info() and close().  It adds drain() which returns an
-    optional Future on which you can wait for flow control.  It also
-    adds a transport property which references the Transport
-    directly.
-    """
-
-    def __init__(self, transport, protocol, reader, loop):
-        self._transport = transport
-        self._protocol = protocol
-        # drain() expects that the reader has a exception() method
-        assert reader is None or isinstance(reader, StreamReader)
-        self._reader = reader
-        self._loop = loop
-
-    def __repr__(self):
-        info = [self.__class__.__name__, 'transport=%r' % self._transport]
-        if self._reader is not None:
-            info.append('reader=%r' % self._reader)
-        return '<%s>' % ' '.join(info)
-
-    @property
-    def transport(self):
-        return self._transport
-
-    def write(self, data):
-        self._transport.write(data)
-
-    def writelines(self, data):
-        self._transport.writelines(data)
-
-    def write_eof(self):
-        return self._transport.write_eof()
-
-    def can_write_eof(self):
-        return self._transport.can_write_eof()
-
-    def close(self):
-        return self._transport.close()
-
-    def get_extra_info(self, name, default=None):
-        return self._transport.get_extra_info(name, default)
-
-    @coroutine
-    def drain(self):
-        """Flush the write buffer.
-
-        The intended use is to write
-
-          w.write(data)
-          yield from w.drain()
-        """
-        if self._reader is not None:
-            exc = self._reader.exception()
-            if exc is not None:
-                raise exc
-        yield from self._protocol._drain_helper()
-
-
-class StreamReader:
-
-    def __init__(self, limit=_DEFAULT_LIMIT, loop=None):
-        # The line length limit is  a security feature;
-        # it also doubles as half the buffer limit.
-        self._limit = limit
-        if loop is None:
-            self._loop = events.get_event_loop()
-        else:
-            self._loop = loop
-        self._buffer = bytearray()
-        self._eof = False    # Whether we're done.
-        self._waiter = None  # A future used by _wait_for_data()
-        self._exception = None
-        self._transport = None
-        self._paused = False
-
-    def exception(self):
-        return self._exception
-
-    def set_exception(self, exc):
-        self._exception = exc
-
-        waiter = self._waiter
-        if waiter is not None:
-            self._waiter = None
-            if not waiter.cancelled():
-                waiter.set_exception(exc)
-
-    def _wakeup_waiter(self):
-        """Wakeup read() or readline() function waiting for data or EOF."""
-        waiter = self._waiter
-        if waiter is not None:
-            self._waiter = None
-            if not waiter.cancelled():
-                waiter.set_result(None)
-
-    def set_transport(self, transport):
-        assert self._transport is None, 'Transport already set'
-        self._transport = transport
-
-    def _maybe_resume_transport(self):
-        if self._paused and len(self._buffer) <= self._limit:
-            self._paused = False
-            self._transport.resume_reading()
-
-    def feed_eof(self):
-        self._eof = True
-        self._wakeup_waiter()
-
-    def at_eof(self):
-        """Return True if the buffer is empty and 'feed_eof' was called."""
-        return self._eof and not self._buffer
-
-    def feed_data(self, data):
-        assert not self._eof, 'feed_data after feed_eof'
-
-        if not data:
-            return
-
-        self._buffer.extend(data)
-        self._wakeup_waiter()
-
-        if (self._transport is not None and
-            not self._paused and
-            len(self._buffer) > 2*self._limit):
-            try:
-                self._transport.pause_reading()
-            except NotImplementedError:
-                # The transport can't be paused.
-                # We'll just have to buffer all data.
-                # Forget the transport so we don't keep trying.
-                self._transport = None
-            else:
-                self._paused = True
-
-    @coroutine
-    def _wait_for_data(self, func_name):
-        """Wait until feed_data() or feed_eof() is called."""
-        # StreamReader uses a future to link the protocol feed_data() method
-        # to a read coroutine. Running two read coroutines at the same time
-        # would have an unexpected behaviour. It would not possible to know
-        # which coroutine would get the next data.
-        if self._waiter is not None:
-            raise RuntimeError('%s() called while another coroutine is '
-                               'already waiting for incoming data' % func_name)
-
-        self._waiter = futures.Future(loop=self._loop)
-        try:
-            yield from self._waiter
-        finally:
-            self._waiter = None
-
-    @coroutine
-    def readline(self):
-        if self._exception is not None:
-            raise self._exception
-
-        line = bytearray()
-        not_enough = True
-
-        while not_enough:
-            while self._buffer and not_enough:
-                ichar = self._buffer.find(b'\n')
-                if ichar < 0:
-                    line.extend(self._buffer)
-                    self._buffer.clear()
-                else:
-                    ichar += 1
-                    line.extend(self._buffer[:ichar])
-                    del self._buffer[:ichar]
-                    not_enough = False
-
-                if len(line) > self._limit:
-                    self._maybe_resume_transport()
-                    raise ValueError('Line is too long')
-
-            if self._eof:
-                break
-
-            if not_enough:
-                yield from self._wait_for_data('readline')
-
-        self._maybe_resume_transport()
-        return bytes(line)
-
-    @coroutine
-    def read(self, n=-1):
-        if self._exception is not None:
-            raise self._exception
-
-        if not n:
-            return b''
-
-        if n < 0:
-            # This used to just loop creating a new waiter hoping to
-            # collect everything in self._buffer, but that would
-            # deadlock if the subprocess sends more than self.limit
-            # bytes.  So just call self.read(self._limit) until EOF.
-            blocks = []
-            while True:
-                block = yield from self.read(self._limit)
-                if not block:
-                    break
-                blocks.append(block)
-            return b''.join(blocks)
-        else:
-            if not self._buffer and not self._eof:
-                yield from self._wait_for_data('read')
-
-        if n < 0 or len(self._buffer) <= n:
-            data = bytes(self._buffer)
-            self._buffer.clear()
-        else:
-            # n > 0 and len(self._buffer) > n
-            data = bytes(self._buffer[:n])
-            del self._buffer[:n]
-
-        self._maybe_resume_transport()
-        return data
-
-    @coroutine
-    def readexactly(self, n):
-        if self._exception is not None:
-            raise self._exception
-
-        # There used to be "optimized" code here.  It created its own
-        # Future and waited until self._buffer had at least the n
-        # bytes, then called read(n).  Unfortunately, this could pause
-        # the transport if the argument was larger than the pause
-        # limit (which is twice self._limit).  So now we just read()
-        # into a local buffer.
-
-        blocks = []
-        while n > 0:
-            block = yield from self.read(n)
-            if not block:
-                partial = b''.join(blocks)
-                raise IncompleteReadError(partial, len(partial) + n)
-            blocks.append(block)
-            n -= len(block)
-
-        return b''.join(blocks)
+/**
+ * Helper class to adapt between $(D_PSYMBOL Protocol) and $(D_PSYMBOL
+ * StreamReader).
+ *
+ * (This is a helper class instead of making StreamReader itself a $(D_PSYMBOL
+ * Protocol) subclass, because the StreamReader has other potential uses, and to
+ * prevent the user of the StreamReader to accidentally call inappropriate
+ * methods of the protocol.)
+ */
+class StreamReaderProtocol : FlowControlProtocol
+{
+    private StreamReader streamReader;
+    private StreamWriter streamWriter;
+    private ClientConnectedCallback clientConnectedCallback;
+
+    this(EventLoop eventLoop, StreamReader streamReader, 
+        ClientConnectedCallback clientConnectedCallback = null)
+    {
+        super(eventLoop);
+        this.streamReader = streamReader;
+        this.streamWriter = null;
+        this.clientConnectedCallback = clientConnectedCallback;
+    }
+
+    override void connectionMade(BaseTransport transport)
+    {
+        auto transport1 = cast(Transport) transport;
+
+        enforce(transport1 !is null);
+        streamReader.setTransport(transport1);
+
+        if (clientConnectedCallback !is null)
+        {
+            streamWriter = new StreamWriter(eventLoop, transport1, this, 
+                streamReader);
+            eventLoop.createTask(clientConnectedCallback, streamReader,
+                streamWriter);
+        }
+    }
+
+    override void connectionLost(Exception exception)
+    {
+        if (exception is null)
+            streamReader.feedEof;
+        else
+            streamReader.setException(exception);
+        super.connectionLost(exception);        
+    }
+
+    override void dataReceived(const(void)[] data)
+    {
+        streamReader.feedData(data);
+    }
+
+    override bool eofReceived()
+    {
+        streamReader.feedEof;
+        return true;
+    }
+}
+
+final class StreamReader
+{
+    private EventLoop eventLoop;
+    private size_t limit;
+    private const(void)[] buffer;
+    private bool eof = false;
+    private Waiter flowWaiter;
+    private Throwable exception_;
+    private ReadTransport transport;
+    private bool paused = false;
+
+    this(EventLoop eventLoop, size_t limit = DEFAULT_LIMIT)
+    {
+        if (eventLoop is null)
+            this.eventLoop = getEventLoop;
+        else
+            this.eventLoop = eventLoop;
+        // The line length limit is  a security feature;
+        // it also doubles as half the buffer limit.
+        this.limit = limit;
+    }
+
+    /**
+     * Get the exception.
+     */
+    @property Throwable exception()
+    {
+        return exception_;
+    }
+
+    /**
+     * Acknowledge the EOF.
+     */
+    void feedEof()
+    {
+        eof = true;
+        wakeupWaiter;
+    }
+
+    /**
+     * Feed $(D_PSYMBOL data) bytes in the internal buffer. Any operations
+     * waiting for the data will be resumed.
+     */
+    void feedData(const(void)[] data)
+    in
+    {
+        assert(!eof); // feedData after feedEof
+    }
+    body
+    {
+        if (data.empty)
+            return;
+
+        buffer ~= data;
+        wakeupWaiter;
+
+        if (transport is null || paused || buffer.length <= 2 * limit)
+            return;
+
+        try
+        {
+            transport.pauseReading;
+            paused = true;
+        }
+        catch (NotImplementedException)
+        {
+            // The transport can't be paused.
+            // We'll just have to buffer all data.
+            // Forget the transport so we don't keep trying.
+            transport = null;
+        }
+    }
+
+    /**
+     * Set the exception.
+     */
+    void setException(Throwable exception)
+    {
+        exception_ = exception;
+
+        if (flowWaiter is null)
+            return;
+
+        auto waiter = flowWaiter;
+        flowWaiter = null;
+        if (!waiter.cancelled)
+            waiter.setException(exception);
+    }
+
+    /**
+     * Set the exception.
+     */
+    void setTransport(ReadTransport transport)
+    in
+    {
+        assert(this.transport is null);
+    }
+    body
+    {
+        this.transport = transport;
+    }
+
+    /**
+     * Wakeup $(D_PSYMBOL read()) or $(D_PSYMBOL readline()) function waiting
+     * for data or EOF.
+     */
+    private void wakeupWaiter()
+    {
+        if (flowWaiter is null)
+            return;
+
+        auto waiter = flowWaiter;
+        flowWaiter = null;
+        if (!waiter.cancelled)
+            waiter.setResult;
+    }
+
+    private void maybeResumeTransport()
+    {
+        if (paused && buffer.length <= limit)
+        {
+            paused = false;
+            transport.resumeReading;
+        }
+    }
+
+    /**
+     * Wait until $(D_PSYMBOL feedData()) or $(D_PSYMBOL feedEof()) is called.
+     */
+    @Coroutine
+    private void waitForData(string functionName)
+    {
+        // StreamReader uses a future to link the protocol feed_data() method
+        // to a read coroutine. Running two read coroutines at the same time
+        // would have an unexpected behaviour. It would not possible to know
+        // which coroutine would get the next data.
+        enforce(flowWaiter is null, "%s() called while another coroutine is "
+            "already waiting for incoming data".format(functionName));
+
+        flowWaiter = new Waiter(eventLoop);
+        eventLoop.waitFor(flowWaiter);
+        flowWaiter = null;
+    }
+
+    /**
+     * Read up to $(D_PSYMBOL n) bytes. If $(D_PSYMBOL n) is not provided, or
+     * set to -1, read until EOF and return all read bytes.
+     *
+     * If the EOF was received and the internal buffer is empty, return an empty
+     * array.
+     */
+    @Coroutine
+    const(void)[] read(ptrdiff_t n = -1)
+    {
+        if (exception !is null)
+            throw exception;
+
+        if (n == 0)
+            return null;
+
+        if (n < 0)
+        {
+            // This used to just loop creating a new waiter hoping to
+            // collect everything in this.buffer, but that would
+            // deadlock if the subprocess sends more than this.limit
+            // bytes. So just call read(limit) until EOF.
+            Appender!(const(char)[]) buff;
+
+            while (true)
+            {
+                const(char)[] chunk = cast(const(char)[]) read(limit);
+                if (chunk.empty)
+                    break;
+                buff ~= chunk;
+            }
+
+            return buff.data;
+        }
+
+        if (buffer.empty && !eof)
+            waitForData("read");
+
+        const(void)[] data;
+
+        if (buffer.length <= n)
+        {
+            data = buffer;
+            buffer = null;
+        }
+        else
+        {
+            data = buffer[0 .. n];
+            buffer = buffer[n .. $];
+        }
+
+        maybeResumeTransport;
+
+        return data;
+    }
+
+    /**
+     * Read one line, where “line” is a sequence of bytes ending with '\n'.
+     *
+     * If EOF is received, and '\n' was not found, the method will return the
+     * partial read bytes.
+     *
+     * If the EOF was received and the internal buffer is empty, return an empty
+     * array.
+     */
+    @Coroutine
+    const(char)[] readline()
+    {
+        if (exception !is null)
+            throw exception;
+
+        Appender!(const(char)[]) line;
+        bool notEnough = true;
+
+        while (notEnough)
+        {
+            while (!buffer.empty && notEnough)
+            {
+                const(char)[] buffer1 = cast(const(char)[]) buffer;
+                auto r = buffer1.findSplit(['\n']);
+                line ~= r[0];
+                buffer = r[2];
+
+                if (!r[1].empty)
+                    notEnough = false;
+
+                if (line.data.length > limit)
+                {
+                    maybeResumeTransport;
+                    throw new Exception("Line is too long");
+                }
+            }
+
+            if (eof)
+                break;
+
+            if (notEnough)
+                waitForData("readline");
+        }
+
+        maybeResumeTransport;
+        return line.data;
+    }
+
+    /**
+     * Read exactly $(D_PSYMBOL n) bytes. Raise an $(D_PSYMBOL
+     * IncompleteReadError) if the end of the stream is reached before
+     * $(D_PSYMBOL n) can be read, the $(D_PSYMBOL IncompleteReadError.partial)
+     * attribute of the exception contains the partial read bytes.
+     */
+    @Coroutine
+    const(void)[] readexactly(size_t n)
+    {
+        if (exception !is null)
+            throw exception;
+
+        // There used to be "optimized" code here.  It created its own
+        // Future and waited until self._buffer had at least the n
+        // bytes, then called read(n).  Unfortunately, this could pause
+        // the transport if the argument was larger than the pause
+        // limit (which is twice self._limit).  So now we just read()
+        // into a local buffer.
+
+        Appender!(const(char)[]) data;
+
+        while (n > 0)
+        {
+            const(char)[] block = cast(const(char)[]) read(n);
+
+            if (block.empty)
+                throw new IncompleteReadError(data.data, data.data.length + n);
+
+            data ~= block;
+            n -= block.length;
+        }
+
+        return data.data;
+    }
+
+    /**
+     * Return $(D_KEYWORD true) if the buffer is empty and $(D_PSYMBOL feedEof())
+     * was called.
+     */
+    bool atEof()
+    {
+        return eof && buffer.empty;
+    }
+}
+
+/**
+ * Wraps a Transport.
+ *
+ * This exposes $(D_PSYMBOL write()), $(D_PSYMBOL writeEof()),
+ * $(D_PSYMBOL canWriteEof()), $(D_PSYMBOL getExtraInfo()) and
+ * $(D_PSYMBOL close()). It adds $(D_PSYMBOL drain()) coroutine for waiting for
+ * flow control.  It also adds a $(D_PSYMBOL transport) property which
+ * references the Transport directly.
+ *
+ * This class is not thread safe.
+ */
+final class StreamWriter
+{
+    private EventLoop eventLoop;
+    private WriteTransport transport_;
+    private StreamReaderProtocol protocol;
+    private StreamReader streamReader;
+
+    this(EventLoop eventLoop, Transport transport, Protocol protocol,
+        StreamReader streamReader)
+    {
+        this.eventLoop = eventLoop;
+        this.transport_ = transport;
+        this.protocol = cast(StreamReaderProtocol) protocol;
+        enforce(this.protocol !is null, "StreamReaderProtocol is needed");
+        this.streamReader = streamReader;
+    }
+
+    override string toString()
+    {
+        import std.string;
+
+        return "%s(transport = %s, reader = %s)".format(typeof(this).stringof,
+            transport, streamReader);
+    }
+
+    /**
+     * Transport.
+     */
+    @property WriteTransport transport()
+    {
+        return transport_;
+    }
+
+    /**
+     * Return $(D_KEYWORD true) if the transport supports $(D_PSYMBOL
+     * writeEof()), $(D_KEYWORD false) if not. See $(D_PSYMBOL
+     * WriteTransport.canWriteEof()).
+     */
+    bool canWriteEof()
+    {
+        return transport_.canWriteEof;
+    }
+
+    /**
+     * Close the transport: see $(D_PSYMBOL BaseTransport.close()).
+     */
+    void close()
+    {
+        return transport_.close;
+    }
+
+    /**
+     * Let the write buffer of the underlying transport a chance to be flushed.
+     *
+     * The intended use is to write:
+     *
+     * w.write(data)
+     * w.drain()
+     *
+     * When the size of the transport buffer reaches the high-water limit (the
+     * protocol is paused), block until the size of the buffer is drained down
+     * to the low-water limit and the protocol is resumed. When there is nothing
+     * to wait for, the continues immediately.
+     *
+     * Calling $(D_PSYMBOL drain()) gives the opportunity for the loop to
+     * schedule the write operation and flush the buffer. It should especially
+     * be used when a possibly large amount of data is written to the transport,
+     * and the coroutine does not process the event loop between calls to
+     * $(D_PSYMBOL write()).
+     */
+    @Coroutine
+    void drain()
+    {
+        if (streamReader !is null)
+        {
+            auto exception = streamReader.exception;
+            if (exception !is null)
+                throw exception;
+        }
+        protocol.drainHelper;
+    }
+
+    /**
+     * Return optional transport information: see $(D_PSYMBOL
+     * BaseTransport.getExtraInfo()).
+     */
+    string getExtraInfo(string name)()
+    {
+        return transport_.getExtraInfo!name;
+    }
+
+    /**
+     * Write some data bytes to the transport: see $(D_PSYMBOL
+     * WriteTransport.write()).
+     */
+    void write(const(void)[] data)
+    {
+        transport_.write(data);
+    }
+
+    /**
+     * Close the write end of the transport after flushing buffered data: see
+     * $(D_PSYMBOL WriteTransport.write_eof()).
+     */
+    void writeEof()
+    {
+        transport_.writeEof;
+    }
+}

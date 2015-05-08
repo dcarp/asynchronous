@@ -52,6 +52,18 @@ class TimeoutException : Exception
     }
 }
 
+/**
+ * This operation is not implemented.
+ */
+class NotImplementedException : Exception
+{
+    this(string message = null, string file = __FILE__, size_t line = __LINE__,
+         Throwable next = null) @safe pure nothrow
+    {
+        super(message, file, line, next);
+    }
+}
+
 class ResourcePool(T, TArgs...)
 {
     alias ResourceStatus = Tuple!(T, T.stringof, bool, "inUse");

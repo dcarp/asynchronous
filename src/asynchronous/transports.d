@@ -25,7 +25,6 @@ interface BaseTransport
     void close();
 }
 
-
 /**
  * Interface for read-only transports.
  */
@@ -103,7 +102,7 @@ interface WriteTransport : BaseTransport
      * concurrently.
      */
     void setWriteBufferLimits(Nullable!size_t high = Nullable!size_t(),
-                              Nullable!size_t low = Nullable!size_t());
+        Nullable!size_t low = Nullable!size_t());
 
     /**
      * Write some data bytes to the transport.
@@ -112,7 +111,7 @@ interface WriteTransport : BaseTransport
      * out asynchronously.
      */
     void write(const(void)[] data);
- 
+
     /**
      * Close the write end of the transport after flushing buffered data.
      *
@@ -123,7 +122,6 @@ interface WriteTransport : BaseTransport
      */
     void writeEof();
 }
-
 
 /**
  * Interface representing a bidirectional transport.
@@ -144,7 +142,6 @@ interface WriteTransport : BaseTransport
 interface Transport : ReadTransport, WriteTransport
 {
 }
-
 
 /**
  * Interface for datagram (UDP) transports.

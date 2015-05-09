@@ -20,7 +20,7 @@ package class TaskRepository
 
     static this()
     {
-        fibers = new ResourcePool!(Fiber, void function())({});
+        fibers = new ResourcePool!(Fiber, void function())({ });
     }
 
     static TaskHandle[] allTasks(EventLoop eventLoop)
@@ -43,7 +43,8 @@ package class TaskRepository
         return currentTasks.get(eventLoop, null);
     }
 
-    static void resetCurrentTask(EventLoop eventLoop, TaskHandle taskHandle = null)
+    static void resetCurrentTask(EventLoop eventLoop,
+        TaskHandle taskHandle = null)
     in
     {
         assert(eventLoop !is null);
@@ -73,7 +74,8 @@ package class TaskRepository
         tasks[eventLoop] ~= taskHandle;
     }
 
-    package static void unregisterTask(EventLoop eventLoop, TaskHandle taskHandle)
+    package static void unregisterTask(EventLoop eventLoop,
+        TaskHandle taskHandle)
     in
     {
         assert(eventLoop !is null);
@@ -299,7 +301,7 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
         import std.string;
 
         return "%s(done: %s, cancelled: %s)".format(typeid(this), done,
-                                                    cancelled);
+            cancelled);
     }
 }
 
@@ -318,7 +320,7 @@ auto sleep(EventLoop eventLoop, Duration delay)
 }
 
 auto task(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
-                               Args args)
+    Args args)
 {
     return new Task!(Coroutine, Args)(eventLoop, coroutine, args);
 }
@@ -405,8 +407,8 @@ enum ReturnWhen
  */
 @Coroutine
 auto wait(Future)(EventLoop eventLoop, Future[] futures,
-                  Duration timeout = 0.seconds,
-                  ReturnWhen returnWhen = ReturnWhen.ALL_COMPLETED)
+    Duration timeout = 0.seconds,
+    ReturnWhen returnWhen = ReturnWhen.ALL_COMPLETED)
     if (is(Future : FutureHandle))
 {
     if (eventLoop is null)
@@ -433,7 +435,7 @@ auto wait(Future)(EventLoop eventLoop, Future[] futures,
         foreach (future; futures)
         {
             future.removeDoneCallback(&thisTask.scheduleStep);
-        }        
+        }
     }
 
     bool completed = false;
@@ -517,8 +519,8 @@ unittest
     assert(tasks[0].result == 21);
     assert(tasks[1].result == 23);
 
-    assert(result.done == tasks[0..2]);
-    assert(result.notDone == tasks[2..$]);
+    assert(result.done == tasks[0 .. 2]);
+    assert(result.notDone == tasks[2 .. $]);
 }
 
 
@@ -539,7 +541,7 @@ unittest
  */
 @Coroutine
 auto waitFor(Future)(EventLoop eventLoop, Future future,
-                     Duration timeout = 0.seconds)
+    Duration timeout = 0.seconds)
     if (is(Future : FutureHandle))
 {
     if (eventLoop is null)

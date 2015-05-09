@@ -70,7 +70,7 @@ class Callback(Dg, Args...) : CallbackHandle
         this.eventLoop = eventLoop;
         this.cancelled = false;
         this.dg = dg;
-        static if(args.length > 0)
+        static if (args.length > 0)
         {
             this.args = args;
         }
@@ -104,7 +104,7 @@ class Callback(Dg, Args...) : CallbackHandle
         import std.string;
 
         return "%s(dg: %s, cancelled: %s".format(typeid(this),
-                                                 __traits(identifier, dg), cancelled);
+            __traits(identifier, dg), cancelled);
     }
 }
 
@@ -112,7 +112,6 @@ auto callback(Dg, Args...)(EventLoop eventLoop, Dg dg, Args args)
 {
     return new Callback!(Dg, Args)(eventLoop, dg, args);
 }
-
 
 package class ServerImpl : Server
 {
@@ -195,7 +194,6 @@ package class ServerImpl : Server
         this.eventLoop.waitFor(waiter);
     }
 }
-
 
 /**
  * Interface of event loop.
@@ -285,7 +283,6 @@ public:
         }
     }
 
-
     /**
      * Returns: $(D_KEYWORD true) if the event loop was closed.
      */
@@ -318,7 +315,6 @@ public:
         }
     }
 
-
     /// Calls
 
     /**
@@ -348,7 +344,6 @@ public:
     //{
     //    return callLater!callback(0, args);
     //}
-
 
     /// Delayed calls
 
@@ -429,7 +424,6 @@ public:
 
     //// def getNameInfo(sockaddr, flags = 0);
 
-
     /// Creating connections
 
     /**
@@ -486,42 +480,40 @@ public:
      */
     @Coroutine
     auto createConnection(ProtocolFactory protocolFactory,
-            in char[] host = null, in char[] service = null,
-            SslContext sslContext = null,
-            AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
-            ProtocolType protocolType = UNSPECIFIED!ProtocolType,
-            AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags,
-            Socket socket = null, in char[] localHost = null,
-            in char[] localService = null, in char[] serverHostname = null)
+        in char[] host = null, in char[] service = null,
+        SslContext sslContext = null,
+        AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
+        ProtocolType protocolType = UNSPECIFIED!ProtocolType,
+        AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags,
+        Socket socket = null, in char[] localHost = null,
+        in char[] localService = null, in char[] serverHostname = null)
     {
         enforce(serverHostname.empty || sslContext !is null,
-                "serverHostname is only meaningful with SSL");
+            "serverHostname is only meaningful with SSL");
         enforce(serverHostname.empty || sslContext is null || !host.empty,
-                "You must set serverHostname when using SSL without a host");
+            "You must set serverHostname when using SSL without a host");
 
         if (!host.empty || !service.empty)
         {
             enforce(socket is null,
-                    "host/service and socket can not be specified at the same time");
+                "host/service and socket can not be specified at the same time");
 
-            Future!(AddressInfo[])[] fs = [createTask(&this.getAddressInfo,
-                                                      host, service,
-                                                      addressFamily,
-                                                      SocketType.STREAM,
-                                                      protocolType,
-                                                      addressInfoFlags)];
+            Future!(AddressInfo[])[] fs = [
+                createTask(&this.getAddressInfo, host, service, addressFamily,
+                    SocketType.STREAM, protocolType, addressInfoFlags)
+            ];
 
             if (!localHost.empty)
                 fs ~= createTask(&this.getAddressInfo, localHost, localService,
-                                 addressFamily, SocketType.STREAM, protocolType,
-                                 addressInfoFlags);
+                    addressFamily, SocketType.STREAM, protocolType,
+                    addressInfoFlags);
 
             this.wait(fs);
 
             auto addressInfos = fs.map!"a.result";
 
             enforceEx!SocketOSException(addressInfos.all!(a => !a.empty),
-                                        "getAddressInfo() returned empty list");
+                "getAddressInfo() returned empty list");
 
             SocketOSException[] exceptions = null;
             bool connected = false;
@@ -594,23 +586,22 @@ public:
                     if (exceptions.all!(a => a.msg == exceptions[0].msg))
                         throw exceptions[0];
 
-                    throw new SocketOSException("Multiple exceptions: %(%s, %)"
-                        .format(exceptions));
+                    throw new SocketOSException(
+                        "Multiple exceptions: %(%s, %)".format(exceptions));
                 }
             }
         }
         else
         {
             enforce(socket !is null,
-                    "host and port was not specified and no socket specified");
+                "host and port was not specified and no socket specified");
         }
 
         socket.blocking(false);
 
         return createConnectionTransport(socket, protocolFactory, sslContext,
-                                         serverHostname.empty ? serverHostname : host);
+            serverHostname.empty ? serverHostname : host);
     }
-
 
     /**
      * Create datagram connection: socket family $(D_PSYMBOL AddressFamily.INET)
@@ -627,16 +618,15 @@ public:
      */
     @Coroutine
     auto createDatagramEndpoint(DatagramProtocolFactory datagramProtocolFactory,
-            in char[] localHost = null, in char[] localService = null,
-            in char[] remoteHost = null, in char[] remoteService = null,
-            AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
-            ProtocolType protocolType = UNSPECIFIED!ProtocolType,
-            AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags)
+        in char[] localHost = null, in char[] localService = null,
+        in char[] remoteHost = null, in char[] remoteService = null,
+        AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
+        ProtocolType protocolType = UNSPECIFIED!ProtocolType,
+        AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags)
     {
         alias AddressPairInfo = Tuple!(AddressFamily, "addressFamily",
-                                       ProtocolType, "protocolType",
-                                       Address, "localAddress",
-                                       Address, "remoteAddress");
+            ProtocolType, "protocolType", Address, "localAddress",
+            Address, "remoteAddress");
 
         AddressPairInfo[] addressPairInfos = null;
 
@@ -644,26 +634,26 @@ public:
         if (localHost.empty && remoteHost.empty)
         {
             enforce(addressFamily != UNSPECIFIED!AddressFamily,
-                    "Unexpected address family");
+                "Unexpected address family");
             addressPairInfos ~= AddressPairInfo(addressFamily, protocolType,
-                                                null, null);
+                null, null);
         }
         else
         {
-            enforce(remoteHost.empty, "Remote host parameter not supportored yet");
+            enforce(remoteHost.empty,
+                "Remote host parameter not supportored yet");
 
             auto addressInfos = getAddressInfo(localHost, localService,
-                                               addressFamily, SocketType.DGRAM,
-                                               protocolType, addressInfoFlags);
+                addressFamily, SocketType.DGRAM, protocolType,
+                addressInfoFlags);
 
             enforceEx!SocketOSException(!addressInfos.empty,
-                                        "getAddressInfo() returned empty list");
+                "getAddressInfo() returned empty list");
 
             foreach (addressInfo; addressInfos)
             {
                 addressPairInfos ~= AddressPairInfo(addressInfo.family,
-                                                    addressInfo.protocol,
-                                                    addressInfo.address, null);
+                    addressInfo.protocol, addressInfo.address, null);
             }
         }
 
@@ -676,10 +666,9 @@ public:
             try
             {
                 socket = new Socket(addressPairInfo.addressFamily,
-                                    SocketType.DGRAM,
-                                    addressPairInfo.protocolType);
+                    SocketType.DGRAM, addressPairInfo.protocolType);
                 socket.setOption(SocketOptionLevel.SOCKET,
-                                 SocketOption.REUSEADDR, 1);
+                    SocketOption.REUSEADDR, 1);
                 socket.blocking(false);
 
                 if (addressPairInfo.localAddress)
@@ -687,7 +676,8 @@ public:
 
 
                 remoteAddress = addressPairInfo.remoteAddress;
-                enforce(remoteAddress is null, "remote connect not supported yet");
+                enforce(remoteAddress is null,
+                    "remote connect not supported yet");
 
                 break;
             }
@@ -710,7 +700,7 @@ public:
         auto protocol = datagramProtocolFactory();
         auto waiter = new Waiter(this);
         auto transport = makeDatagramTransport(socket, protocol, remoteAddress,
-                                               waiter);
+            waiter);
         try
         {
             this.waitFor(waiter);
@@ -722,9 +712,8 @@ public:
         }
 
         return tuple!("datagramTransport", "datagramProtocol")(transport,
-                                                               protocol);
+            protocol);
     }
-
 
     /**
      * A coroutine which creates a TCP server bound to host and port.
@@ -759,11 +748,11 @@ public:
      */
     @Coroutine
     Server createServer(ProtocolFactory protocolFactory,
-            in char[] host = null, in char[] service = null,
-            AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
-            AddressInfoFlags addressInfoFlags = AddressInfoFlags.PASSIVE,
-            Socket socket = null, int backlog = 100, SslContext sslContext = null,
-            bool reuseAddress = true)
+        in char[] host = null, in char[] service = null,
+        AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
+        AddressInfoFlags addressInfoFlags = AddressInfoFlags.PASSIVE,
+        Socket socket = null, int backlog = 100, SslContext sslContext = null,
+        bool reuseAddress = true)
     {
         enforce(sslContext is null, "SSL support not implemented yet");
 
@@ -778,16 +767,14 @@ public:
         if (!host.empty || !service.empty)
         {
             enforce(socket is null,
-                    "host/service and socket can not be specified at the same time");
+                "host/service and socket can not be specified at the same time");
 
             AddressInfo[] addressInfos = getAddressInfo(host, service,
-                                                        addressFamily,
-                                                        SocketType.STREAM,
-                                                        UNSPECIFIED!ProtocolType,
-                                                        addressInfoFlags);
+                addressFamily, SocketType.STREAM, UNSPECIFIED!ProtocolType,
+                addressInfoFlags);
 
             enforceEx!SocketOSException(!addressInfos.empty,
-                                        "getAddressInfo() returned empty list");
+                "getAddressInfo() returned empty list");
 
             foreach (addressInfo; addressInfos)
             {
@@ -816,14 +803,16 @@ public:
                 }
                 catch (SocketException socketException)
                 {
-                    throw new SocketException("error while attempting to bind to address %s: %s"
-                                              .format(addressInfo.address, socketException.msg));
+                    throw new SocketException(
+                        "error while attempting to bind to address %s: %s"
+                            .format(addressInfo.address, socketException.msg));
                 }
             }
         }
         else
         {
-            enforce(socket !is null, "Neither host/service nor sock were specified");
+            enforce(socket !is null,
+                "Neither host/service nor sock were specified");
 
             sockets ~= socket;
         }
@@ -927,10 +916,10 @@ public:
 
     @Coroutine
     AddressInfo[] getAddressInfo(in char[] host, in char[] service,
-            AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
-            SocketType socketType = UNSPECIFIED!SocketType,
-            ProtocolType protocolType = UNSPECIFIED!ProtocolType,
-            AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags);
+        AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
+        SocketType socketType = UNSPECIFIED!SocketType,
+        ProtocolType protocolType = UNSPECIFIED!ProtocolType,
+        AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags);
 
 
     /// Signal handling.
@@ -970,22 +959,22 @@ protected:
     void socketConnect(Socket socket, Address address);
 
     Transport makeSocketTransport(Socket socket, Protocol protocol,
-            Waiter waiter);
+        Waiter waiter);
 
     DatagramTransport makeDatagramTransport(Socket socket,
-            DatagramProtocol datagramProtocol, Address remoteAddress,
-            Waiter waiter);
+        DatagramProtocol datagramProtocol, Address remoteAddress,
+        Waiter waiter);
 
     void startServing(ProtocolFactory protocolFactory, Socket socket,
-            SslContext sslContext, ServerImpl server);
+        SslContext sslContext, ServerImpl server);
 
     void stopServing(Socket socket);
 private:
 
     @Coroutine
     auto createConnectionTransport(Socket socket,
-            ProtocolFactory protocolFactory, SslContext sslContext,
-            in char[] serverHostname = null)
+        ProtocolFactory protocolFactory, SslContext sslContext,
+        in char[] serverHostname = null)
     {
         Protocol protocol = protocolFactory();
         Transport transport = null;
@@ -1017,7 +1006,6 @@ private:
         return tuple!("transport", "protocol")(transport, protocol);
     }
 }
-
 
 struct ExceptionContext
 {
@@ -1085,6 +1073,7 @@ abstract class EventLoopPolicy
 private __gshared EventLoopPolicy eventLoopPolicy;
 
 import asynchronous.libasync.events;
+
 alias DefaultEventLoopPolicy = LibasyncEventLoopPolicy;
 
 /**

@@ -49,7 +49,6 @@ interface BaseProtocol
      * is called once when the buffer size reaches the low-water mark.
      */
 
-
     /**
      * Called when the transport’s buffer goes over the high-water mark.
      */
@@ -124,7 +123,6 @@ interface DatagramProtocol : BaseProtocol
      */
     void errorReceived(Exception exception);
 }
-
 
 /**
  * Interface for protocol for subprocess calls.

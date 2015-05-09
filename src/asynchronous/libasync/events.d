@@ -54,7 +54,7 @@ package class LibasyncEventLoop : EventLoop
     override void runForever()
     {
         enforce(this.state == State.STOPPED,
-                "Unexpected event loop state %s".format(this.state));
+            "Unexpected event loop state %s".format(this.state));
 
         this.state = State.RUNNING;
 
@@ -125,7 +125,7 @@ package class LibasyncEventLoop : EventLoop
     override void socketConnect(Socket socket, Address address)
     {
         auto asyncTCPConnection = new AsyncTCPConnection(this.eventLoop,
-                                                         socket.handle);
+            socket.handle);
         NetworkAddress peerAddress;
 
         (cast(byte*) peerAddress.sockAddr)[0 .. address.nameLen] =
@@ -133,7 +133,7 @@ package class LibasyncEventLoop : EventLoop
         asyncTCPConnection.peer = peerAddress;
 
         auto connection = new LibasyncTransport(this, socket,
-                                                asyncTCPConnection);
+            asyncTCPConnection);
 
         asyncTCPConnection.run(&connection.handleTCPEvent);
 
@@ -141,9 +141,10 @@ package class LibasyncEventLoop : EventLoop
     }
 
     override Transport makeSocketTransport(Socket socket, Protocol protocol,
-                                           Waiter waiter)
+        Waiter waiter)
     {
-        auto index = this.pendingConnections.countUntil!(a => a.socket == socket);
+        auto index = this.pendingConnections.countUntil!(
+            a => a.socket == socket);
 
         enforce(index >= 0, "Internal error");
 
@@ -161,13 +162,12 @@ package class LibasyncEventLoop : EventLoop
     }
 
     override DatagramTransport makeDatagramTransport(Socket socket,
-            DatagramProtocol datagramProtocol, Address remoteAddress,
-            Waiter waiter)
+        DatagramProtocol datagramProtocol, Address remoteAddress, Waiter waiter)
     {
         auto asyncUDPSocket = new AsyncUDPSocket(this.eventLoop, socket.handle);
 
         auto datagramTransport = new LibasyncDatagramTransport(this, socket,
-                                                               asyncUDPSocket);
+            asyncUDPSocket);
 
         asyncUDPSocket.run(&datagramTransport.handleUDPEvent);
 
@@ -181,22 +181,21 @@ package class LibasyncEventLoop : EventLoop
 
     @Coroutine
     override AddressInfo[] getAddressInfo(in char[] host, in char[] service,
-            AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
-            SocketType socketType = UNSPECIFIED!SocketType,
-            ProtocolType protocolType = UNSPECIFIED!ProtocolType,
-            AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags)
+        AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
+        SocketType socketType = UNSPECIFIED!SocketType,
+        ProtocolType protocolType = UNSPECIFIED!ProtocolType,
+        AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags)
     {
         // no async implementation in libasync yet, use the std.socket.getAddresInfo implementation;
         return std.socket.getAddressInfo(host, service, addressFamily,
-                                         socketType, protocolType,
-                                         addressInfoFlags);
+            socketType, protocolType, addressInfoFlags);
     }
 
     override void startServing(ProtocolFactory protocolFactory, Socket socket,
             SslContext sslContext, ServerImpl server)
     {
         auto asyncTCPListener = new AsyncTCPListener(this.eventLoop,
-                                                     socket.handle);
+            socket.handle);
         NetworkAddress localAddress;
         Address address = socket.localAddress;
 
@@ -206,10 +205,9 @@ package class LibasyncEventLoop : EventLoop
 
         this.activeListeners ~= Listener(server, asyncTCPListener);
 
-        asyncTCPListener.run((AsyncTCPConnection connection)
-        {
+        asyncTCPListener.run((AsyncTCPConnection connection) {
             auto socket1 = new Socket(cast(socket_t) connection.socket,
-                                      socket.addressFamily);
+                socket.addressFamily);
 
             auto transport = new LibasyncTransport(this, socket1, connection);
 
@@ -381,7 +379,7 @@ private final class LibasyncTransport : Transport
         if (!receivedData.data.empty)
         {
             this.eventLoop.callSoon(&this.protocol.dataReceived,
-                                    receivedData.data);
+                receivedData.data);
         }
     }
 
@@ -413,7 +411,8 @@ private final class LibasyncTransport : Transport
     }
     body
     {
-        this.eventLoop.callSoon(&this.protocol.connectionLost, socketOSException);
+        this.eventLoop.callSoon(&this.protocol.connectionLost,
+            socketOSException);
     }
 
     void handleTCPEvent(TCPEvent event)
@@ -497,7 +496,7 @@ private final class LibasyncTransport : Transport
     }
 
     void setWriteBufferLimits(Nullable!size_t high = Nullable!size_t(),
-                              Nullable!size_t low = Nullable!size_t())
+        Nullable!size_t low = Nullable!size_t())
     {
         if (high.isNull)
         {
@@ -604,15 +603,15 @@ private final class LibasyncDatagramTransport : DatagramTransport
         auto length = this.udpSocket.recvFrom(readBuffer, networkAddress);
 
         enforce(length < readBuffer.length,
-                "Unexpected UDP package size > 1500 bytes");
+            "Unexpected UDP package size > 1500 bytes");
 
         Address tmp;
         Address address = new UnknownAddressReference(
-                cast(typeof(tmp.name)) networkAddress.sockAddr,
-                cast(uint) networkAddress.sockAddrLen);
+            cast(typeof(tmp.name)) networkAddress.sockAddr,
+            cast(uint) networkAddress.sockAddrLen);
 
         this.eventLoop.callSoon(&this.datagramProtocol.datagramReceived,
-                                readBuffer[0 .. length], address);
+            readBuffer[0 .. length], address);
     }
 
     private void onWrite()

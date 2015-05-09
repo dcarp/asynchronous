@@ -13,9 +13,7 @@ import asynchronous.tasks;
 import asynchronous.transports;
 import asynchronous.types;
 
-
 enum DEFAULT_LIMIT = 1 << 16; // 2 ** 16
-
 
 /**
  * Incomplete read error.
@@ -40,11 +38,10 @@ class IncompleteReadError : Exception
         this.partial = partial;
         this.expected = expected;
 
-        super("%s bytes read on a total of %s expected bytes".format(
-            partial.length, expected), file, line, next);
+        super("%s bytes read on a total of %s expected bytes"
+                .format(partial.length, expected), file, line, next);
     }
 }
-
 
 /**
  * A wrapper for $(D_PSYMBOL createConnection()) returning a (reader, writer)
@@ -80,9 +77,9 @@ auto openConnection(EventLoop eventLoop, in char[] host = null,
 
     auto streamReader = new StreamReader(eventLoop, limit);
     auto connection = eventLoop.createConnection(
-        () => new StreamReaderProtocol(eventLoop, streamReader),
-        host, service, sslContext, addressFamily, protocolType,
-        addressInfoFlags, socket, localHost, localService, serverHostname);
+        () => new StreamReaderProtocol(eventLoop, streamReader), host, service,
+        sslContext, addressFamily, protocolType, addressInfoFlags, socket,
+        localHost, localService, serverHostname);
     auto streamWriter = new StreamWriter(eventLoop, connection.transport,
         connection.protocol, streamReader);
 
@@ -129,8 +126,9 @@ auto startServer(EventLoop eventLoop,
             clientConnectedCallback);
     }
 
-    return eventLoop.createServer(&protocolFactory, host, service, addressFamily,
-        addressInfoFlags, socket, backlog, sslContext, reuseAddress);
+    return eventLoop.createServer(&protocolFactory, host, service,
+        addressFamily, addressInfoFlags, socket, backlog, sslContext,
+        reuseAddress);
 }
 
 //if hasattr(socket, 'AF_UNIX'):
@@ -283,7 +281,7 @@ class StreamReaderProtocol : FlowControlProtocol
     private StreamWriter streamWriter;
     private ClientConnectedCallback clientConnectedCallback;
 
-    this(EventLoop eventLoop, StreamReader streamReader, 
+    this(EventLoop eventLoop, StreamReader streamReader,
         ClientConnectedCallback clientConnectedCallback = null)
     {
         super(eventLoop);
@@ -314,7 +312,7 @@ class StreamReaderProtocol : FlowControlProtocol
             streamReader.feedEof;
         else
             streamReader.setException(exception);
-        super.connectionLost(exception);        
+        super.connectionLost(exception);
     }
 
     override void dataReceived(const(void)[] data)
@@ -465,8 +463,9 @@ final class StreamReader
         // to a read coroutine. Running two read coroutines at the same time
         // would have an unexpected behaviour. It would not possible to know
         // which coroutine would get the next data.
-        enforce(flowWaiter is null, "%s() called while another coroutine is "
-            "already waiting for incoming data".format(functionName));
+        enforce(flowWaiter is null,
+            "%s() called while another coroutine is already waiting for incoming data"
+                .format(functionName));
 
         flowWaiter = new Waiter(eventLoop);
         eventLoop.waitFor(flowWaiter);

@@ -106,7 +106,7 @@ abstract class FutureBase : FutureHandle
         auto scheduledCallbacks = this.callbacks;
         this.callbacks = null;
 
-        foreach(callback; scheduledCallbacks)
+        foreach (callback; scheduledCallbacks)
         {
             this.eventLoop.callSoon(callback);
         }

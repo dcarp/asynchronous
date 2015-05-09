@@ -43,50 +43,50 @@ package class TaskRepository
         return currentTasks.get(eventLoop, null);
     }
 
-    static void resetCurrentTask(EventLoop eventLoop, TaskHandle task = null)
+    static void resetCurrentTask(EventLoop eventLoop, TaskHandle taskHandle = null)
     in
     {
         assert(eventLoop !is null);
     }
     body
     {
-        currentTasks[eventLoop] = task;
+        currentTasks[eventLoop] = taskHandle;
     }
 
-    package static void registerTask(EventLoop eventLoop, TaskHandle task,
+    package static void registerTask(EventLoop eventLoop, TaskHandle taskHandle,
         void delegate() dg)
     in
     {
         assert(eventLoop !is null);
-        assert(task !is null);
-        assert(task.fiber is null);
+        assert(taskHandle !is null);
+        assert(taskHandle.fiber is null);
     }
     out
     {
-        assert(task.fiber.state == Fiber.State.HOLD);
+        assert(taskHandle.fiber.state == Fiber.State.HOLD);
     }
     body
     {
-        task.fiber = fibers.acquire;
-        task.fiber.reset(dg);
+        taskHandle.fiber = fibers.acquire;
+        taskHandle.fiber.reset(dg);
 
-        tasks[eventLoop] ~= task;
+        tasks[eventLoop] ~= taskHandle;
     }
 
-    package static void unregisterTask(EventLoop eventLoop, TaskHandle task)
+    package static void unregisterTask(EventLoop eventLoop, TaskHandle taskHandle)
     in
     {
         assert(eventLoop !is null);
-        assert(task !is null);
-        assert(task.fiber.state == Fiber.State.TERM);
+        assert(taskHandle !is null);
+        assert(taskHandle.fiber.state == Fiber.State.TERM);
     }
     body
     {
-        task.fiber.reset;
-        fibers.release(task.fiber);
-        task.fiber = null;
+        taskHandle.fiber.reset;
+        fibers.release(taskHandle.fiber);
+        taskHandle.fiber = null;
 
-        tasks[eventLoop].remove!(a => a is task);
+        tasks[eventLoop].remove!(a => a is taskHandle);
     }
 }
 
@@ -157,7 +157,7 @@ interface TaskHandle : FutureHandle
  * destroyed.
  *
  * Don’t directly create $(D_PSYMBOL Task) instances: use the $(D_PSYMBOL
- * async()) function or the $(D_PSYMBOL EventLoop.create_task()) method.
+ * task()) function or the $(D_PSYMBOL EventLoop.create_task()) method.
  */
 class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
     if (isDelegate!Coroutine)
@@ -317,7 +317,7 @@ auto sleep(EventLoop eventLoop, Duration delay)
     eventLoop.yield;
 }
 
-auto async(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
+auto task(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
                                Args args)
 {
     return new Task!(Coroutine, Args)(eventLoop, coroutine, args);
@@ -327,26 +327,26 @@ unittest
 {
     import std.functional;
 
-    auto task = async(null, toDelegate({
+    auto task1 = task(null, toDelegate({
         return 3 + 39;
     }));
 
-    assert(!task.done);
-    assert(!task.cancelled);
+    assert(!task1.done);
+    assert(!task1.cancelled);
 
-    task.cancel;
-    assert(!task.cancelled);
+    task1.cancel;
+    assert(!task1.cancelled);
 
-    auto result = getEventLoop.runUntilComplete(task);
+    auto result = getEventLoop.runUntilComplete(task1);
 
-    assert(task.done);
-    assert(!task.cancelled);
+    assert(task1.done);
+    assert(!task1.cancelled);
     assert(result == 42);
 }
 
-package void resume(TaskHandle task)
+package void resume(TaskHandle taskHandle)
 {
-    task.scheduleStep;
+    taskHandle.scheduleStep;
 }
 
 /**

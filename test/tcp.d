@@ -132,13 +132,13 @@ unittest
     ];
 
     // execute
-    loop.runUntilComplete(loop.async(() => testHelper.createConnection));
+    loop.runUntilComplete(loop.task(() => testHelper.createConnection));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);
 
     // tear down
-    loop.runUntilComplete(loop.async(() => testHelper.tearDown));
+    loop.runUntilComplete(loop.task(() => testHelper.tearDown));
 }
 
 @Coroutine
@@ -165,13 +165,13 @@ unittest
     ];
 
     // execute
-    loop.runUntilComplete(loop.async(() => testHelper.sendToServer("foo")));
+    loop.runUntilComplete(loop.task(() => testHelper.sendToServer("foo")));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);
 
     // tear down
-    loop.runUntilComplete(loop.async(() => testHelper.tearDown));
+    loop.runUntilComplete(loop.task(() => testHelper.tearDown));
 }
 
 @Coroutine
@@ -198,11 +198,11 @@ unittest
     ];
 
     // execute
-    loop.runUntilComplete(loop.async(() => testHelper.sendToClient("foo")));
+    loop.runUntilComplete(loop.task(() => testHelper.sendToClient("foo")));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);
 
     // tear down
-    loop.runUntilComplete(loop.async(() => testHelper.tearDown));
+    loop.runUntilComplete(loop.task(() => testHelper.tearDown));
 }

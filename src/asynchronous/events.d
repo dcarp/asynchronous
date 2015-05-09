@@ -236,7 +236,7 @@ public:
      * Run until $(PARAM future) is done.
      *
      * If the argument is a $(I coroutine object), it is wrapped by $(D_PSYMBOL
-     * async()).
+     * task()).
      *
      * Returns: the Future's result, or throws its exception.
      */
@@ -409,7 +409,7 @@ public:
      *
      * Returns: a $(D_PSYMBOL Task) object.
      *
-     * See_Also: $(D_PSYMBOL async()).
+     * See_Also: $(D_PSYMBOL task()).
      */
     final auto createTask(Coroutine, Args...)(Coroutine coroutine, Args args)
         if (isDelegate!Coroutine)

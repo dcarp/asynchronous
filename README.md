@@ -9,7 +9,7 @@ Implementation status:
 1. Timers (done)
 2. Futures, Tasks (done)
 3. Sockets (done)
-4. Streams (not implemented)
+4. Streams (done)
 5. Subprocesses (not implemented)
 6. Locks and semaphores (not implemented)
 7. Queues (not implemented)

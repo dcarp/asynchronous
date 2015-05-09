@@ -99,9 +99,8 @@ interface TaskHandle : FutureHandle
 
     protected @property Throwable injectException();
 
-    protected void step(Throwable throwable = null);
-
     protected void scheduleStep();
+    protected void scheduleStep(Throwable throwable);
 
     /**
      * Returns: a set of all tasks for an event loop.
@@ -243,7 +242,7 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
         return true;
     }
 
-    protected override void step(Throwable throwable = null)
+    private void step(Throwable throwable = null)
     {
         debug(tasks) std.stdio.writefln("Resume task %s",
             cast(void*) cast(TaskHandle) this);
@@ -272,7 +271,7 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
                 }
 
                 if (this.fiber.state == Fiber.State.TERM)
-                    eventLoop.callSoon(&step, null);
+                    scheduleStep;
 
                 TaskRepository.resetCurrentTask(this.eventLoop);
                 break;
@@ -290,10 +289,25 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
 
     protected override void scheduleStep()
     {
-        debug(tasks) std.stdio.writefln("Schedule task %s",
-            cast(void*) cast(TaskHandle) this);
+        scheduleStep(null);
+    }
 
-        this.eventLoop.callSoon(&step, null);
+    protected override void scheduleStep(Throwable throwable)
+    {
+        debug(tasks)
+        {
+            if (throwable is null)
+                std.stdio.writefln("Schedule task %s",
+                    cast(void*) cast(TaskHandle) this);
+            else
+                std.stdio.writefln("Schedule task %s to throw %s",
+                    cast(void*) cast(TaskHandle) this, throwable);
+        }
+
+        if (TaskRepository.currentTask(this.eventLoop) is null)
+            step(throwable);
+        else
+            this.eventLoop.callSoon(&step, throwable);
     }
 
     override string toString()
@@ -419,7 +433,7 @@ auto wait(Future)(EventLoop eventLoop, Future[] futures,
     assert(thisTask !is null);
     if (futures.empty)
     {
-        eventLoop.callSoon(&thisTask.scheduleStep);
+        thisTask.scheduleStep;
         eventLoop.yield;
 
         return Tuple!(Future[], "done", Future[], "notDone")(null, null);
@@ -445,7 +459,7 @@ auto wait(Future)(EventLoop eventLoop, Future[] futures,
     {
         timeoutCallback = eventLoop.callLater(timeout, {
             completed = true;
-            eventLoop.callSoon(&thisTask.scheduleStep);
+            thisTask.scheduleStep;
         });
     }
 
@@ -565,7 +579,7 @@ auto waitFor(Future)(EventLoop eventLoop, Future future,
     {
         timeoutCallback = eventLoop.callLater(timeout, {
             cancelFuture = true;
-            eventLoop.callSoon(&thisTask.scheduleStep);
+            thisTask.scheduleStep;
         });
     }
 

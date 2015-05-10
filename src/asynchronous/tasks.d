@@ -360,11 +360,6 @@ unittest
     assert(result == 42);
 }
 
-package void resume(TaskHandle taskHandle)
-{
-    taskHandle.scheduleStep;
-}
-
 /**
  * Forces a context switch to occur away from the calling task.
  *

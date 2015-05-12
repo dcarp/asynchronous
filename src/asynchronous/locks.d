@@ -387,10 +387,9 @@ final class Condition
      * predicate value is the return value.
      */
     @Coroutine
-    bool waitFor(Predicate, Args...)(Predicate predicate, Args args)
-        if (isDelegate!Predicate && is(ReturnType!Dg == bool))
+    bool waitFor(bool delegate() predicate)
     {
-        while (!predicate(args))
+        while (!predicate())
             wait;
 
         return true;

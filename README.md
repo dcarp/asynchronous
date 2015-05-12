@@ -12,4 +12,4 @@ Implementation status:
 4. Streams (done)
 5. Subprocesses (not implemented)
 6. Locks and semaphores (done)
-7. Queues (not implemented)
+7. Queues (done)

@@ -360,32 +360,86 @@ unittest
 }
 
 /**
- * A subclass of $(D_PSYMBOL Queue); retrieves entries in priority order (lowest
- * first).
+ * A subclass of $(D_PSYMBOL Queue); retrieves entries in priority order
+ * (largest first).
  *
  * Entries are typically tuples of the form: (priority number, data).
  */
-//class PriorityQueue(T) : Queue(T)
-//{
+class PriorityQueue(T, alias less = "a < b") : Queue!T
+{
+    import std.container : BinaryHeap;
 
-//    def _init(self, maxsize):
-//        self._queue = []
+    BinaryHeap!(T[], less) binaryHeap;
 
-//    def _put(self, item, heappush=heapq.heappush):
-//        heappush(self._queue, item)
+    this(EventLoop eventLoop = null, size_t maxsize = 0)
+    {
+        super(eventLoop, maxsize);
+        binaryHeap.acquire(queue, length);
+    }
 
-//    def _get(self, heappop=heapq.heappop):
-//        return heappop(self._queue)
-//}
+    protected override T get_()
+    {
+        --length;
+        auto result = binaryHeap.front;
+        binaryHeap.removeFront;
+        return result;
+    }
 
-//class LifoQueue(Queue):
-//    """A subclass of Queue that retrieves most recently added entries first."""
+    protected override void put_(T item)
+    {
+        // underlying store is reallocated
+        if (binaryHeap.capacity != queue.length)
+            binaryHeap.assume(queue, length);
 
-//    def _init(self, maxsize):
-//        self._queue = []
+        assert(binaryHeap.capacity == queue.length);
 
-//    def _put(self, item):
-//        self._queue.append(item)
+        binaryHeap.insert(item);
+        ++length;
+    }
+}
 
-//    def _get(self):
-//        return self._queue.pop()
+unittest
+{
+    auto queue = new PriorityQueue!int;
+
+    foreach (i; iota(200))
+        queue.putNowait(i);
+
+    foreach (i; iota(199, -1, -1))
+        assert(queue.getNowait == i);
+}
+
+/**
+ * A subclass of $(D_PSYMBOL Queue) that retrieves most recently added entries
+ * first.
+ */
+class LifoQueue(T) : Queue!T
+{
+    this(EventLoop eventLoop = null, size_t maxsize = 0)
+    {
+        super(eventLoop, maxsize);
+    }
+
+    protected override T get_()
+    {
+        auto result = queue[--length];
+        queue[length] = T.init;
+        return result;
+    }
+
+    protected override void put_(T item)
+    {
+        queue[length++] = item;
+    }
+}
+
+unittest
+{
+    auto queue = new LifoQueue!int;
+
+    foreach (i; iota(200))
+        queue.putNowait(i);
+
+    foreach (i; iota(199, -1, -1))
+        assert(queue.getNowait == i);
+}

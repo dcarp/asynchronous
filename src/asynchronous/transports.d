@@ -187,14 +187,14 @@ interface SubprocessTransport : BaseTransport
      * integer file descriptor fd:
      *
      * 0: readable streaming transport of the standard input (stdin), or throws
-     *    $(D_PSYMBOL Exception) if the subprocess was not created with stdin =
-     *    PIPE
+     *      $(D_PSYMBOL Exception) if the subprocess was not created with
+     *      stdin = PIPE
      * 1: writable streaming transport of the standard output (stdout), or
-     *    throws $(D_PSYMBOL Exception) if the subprocess was not created with
-     *    stdout = PIPE
+     *      throws $(D_PSYMBOL Exception) if the subprocess was not created with
+     *      stdout = PIPE
      * 2: writable streaming transport of the standard error (stderr), or throws
-     *    $(D_PSYMBOL Exception) if the subprocess was not created with stderr =
-     *    PIPE
+     *      $(D_PSYMBOL Exception) if the subprocess was not created with
+     *      stderr = PIPE
      * other fd: throws $(D_PSYMBOL Exception)
      */
     Pipe getPipeTransport(int fd);

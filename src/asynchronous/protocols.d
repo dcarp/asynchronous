@@ -26,7 +26,7 @@ interface BaseProtocol
      *
      * Params:
      *  transport = is the transport representing the connection. You are
-     *              responsible for storing it somewhere if you need to.
+     *      responsible for storing it somewhere if you need to.
      */
     void connectionMade(BaseTransport transport);
 
@@ -35,15 +35,15 @@ interface BaseProtocol
      *
      * Params:
      *  exception = is either an exception object or $(D_KEYWORD null). The
-     *              latter means a regular EOF is received, or the connection
-     *              was aborted or closed by this side of the connection.
+     *      latter means a regular EOF is received, or the connection was
+     *      aborted or closed by this side of the connection.
      */
     void connectionLost(Exception exception);
 
     /// Flow control callbacks
     /**
      * $(D_PSYMBOL pauseWriting()) and $(D_PSYMBOL resumeWriting()) calls are
-     * paired – $(D_PSYMBOL pauseWriting() is called once when the buffer goes
+     * paired – $(D_PSYMBOL pauseWriting()) is called once when the buffer goes
      * strictly over the high-water mark (even if subsequent writes increases
      * the buffer size even more), and eventually $(D_PSYMBOL resumeWriting())
      * is called once when the buffer size reaches the low-water mark.
@@ -134,6 +134,7 @@ interface SubprocessProtocol : BaseProtocol
      *
      * Params:
      *  fd = is the file descriptor of the pipe.
+     *
      *  data = is a non-empty array containing the data.
      */
     void pipeDataReceived(int fd, const(void)[] data);
@@ -144,6 +145,10 @@ interface SubprocessProtocol : BaseProtocol
      *
      * Params:
      *  fd = is the file descriptor that was closed.
+     *
+     *  exception = is either an exception object or $(D_KEYWORD null). The
+     *      latter means a regular EOF is received, or the connection was
+     *      aborted or closed by this side of the connection.
      */
     void pipeConnectionLost(int fd, Exception exception);
 

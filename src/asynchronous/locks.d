@@ -21,7 +21,7 @@ import asynchronous.types : Coroutine;
  *
  * It is created in the unlocked state. It has two basic methods, $(D_PSYMBOL
  * acquire()) and $(D_PSYMBOL release()). When the state is unlocked,
- * $(D_PSYMBOL acquire() changes the state to locked and returns immediately.
+ * $(D_PSYMBOL acquire()) changes the state to locked and returns immediately.
  * When the state is locked, $(D_PSYMBOL acquire()) blocks until a call to
  * $(D_PSYMBOL release()) in another coroutine changes it to unlocked, then the
  * $(D_PSYMBOL acquire()) call resets it to locked and returns. The $(D_PSYMBOL

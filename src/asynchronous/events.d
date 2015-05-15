@@ -430,8 +430,7 @@ public:
      * Create a streaming transport connection to a given Internet host and
      * port: socket family $(D_PSYMBOL AddressFamily.INET) or $(D_PSYMBOL
      * AddressFamily.INET6) depending on host (or family if specified), socket
-     * type $(D_PSYMBOL SocketType.STREAM). protocol_factory must be a callable
-     * returning a protocol instance.
+     * type $(D_PSYMBOL SocketType.STREAM).
      *
      * This method is a coroutine which will try to establish the connection in
      * the background. When successful, the coroutine returns a (transport,
@@ -444,37 +443,51 @@ public:
      * return a protocol instance.
      * The protocol instance is tied to the transport, and its $(D_PSYMBOL
      * connectionMade()) method is called.
-     * The coroutine returns successfully with the (transport, protocol) tuple.
+     * The coroutine returns successfully with the $(D_PSYMBOL (transport,
+     * protocol)) tuple.
      *
      * The created transport is an implementation-dependent bidirectional
      * stream.
      *
      * Options allowing to change how the connection is created:
      * Params:
-     * sslContext = if not $(D_KEYWORD null), a SSL/TLS transport is created (by
-     *        default a plain TCP transport is created).
-     * serverHostname = is only for use together with ssl, and sets or overrides
-     *                  the hostname that the target server’s certificate will
-     *                  be matched against. By default the value of the host
-     *                  argument is used. If host is empty, there is no default
-     *                  and you must pass a value for $(D_PSYMBOL serverHostname).
-     *                  If $(D_PSYMBOL serverHostname) is an empty, hostname
-     *                  matching is disabled (which is a serious security risk,
-     *                  allowing for man-in-the-middle-attacks).
-     * addressFamily = optional adress family.
-     * protocolType = optional protocol.
-     * addressInfoFlags = optional flags.
-     * socket = if not $(D_KEYWORD null), should be an existing, already
-     *          connected $(D_PSYMBOL Socket) object to be used by the
-     *          transport. If $(D_PSYMBOL socket) is given, none of $(D_PSYMBOL
-     *          host), $(D_PSYMBOL service), $(D_PSYMBOL addressFamily),
-     *          $(D_PSYMBOL protocolType), $(D_PSYMBOL addressInfoFlags) and
-     *          $(D_PSYMBOL localAddress) should be specified.
-     * localHost = if given, together with $(D_PSYMBOL localService) is used to
-     *             bind the socket to locally. The $(D_PSYMBOL localHost) and
-     *             $(D_PSYMBOL localService are looked up using $(D_PSYMBOL
-     *             getAddressInfo()), similarly to host and service.
-     * localService = see $(D_PSYMBOL localHost).
+     *  protocolFactory = is a callable returning a protocol instance
+     *
+     *  host = if empty then the $(D_PSYMBOL socket) parameter should be
+     *      specified.
+     *
+     *  service = service name or port number.
+     *
+     *  sslContext = if not $(D_KEYWORD null), a SSL/TLS transport is created
+     *      (by default a plain TCP transport is created).
+     *
+     *  serverHostname = is only for use together with ssl, and sets or
+     *      overrides the hostname that the target server’s certificate will be
+     *      matched against. By default the value of the host argument is used.
+     *      If host is empty, there is no default and you must pass a value for
+     *      $(D_PSYMBOL serverHostname). If $(D_PSYMBOL serverHostname) is an
+     *      empty, hostname matching is disabled (which is a serious security
+     *      risk, allowing for man-in-the-middle-attacks).
+     *
+     *  addressFamily = optional adress family.
+     *
+     *  protocolType = optional protocol.
+     *
+     *  addressInfoFlags = optional flags.
+     *
+     *  socket = if not $(D_KEYWORD null), should be an existing, already
+     *      connected $(D_PSYMBOL Socket) object to be used by the transport. If
+     *      $(D_PSYMBOL socket) is given, none of $(D_PSYMBOL host), $(D_PSYMBOL
+     *      service), $(D_PSYMBOL addressFamily), $(D_PSYMBOL protocolType),
+     *      $(D_PSYMBOL addressInfoFlags) and $(D_PSYMBOL localAddress) should
+     *      be specified.
+     *
+     *  localHost = if given, together with $(D_PSYMBOL localService) is used to
+     *      bind the socket to locally. The $(D_PSYMBOL localHost) and
+     *      $(D_PSYMBOL localService) are looked up using $(D_PSYMBOL
+     *      getAddressInfo()), similarly to host and service.
+     *
+     *  localService = see $(D_PSYMBOL localHost).
      *
      * Returns: Tuple!(Transport, "transport", Protocol, "protocol")
      */
@@ -719,30 +732,33 @@ public:
      * A coroutine which creates a TCP server bound to host and port.
      *
      * Params:
-     * host = if empty then all interfaces are assumed and a list of multiple
-     *        sockets will be returned (most likely one for IPv4 and another one
-     *        for IPv6).
+     *  protocolFactory = is a callable returning a protocol instance.
      *
-     * addressFamily = can be set to either $(D_PSYMBOL AddressFamily.INET) or
-     *                 $(D_PSYMBOL AddressFamily.INET6) to force the socket to
-     *                 use IPv4 or IPv6. If not set it will be determined from
-     *                 host (defaults to $(D_PSYMBOL AddressFamily.UNSPEC)).
+     *  host = if empty then all interfaces are assumed and a list of multiple
+     *      sockets will be returned (most likely one for IPv4 and another one
+     *      for IPv6).
      *
-     * flags = a bitmask for getAddressInfo().
+     *  service = service name or port number.
      *
-     * socket = can optionally be specified in order to use a preexisting
-     *          socket object.
+     *  addressFamily = can be set to either $(D_PSYMBOL AddressFamily.INET) or
+     *      $(D_PSYMBOL AddressFamily.INET6) to force the socket to use IPv4 or
+     *      IPv6. If not set it will be determined from host (defaults to
+     *      $(D_PSYMBOL AddressFamily.UNSPEC)).
      *
-     * backlog = the maximum number of queued connections passed to listen()
-     *           (defaults to 100).
+     *  addressInfoFlags = a bitmask for getAddressInfo().
      *
-     * sslContext = can be set to an SSLContext to enable SSL over the accepted
-     *              connections.
+     *  socket = can optionally be specified in order to use a preexisting
+     *      socket object.
      *
-     * reuseAddress = tells the kernel to reuse a local socket in TIME_WAIT
-     *                state, without waiting for its natural timeout to expire.
-     *                If not specified will automatically be set to $(D_KEYWORD
-     *                true) on UNIX.
+     *  backlog = the maximum number of queued connections passed to listen()
+     *      (defaults to 100).
+     *
+     *  sslContext = can be set to an SSLContext to enable SSL over the accepted
+     *      connections.
+     *
+     *  reuseAddress = tells the kernel to reuse a local socket in TIME_WAIT
+     *      state, without waiting for its natural timeout to expire. If not
+     *      specified will automatically be set to $(D_KEYWORD true) on UNIX.
      *
      * Returns: a Server object which can be used to stop the service.
      */

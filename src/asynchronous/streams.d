@@ -624,11 +624,10 @@ final class StreamReader
 /**
  * Wraps a Transport.
  *
- * This exposes $(D_PSYMBOL write()), $(D_PSYMBOL writeEof()),
- * $(D_PSYMBOL canWriteEof()), $(D_PSYMBOL getExtraInfo()) and
- * $(D_PSYMBOL close()). It adds $(D_PSYMBOL drain()) coroutine for waiting for
- * flow control.  It also adds a $(D_PSYMBOL transport) property which
- * references the Transport directly.
+ * This exposes $(D_PSYMBOL write()), $(D_PSYMBOL writeEof()), $(D_PSYMBOL
+ * canWriteEof()), $(D_PSYMBOL getExtraInfo()) and $(D_PSYMBOL close()). It adds
+ * $(D_PSYMBOL drain()) coroutine for waiting for flow control.  It also adds a
+ * $(D_PSYMBOL transport) property which references the Transport directly.
  *
  * This class is not thread safe.
  */

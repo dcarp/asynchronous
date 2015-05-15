@@ -223,9 +223,8 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
      *
      * Unlike $(D_PSYMBOL Future.cancel()), this does not guarantee that the
      * task will be cancelled: the exception might be caught and acted upon,
-     * delaying cancellation of the task or preventing cancellation
-     * completely. The task may also return a value or raise a different
-     * exception.
+     * delaying cancellation of the task or preventing cancellation completely.
+     * The task may also return a value or raise a different exception.
      *
      * Immediately after this method is called, $(D_PSYMBOL cancelled()) will
      * not return $(D_KEYWORD true) (unless the task was already cancelled). A
@@ -393,26 +392,28 @@ enum ReturnWhen
  * Wait for the Future instances given by $(PARAM futures) to complete.
  *
  * Params:
- *  eventLoop  = event loop, $(D_PSYMBOL getEventLoop) if not specified.
- *  futures    = futures to wait for.
- *  timeout    = can be used to control the maximum number of seconds to wait
- *               before returning. If $(PARAM timeout) is 0 or negative there
- *               is no limit to the wait time.
+ *  eventLoop = event loop, $(D_PSYMBOL getEventLoop) if not specified.
+ *
+ *  futures = futures to wait for.
+ *
+ *  timeout = can be used to control the maximum number of seconds to wait
+ *      before returning. If $(PARAM timeout) is 0 or negative there is no limit
+ *      to the wait time.
+ *
  *  returnWhen = indicates when this function should return. It must be one of
- *               the following constants:
- *               FIRST_COMPLETED  The function will return when any future
- *                                finishes or is cancelled.
- *               FIRST_EXCEPTION  The function will return when any future
- *                                finishes by raising an exception. If no
- *                                future raises an exception then it is
- *                                equivalent to ALL_COMPLETED.
- *               ALL_COMPLETED    The function will return when all futures
- *                                finish or are cancelled.
+ *      the following constants:
+ *          FIRST_COMPLETED The function will return when any future finishes or
+ *              is cancelled.
+ *          FIRST_EXCEPTION The function will return when any future finishes by
+ *              raising an exception. If no future raises an exception then it
+ *              is equivalent to ALL_COMPLETED.
+ *          ALL_COMPLETED The function will return when all futures finish or
+ *              are cancelled.
  *
  * Returns: a named 2-tuple of arrays. The first array, named $(D_PSYMBOL done),
- *          contains the futures that completed (finished or were cancelled)
- *          before the wait completed. The second array, named
- *          $(D_PSYMBOL notDone), contains uncompleted futures.
+ *      contains the futures that completed (finished or were cancelled) before
+ *      the wait completed. The second array, named $(D_PSYMBOL notDone),
+ *      contains uncompleted futures.
  */
 @Coroutine
 auto wait(Future)(EventLoop eventLoop, Future[] futures,
@@ -539,14 +540,16 @@ unittest
  *
  * Params:
  *  eventLoop = event loop, $(D_PSYMBOL getEventLoop) if not specified.
- *  future    = future to wait for.
- *  timeout   = can be used to control the maximum number of seconds to wait
- *              before returning. If $(PARAM timeout) is 0 or negative, block
- *              until the future completes.
+ *
+ *  future = future to wait for.
+ *
+ *  timeout = can be used to control the maximum number of seconds to wait
+ *      before returning. If $(PARAM timeout) is 0 or negative, block until the
+ *      future completes.
  *
  * Returns: result of the future. When a timeout occurs, it cancels the task
- *          and raises $(D_PSYMBOL TimeoutException). To avoid the task
- *          cancellation, wrap it in $(D_SYMBOL shield().
+ *      and raises $(D_PSYMBOL TimeoutException). To avoid the task
+ *      cancellation, wrap it in $(D_SYMBOL shield()).
  */
 @Coroutine
 auto waitFor(Future)(EventLoop eventLoop, Future future,

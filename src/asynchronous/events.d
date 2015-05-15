@@ -741,9 +741,9 @@ public:
      */
     version (Posix)
     @Coroutine
-    auto createUnixConnection(ProtocolFactory protocolFactory, in char[] path,
-        SslContext sslContext = null, Socket socket = null,
-        in char[] serverHostname = null)
+    auto createUnixConnection(ProtocolFactory protocolFactory,
+        in char[] path = null, SslContext sslContext = null,
+        Socket socket = null, in char[] serverHostname = null)
     {
         if (sslContext is null)
             enforce(serverHostname.empty,

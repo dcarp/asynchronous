@@ -108,7 +108,7 @@ alias ClientConnectedCallback = void delegate(StreamReader, StreamWriter);
  * $(D_PSYMBOL Server) object which can be used to stop the service.
  */
 @Coroutine
-auto startServer(EventLoop eventLoop,
+Server startServer(EventLoop eventLoop,
     ClientConnectedCallback clientConnectedCallback, in char[] host = null,
     in char[] service = null, size_t limit = DEFAULT_LIMIT,
     AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
@@ -131,38 +131,58 @@ auto startServer(EventLoop eventLoop,
         reuseAddress);
 }
 
-//if hasattr(socket, 'AF_UNIX'):
-//    # UNIX Domain Sockets are supported on this platform
+/**
+ * A wrapper for $(D_PSYMBOL createUnixConnection()) returning a (reader,
+ * writer) pair.
+ *
+ * See $(D_PSYMBOL openConnection()) for information about return value and
+ * other details.
+ */
+version (Posix)
+@Coroutine
+auto openUnixConnection(EventLoop eventLoop, in char[] path = null,
+    size_t limit = DEFAULT_LIMIT, SslContext sslContext = null,
+    Socket socket = null, in char[] serverHostname = null)
+{
+    if (eventLoop is null)
+        eventLoop = getEventLoop;
 
-//    @coroutine
-//    def open_unix_connection(path=None, *,
-//                             loop=None, limit=_DEFAULT_LIMIT, **kwds):
-//        """Similar to `open_connection` but works with UNIX Domain Sockets."""
-//        if loop is None:
-//            loop = events.get_event_loop()
-//        reader = StreamReader(limit=limit, loop=loop)
-//        protocol = StreamReaderProtocol(reader, loop=loop)
-//        transport, _ = yield from loop.create_unix_connection(
-//            lambda: protocol, path, **kwds)
-//        writer = StreamWriter(transport, protocol, reader, loop)
-//        return reader, writer
+    auto streamReader = new StreamReader(eventLoop, limit);
+    auto connection = eventLoop.createUnixConnection(
+        () => new StreamReaderProtocol(eventLoop, streamReader), path,
+        sslContext, socket, serverHostname);
+    auto streamWriter = new StreamWriter(eventLoop, connection.transport,
+        connection.protocol, streamReader);
 
+    return tuple!("reader", "writer")(streamReader, streamWriter);
+}
 
-//    @coroutine
-//    def start_unix_server(client_connected_cb, path=None, *,
-//                          loop=None, limit=_DEFAULT_LIMIT, **kwds):
-//        """Similar to `start_server` but works with UNIX Domain Sockets."""
-//        if loop is None:
-//            loop = events.get_event_loop()
+/**
+ * Start a UNIX Domain Socket server, with a callback for each client connected.
+ *
+ * See $(D_PSYMBOL startServer()) for information about return value and other
+ * details.
+ */
+version (Posix)
+@Coroutine
+Server startUnixServer(EventLoop eventLoop,
+    ClientConnectedCallback clientConnectedCallback, in char[] path = null,
+    size_t limit = DEFAULT_LIMIT, Socket socket = null, int backlog = 100,
+    SslContext sslContext = null)
+{
+    if (eventLoop is null)
+        eventLoop = getEventLoop;
 
-//        def factory():
-//            reader = StreamReader(limit=limit, loop=loop)
-//            protocol = StreamReaderProtocol(reader, client_connected_cb,
-//                                            loop=loop)
-//            return protocol
+    Protocol protocolFactory()
+    {
+        auto reader = new StreamReader(eventLoop, limit);
+        return new StreamReaderProtocol(eventLoop, reader,
+            clientConnectedCallback);
+    }
 
-//        return (yield from loop.create_unix_server(factory, path, **kwds))
-
+    return eventLoop.createUnixServer(&protocolFactory, path, socket, backlog,
+        sslContext);
+}
 
 /**
  * Reusable flow control logic for $(D_PSYMBOL StreamWriter.drain()).

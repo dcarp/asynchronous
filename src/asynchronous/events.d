@@ -608,9 +608,9 @@ public:
         {
             enforce(socket !is null,
                 "host and port was not specified and no socket specified");
-        }
 
-        socket.blocking(false);
+            socket.blocking(false);
+        }
 
         return createConnectionTransport(socket, protocolFactory, sslContext,
             serverHostname.empty ? serverHostname : host);
@@ -627,7 +627,7 @@ public:
      * See the create_connection() method for parameters.
      *
      * Returns: Tuple!(DatagramTransport, "datagramTransport",
-     *                 DatagramProtocol, "datagramProtocol")
+     *      DatagramProtocol, "datagramProtocol")
      */
     @Coroutine
     auto createDatagramEndpoint(DatagramProtocolFactory datagramProtocolFactory,
@@ -729,6 +729,80 @@ public:
     }
 
     /**
+     * Create UNIX connection: socket family $(D_PSYMBOL AddressFamily.UNIX),
+     * socket type $(D_PSYMBOL SocketType.STREAM). The UNIX socket family is
+     * used to communicate between processes on the same machine efficiently.
+     *
+     * This method is a coroutine which will try to establish the connection in
+     * the background. When successful, the coroutine returns a $(D_PSYMBOL
+     * Tuple!(Transport, "transport", Protocol, "protocol")
+     *
+     * See the $(D_PSYMBOL EventLoop.createConnection()) method for parameters.
+     */
+    version (Posix)
+    @Coroutine
+    auto createUnixConnection(ProtocolFactory protocolFactory, in char[] path,
+        SslContext sslContext = null, Socket socket = null,
+        in char[] serverHostname = null)
+    {
+        if (sslContext is null)
+            enforce(serverHostname.empty,
+                "serverHostname is only meaningful with ssl");
+        else
+            enforce(!serverHostname.empty,
+                "you have to pass server_hostname when using ssl");
+
+        if (!path.empty)
+        {
+            enforce(socket is null,
+                "path and socket can not be specified at the same time");
+
+            try
+            {
+                socket = new Socket(AddressFamily.UNIX, SocketType.STREAM);
+                socket.blocking(false);
+                socketConnect(socket, new UnixAddress(path));
+            }
+            catch (Throwable throwable)
+            {
+                if (socket !is null)
+                    socket.close;
+
+                throw throwable;
+            }
+        }
+        else
+        {
+            enforce(socket !is null, "no path and sock were specified");
+            enforce(socket.addressFamily == AddressFamily.UNIX,
+                "A UNIX Domain Socket was expected, got %s".format(socket));
+            socket.blocking(false);
+        }
+
+        return createConnectionTransport(socket, protocolFactory, sslContext,
+            serverHostname);
+    }
+
+
+    //"""A coroutine which creates a UNIX Domain Socket server.
+
+    //The return value is a Server object, which can be used to stop
+    //the service.
+
+    //path is a str, representing a file systsem path to bind the
+    //server socket to.
+
+    //sock can optionally be specified in order to use a preexisting
+    //socket object.
+
+    //backlog is the maximum number of queued connections passed to
+    //listen() (defaults to 100).
+
+    //ssl can be set to an SSLContext to enable SSL over the
+    //accepted connections.
+    //"""
+
+    /**
      * A coroutine which creates a TCP server bound to host and port.
      *
      * Params:
@@ -807,11 +881,11 @@ public:
 
                 if (reuseAddress)
                     socket.setOption(SocketOptionLevel.SOCKET,
-                                     SocketOption.REUSEADDR, true);
+                        SocketOption.REUSEADDR, true);
 
                 if (addressInfo.family == AddressFamily.INET6)
                     socket.setOption(SocketOptionLevel.IPV6,
-                                     SocketOption.IPV6_V6ONLY, true);
+                        SocketOption.IPV6_V6ONLY, true);
 
                 try
                 {
@@ -828,7 +902,7 @@ public:
         else
         {
             enforce(socket !is null,
-                "Neither host/service nor sock were specified");
+                "Neither host/service nor socket were specified");
 
             sockets ~= socket;
         }
@@ -839,35 +913,65 @@ public:
         {
             socket1.listen(backlog);
             socket1.blocking(false);
-
             startServing(protocolFactory, socket1, sslContext, server);
         }
 
         return server;
     }
 
-    //Tuple!(Transport, Protocol) createUnixConnection(Protocol function() protocol_factory,
-    //    in char[] path, bool ssl = false, Socket sock = null, in char[] serverHostname = null);
+    /**
+     * Similar to $(D_PSYMBOL EventLoop.createServer()), but specific to the
+     * socket family $(D_PSYMBOL AddressFamily.UNIX).
+     */
+    version (Posix)
+    @Coroutine
+    Server createUnixServer(ProtocolFactory protocolFactory, in char[] path,
+        Socket socket = null, int backlog = 100, SslContext sslContext = null)
+    {
+        if (!path.empty)
+        {
+            enforce(socket is null,
+                "path and socket can not be specified at the same time");
 
-    ////"""A coroutine which creates a UNIX Domain Socket server.
+            socket = new Socket(AddressFamily.UNIX, SocketType.STREAM);
 
-    ////The return value is a Server object, which can be used to stop
-    ////the service.
+            try
+            {
+                socket.bind(new UnixAddress(path));
+            }
+            catch (SocketOSException socketOSException)
+            {
+                import core.stdc.errno;
 
-    ////path is a str, representing a file systsem path to bind the
-    ////server socket to.
+                socket.close;
+                if (socketOSException.errorCode == EADDRINUSE)
+                    throw new SocketOSException("Address %s is already in use"
+                            .format(path), socketOSException.errorCode);
+                else
+                    throw socketOSException;
+            }
+            catch (Throwable throwable)
+            {
+                socket.close;
+                throw throwable;
+            }
+        }
+        else
+        {
+            enforce(socket !is null,
+                "path was not specified, and no socket specified");
+            enforce(socket.addressFamily == AddressFamily.UNIX,
+                "A UNIX Domain Socket was expected, got %s".format(socket));
+        }
 
-    ////sock can optionally be specified in order to use a preexisting
-    ////socket object.
+        auto server = new ServerImpl(this, [socket]);
 
-    ////backlog is the maximum number of queued connections passed to
-    ////listen() (defaults to 100).
+        socket.listen(backlog);
+        socket.blocking(false);
+        startServing(protocolFactory, socket, sslContext, server);
 
-    ////ssl can be set to an SSLContext to enable SSL over the
-    ////accepted connections.
-    ////"""
-    //AbstractServer createUnixServer(Protocol function() protocol_factory,
-    //    in char[] path, Socket sock = null, int backlog = 100, bool ssl = false);
+        return server;
+    }
 
     //// Pipes and subprocesses.
 
@@ -923,8 +1027,6 @@ public:
     //ptrdiff_t socketReceive(Socket sock, void[] buf);
 
     //ptrdiff_t socketSend(Socket sock, void[] buf);
-
-    //void socketConnect(Socket sock, Address address);
 
     //Socket socketAccept(Socket sock);
 

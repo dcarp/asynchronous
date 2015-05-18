@@ -131,21 +131,22 @@ unittest
         "server: connected",
     ];
 
+    // tear down
+    scope (exit)
+    {
+        loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+    }
+
     // execute
     loop.runUntilComplete(loop.task(() => testHelper.createConnection));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);
-
-    // tear down
-    loop.runUntilComplete(loop.task(() => testHelper.tearDown));
 }
 
 @Coroutine
 void sendToServer(TestHelper testHelper, string message)
 {
-    createConnection(testHelper);
-
     Connection clientConnection = testHelper.connections.find!(c => c.name == "client")[0];
 
     clientConnection.transport.write(message);
@@ -163,22 +164,24 @@ unittest
         "server: connected",
         "server: dataReceived 'foo'",
     ];
+    // tear down
+    scope (exit)
+    {
+        loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+    }
+
 
     // execute
+    loop.runUntilComplete(loop.task(() => testHelper.createConnection));
     loop.runUntilComplete(loop.task(() => testHelper.sendToServer("foo")));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);
-
-    // tear down
-    loop.runUntilComplete(loop.task(() => testHelper.tearDown));
 }
 
 @Coroutine
 void sendToClient(TestHelper testHelper, string message)
 {
-    createConnection(testHelper);
-
     Connection serverConnection = testHelper.connections.find!(c => c.name == "server")[0];
 
     serverConnection.transport.write(message);
@@ -197,12 +200,112 @@ unittest
         "client: dataReceived 'foo'",
     ];
 
+    // tear down
+    scope (exit)
+    {
+        loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+    }
+
     // execute
+    loop.runUntilComplete(loop.task(() => testHelper.createConnection));
     loop.runUntilComplete(loop.task(() => testHelper.sendToClient("foo")));
+
+    // verify
+    assert(testHelper.actualEvents == expectedEvents);
+}
+
+@Coroutine
+void createUnixConnection(TestHelper testHelper)
+{
+    auto loop = getEventLoop;
+    testHelper.server = loop.createUnixServer(() => new Connection("server", testHelper), "unix.socket");
+    auto client = loop.createUnixConnection(() => new Connection("client", testHelper), "unix.socket");
+}
+
+version (Posix)
+version (Libasync_supports_unix_sockets)
+unittest
+{
+    // setup
+    auto loop = getEventLoop;
+    auto testHelper = new TestHelper();
+    string[] expectedEvents = [
+        "client: connected",
+        "server: connected",
+    ];
+
+    // tear down
+    scope (exit)
+    {
+        loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+        import std.file : remove;
+        remove("unix.socket");
+    }
+
+    // execute
+    loop.runUntilComplete(loop.task(() => testHelper.createUnixConnection));
+
+    // verify
+    assert(testHelper.actualEvents == expectedEvents);
+}
+
+version (Posix)
+version (Libasync_supports_unix_sockets)
+unittest
+{
+    // setup
+    auto loop = getEventLoop;
+    auto testHelper = new TestHelper();
+    string[] expectedEvents = [
+        "client: connected",
+        "server: connected",
+        "server: dataReceived 'foo'",
+    ];
+
+    // tear down
+    scope (exit)
+    {
+        loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+        import std.file : remove;
+        remove("unix.socket");
+    }
+
+    // execute
+    loop.runUntilComplete(loop.task(() => testHelper.createUnixConnection));
+    loop.runUntilComplete(loop.task(() => testHelper.sendToServer("foo")));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);
 
     // tear down
     loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+}
+
+version (Posix)
+version (Libasync_supports_unix_sockets)
+unittest
+{
+    // setup
+    auto loop = getEventLoop;
+    auto testHelper = new TestHelper();
+    string[] expectedEvents = [
+        "client: connected",
+        "server: connected",
+        "client: dataReceived 'foo'",
+    ];
+
+    // tear down
+    scope (exit)
+    {
+        loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+        import std.file : remove;
+        remove("unix.socket");
+    }
+
+    // execute
+    loop.runUntilComplete(loop.task(() => testHelper.createUnixConnection));
+    loop.runUntilComplete(loop.task(() => testHelper.sendToClient("foo")));
+
+    // verify
+    assert(testHelper.actualEvents == expectedEvents);
 }

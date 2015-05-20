@@ -191,8 +191,9 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
         super(eventLoop);
 
         TaskRepository.registerTask(this.eventLoop, this, {
-            debug(tasks) std.stdio.writefln("Start task %s",
-                cast(void*) cast(TaskHandle) this);
+            debug (tasks)
+                std.stdio.writefln("Start task %s",
+                    cast(void*) cast(TaskHandle) this);
 
             static if (is(ResultType : void))
             {
@@ -204,13 +205,15 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
                 setResult(coroutine(args));
             }
 
-            debug(tasks) std.stdio.writefln("End task %s",
-                cast(void*) cast(TaskHandle) this);
+            debug (tasks)
+                std.stdio.writefln("End task %s",
+                    cast(void*) cast(TaskHandle) this);
         });
         this.eventLoop.callSoon(&step, null);
 
-        debug(tasks) std.stdio.writefln("Create task %s",
-            cast(void*) cast(TaskHandle) this);
+        debug (tasks)
+            std.stdio.writefln("Create task %s",
+                cast(void*) cast(TaskHandle) this);
     }
 
     /**
@@ -243,8 +246,9 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
 
     private void step(Throwable throwable = null)
     {
-        debug(tasks) std.stdio.writefln("Resume task %s",
-            cast(void*) cast(TaskHandle) this);
+        debug (tasks)
+            std.stdio.writefln("Resume task %s",
+                cast(void*) cast(TaskHandle) this);
 
         final switch (this.fiber.state)
         {
@@ -282,8 +286,9 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
             break;
         }
 
-        debug(tasks) std.stdio.writefln("Suspend task %s",
-            cast(void*) cast(TaskHandle) this);
+        debug (tasks)
+            std.stdio.writefln("Suspend task %s",
+                cast(void*) cast(TaskHandle) this);
     }
 
     protected override void scheduleStep()
@@ -293,7 +298,7 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
 
     protected override void scheduleStep(Throwable throwable)
     {
-        debug(tasks)
+        debug (tasks)
         {
             if (throwable is null)
                 std.stdio.writefln("Schedule task %s",

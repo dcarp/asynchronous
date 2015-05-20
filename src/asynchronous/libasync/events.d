@@ -240,7 +240,7 @@ package class LibasyncEventLoop : EventLoop
     }
 
 
-    version(Posix)
+    version (Posix)
     {
         override void addSignalHandler(int sig, void delegate() handler)
         {
@@ -276,7 +276,7 @@ class LibasyncEventLoopPolicy : EventLoopPolicy
         return new LibasyncEventLoop;
     }
 
-    //version(Posix)
+    //version (Posix)
     //{
     //    override ChildWatcher getChildWatcher()
     //    {

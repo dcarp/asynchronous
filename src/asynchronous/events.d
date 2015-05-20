@@ -1041,7 +1041,7 @@ public:
 
 
     /// Signal handling.
-    version(Posix)
+    version (Posix)
     {
         void addSignalHandler(int sig, void delegate() handler);
 
@@ -1168,7 +1168,7 @@ abstract class EventLoopPolicy
      */
     EventLoop newEventLoop();
 
-    //version(Posix)
+    //version (Posix)
     //{
     //    ChildWatcher getChildWatcher();
 

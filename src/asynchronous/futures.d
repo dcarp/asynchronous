@@ -126,12 +126,12 @@ abstract class FutureBase : FutureHandle
     {
         final switch (this.state)
         {
-            case State.PENDING:
-                throw new InvalidStateException("Exception is not set.");
-            case State.CANCELLED:
-                throw new CancelledException;
-            case State.FINISHED:
-                return this.exception_;
+        case State.PENDING:
+            throw new InvalidStateException("Exception is not set.");
+        case State.CANCELLED:
+            throw new CancelledException;
+        case State.FINISHED:
+            return this.exception_;
         }
     }
 
@@ -194,14 +194,14 @@ class Future(ResultType) : FutureBase
     {
         final switch (this.state)
         {
-            case State.PENDING:
-                throw new InvalidStateException("Result is not ready.");
-            case State.CANCELLED:
-                throw new CancelledException;
-            case State.FINISHED:
-                if (this.exception_)
-                    throw this.exception_;
-                return this.result_;
+        case State.PENDING:
+            throw new InvalidStateException("Result is not ready.");
+        case State.CANCELLED:
+            throw new CancelledException;
+        case State.FINISHED:
+            if (this.exception_)
+                throw this.exception_;
+            return this.result_;
         }
     }
 

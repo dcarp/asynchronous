@@ -248,38 +248,38 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
 
         final switch (this.fiber.state)
         {
-            case Fiber.State.HOLD:
-                TaskRepository.resetCurrentTask(this.eventLoop, this);
+        case Fiber.State.HOLD:
+            TaskRepository.resetCurrentTask(this.eventLoop, this);
 
-                if (throwable !is null)
-                    this.injectException_ = throwable;
+            if (throwable !is null)
+                this.injectException_ = throwable;
 
-                try
-                {
-                    this.fiber.call;
-                }
-                catch (CancelledException cancelledException)
-                {
-                    assert(this.fiber.state == Fiber.State.TERM);
-                    super.cancel;
-                }
-                catch (Throwable throwable)
-                {
-                    assert(this.fiber.state == Fiber.State.TERM);
-                    setException(throwable);
-                }
+            try
+            {
+                this.fiber.call;
+            }
+            catch (CancelledException cancelledException)
+            {
+                assert(this.fiber.state == Fiber.State.TERM);
+                super.cancel;
+            }
+            catch (Throwable throwable)
+            {
+                assert(this.fiber.state == Fiber.State.TERM);
+                setException(throwable);
+            }
 
-                if (this.fiber.state == Fiber.State.TERM)
-                    scheduleStep;
+            if (this.fiber.state == Fiber.State.TERM)
+                scheduleStep;
 
-                TaskRepository.resetCurrentTask(this.eventLoop);
-                break;
-            case Fiber.State.EXEC:
-                assert(0, "Internal error");
-            case Fiber.State.TERM:
-                assert(done);
-                TaskRepository.unregisterTask(this.eventLoop, this);
-                break;
+            TaskRepository.resetCurrentTask(this.eventLoop);
+            break;
+        case Fiber.State.EXEC:
+            assert(0, "Internal error");
+        case Fiber.State.TERM:
+            assert(done);
+            TaskRepository.unregisterTask(this.eventLoop, this);
+            break;
         }
 
         debug(tasks) std.stdio.writefln("Suspend task %s",
@@ -468,16 +468,16 @@ auto wait(Future)(EventLoop eventLoop, Future[] futures,
 
         final switch (returnWhen)
         {
-            case ReturnWhen.FIRST_COMPLETED:
-                completed = futures.any!"a.done";
-                break;
-            case ReturnWhen.FIRST_EXCEPTION:
-                completed = futures.any!"a.exception !is null" ||
-                            futures.all!"a.done";
-                break;
-            case ReturnWhen.ALL_COMPLETED:
-                completed = futures.all!"a.done";
-                break;
+        case ReturnWhen.FIRST_COMPLETED:
+            completed = futures.any!"a.done";
+            break;
+        case ReturnWhen.FIRST_EXCEPTION:
+            completed = futures.any!"a.exception !is null" ||
+                futures.all!"a.done";
+            break;
+        case ReturnWhen.ALL_COMPLETED:
+            completed = futures.all!"a.done";
+            break;
         }
     }
 

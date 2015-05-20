@@ -272,14 +272,14 @@ public:
     {
         final switch (this.state)
         {
-            case State.STOPPED:
-            case State.STOPPING:
-                break;
-            case State.RUNNING:
-                this.state = State.STOPPING;
-                break;
-            case State.CLOSED:
-                throw new Exception("Cannot stop a closed event loop");
+        case State.STOPPED:
+        case State.STOPPING:
+            break;
+        case State.RUNNING:
+            this.state = State.STOPPING;
+            break;
+        case State.CLOSED:
+            throw new Exception("Cannot stop a closed event loop");
         }
     }
 
@@ -304,14 +304,14 @@ public:
     {
         final switch (this.state)
         {
-            case State.STOPPED:
-                this.state = State.CLOSED;
-                break;
-            case State.RUNNING:
-            case State.STOPPING:
-                throw new Exception("Cannot close a running event loop");
-            case State.CLOSED:
-                break;
+        case State.STOPPED:
+            this.state = State.CLOSED;
+            break;
+        case State.RUNNING:
+        case State.STOPPING:
+            throw new Exception("Cannot close a running event loop");
+        case State.CLOSED:
+            break;
         }
     }
 

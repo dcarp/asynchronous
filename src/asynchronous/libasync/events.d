@@ -62,34 +62,34 @@ package class LibasyncEventLoop : EventLoop
         {
             final switch (this.state)
             {
-                case State.STOPPED:
-                case State.STOPPING:
-                    this.state = State.STOPPED;
-                    return;
-                case State.RUNNING:
-                    auto callbacks = this.currentAppender;
+            case State.STOPPED:
+            case State.STOPPING:
+                this.state = State.STOPPED;
+                return;
+            case State.RUNNING:
+                auto callbacks = this.currentAppender;
 
-                    if (this.currentAppender == &this.nextCallbacks1)
-                        this.currentAppender = &this.nextCallbacks2;
-                    else
-                        this.currentAppender = &this.nextCallbacks1;
+                if (this.currentAppender == &this.nextCallbacks1)
+                    this.currentAppender = &this.nextCallbacks2;
+                else
+                    this.currentAppender = &this.nextCallbacks1;
 
-                    assert(this.currentAppender.data.empty);
+                assert(this.currentAppender.data.empty);
 
-                    if (callbacks.data.empty)
-                    {
-                        this.eventLoop.loop(0.seconds);
-                    }
-                    else
-                    {
-                        foreach (callback; callbacks.data)
-                            callback();
+                if (callbacks.data.empty)
+                {
+                    this.eventLoop.loop(0.seconds);
+                }
+                else
+                {
+                    foreach (callback; callbacks.data)
+                        callback();
 
-                        callbacks.clear;
-                    }
-                    break;
-                case State.CLOSED:
-                    throw new Exception("Event loop closed while running.");
+                    callbacks.clear;
+                }
+                break;
+            case State.CLOSED:
+                throw new Exception("Event loop closed while running.");
             }
         }
     }
@@ -419,20 +419,20 @@ private final class LibasyncTransport : Transport
     {
         final switch (event)
         {
-            case TCPEvent.CONNECT:
-                onConnect();
-                break;
-            case TCPEvent.READ:
-                onRead();
-                break;
-            case TCPEvent.WRITE:
-                onWrite();
-                break;
-            case TCPEvent.CLOSE:
-                onClose(null);
-                break;
-            case TCPEvent.ERROR:
-                onClose(new SocketOSException(connection.error()));
+        case TCPEvent.CONNECT:
+            onConnect();
+            break;
+        case TCPEvent.READ:
+            onRead();
+            break;
+        case TCPEvent.WRITE:
+            onWrite();
+            break;
+        case TCPEvent.CLOSE:
+            onClose(null);
+            break;
+        case TCPEvent.ERROR:
+            onClose(new SocketOSException(connection.error()));
         }
     }
 
@@ -627,14 +627,14 @@ private final class LibasyncDatagramTransport : DatagramTransport
     {
         final switch (event)
         {
-            case UDPEvent.READ:
-                onRead();
-                break;
-            case UDPEvent.WRITE:
-                onWrite();
-                break;
-            case UDPEvent.ERROR:
-                assert(0, udpSocket.error());
+        case UDPEvent.READ:
+            onRead();
+            break;
+        case UDPEvent.WRITE:
+            onWrite();
+            break;
+        case UDPEvent.ERROR:
+            assert(0, udpSocket.error());
         }
     }
 

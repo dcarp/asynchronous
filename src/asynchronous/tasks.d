@@ -337,17 +337,39 @@ auto sleep(EventLoop eventLoop, Duration delay)
     eventLoop.yield;
 }
 
+deprecated ("use ensureFuture instead")
 auto task(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
+     Args args)
+{
+    return ensureFuture(eventLoop, coroutine, args);
+}
+
+/**
+ * Schedule the execution of a coroutine: wrap it in a future. Return a
+ * $(D_PSYMBOL Task) object.
+ *
+ * If the argument is a $(D_PSYMBOL Future), it is returned directly.
+ */
+auto ensureFuture(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
     Args args)
 {
-    return new Task!(Coroutine, Args)(eventLoop, coroutine, args);
+    static if (is(typeof(coroutine) : FutureHandle))
+    {
+        static assert(args.length == 0);
+
+        return coroutine;
+    }
+    else
+    {
+        return new Task!(Coroutine, Args)(eventLoop, coroutine, args);
+    }
 }
 
 unittest
 {
     import std.functional;
 
-    auto task1 = task(null, toDelegate({
+    auto task1 = ensureFuture(null, toDelegate({
         return 3 + 39;
     }));
 
@@ -362,6 +384,8 @@ unittest
     assert(task1.done);
     assert(!task1.cancelled);
     assert(result == 42);
+
+    assert(task1 == ensureFuture(null, task1));
 }
 
 /**

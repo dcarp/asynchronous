@@ -134,11 +134,11 @@ unittest
     // tear down
     scope (exit)
     {
-        loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+        loop.runUntilComplete(loop.createTask(() => testHelper.tearDown));
     }
 
     // execute
-    loop.runUntilComplete(loop.task(() => testHelper.createConnection));
+    loop.runUntilComplete(loop.createTask(() => testHelper.createConnection));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);
@@ -167,13 +167,13 @@ unittest
     // tear down
     scope (exit)
     {
-        loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+        loop.runUntilComplete(loop.createTask(() => testHelper.tearDown));
     }
 
 
     // execute
-    loop.runUntilComplete(loop.task(() => testHelper.createConnection));
-    loop.runUntilComplete(loop.task(() => testHelper.sendToServer("foo")));
+    loop.runUntilComplete(loop.createTask(() => testHelper.createConnection));
+    loop.runUntilComplete(loop.createTask(() => testHelper.sendToServer("foo")));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);
@@ -203,12 +203,12 @@ unittest
     // tear down
     scope (exit)
     {
-        loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+        loop.runUntilComplete(loop.createTask(() => testHelper.tearDown));
     }
 
     // execute
-    loop.runUntilComplete(loop.task(() => testHelper.createConnection));
-    loop.runUntilComplete(loop.task(() => testHelper.sendToClient("foo")));
+    loop.runUntilComplete(loop.createTask(() => testHelper.createConnection));
+    loop.runUntilComplete(loop.createTask(() => testHelper.sendToClient("foo")));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);
@@ -237,13 +237,13 @@ unittest
     // tear down
     scope (exit)
     {
-        loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+        loop.runUntilComplete(loop.createTask(() => testHelper.tearDown));
         import std.file : remove;
         remove("unix.socket");
     }
 
     // execute
-    loop.runUntilComplete(loop.task(() => testHelper.createUnixConnection));
+    loop.runUntilComplete(loop.createTask(() => testHelper.createUnixConnection));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);
@@ -265,20 +265,20 @@ unittest
     // tear down
     scope (exit)
     {
-        loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+        loop.runUntilComplete(loop.createTask(() => testHelper.tearDown));
         import std.file : remove;
         remove("unix.socket");
     }
 
     // execute
-    loop.runUntilComplete(loop.task(() => testHelper.createUnixConnection));
-    loop.runUntilComplete(loop.task(() => testHelper.sendToServer("foo")));
+    loop.runUntilComplete(loop.createTask(() => testHelper.createUnixConnection));
+    loop.runUntilComplete(loop.createTask(() => testHelper.sendToServer("foo")));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);
 
     // tear down
-    loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+    loop.runUntilComplete(loop.createTask(() => testHelper.tearDown));
 }
 
 version (Posix)
@@ -297,14 +297,14 @@ unittest
     // tear down
     scope (exit)
     {
-        loop.runUntilComplete(loop.task(() => testHelper.tearDown));
+        loop.runUntilComplete(loop.createTask(() => testHelper.tearDown));
         import std.file : remove;
         remove("unix.socket");
     }
 
     // execute
-    loop.runUntilComplete(loop.task(() => testHelper.createUnixConnection));
-    loop.runUntilComplete(loop.task(() => testHelper.sendToClient("foo")));
+    loop.runUntilComplete(loop.createTask(() => testHelper.createUnixConnection));
+    loop.runUntilComplete(loop.createTask(() => testHelper.sendToClient("foo")));
 
     // verify
     assert(testHelper.actualEvents == expectedEvents);

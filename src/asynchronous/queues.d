@@ -103,6 +103,13 @@ class Queue(T)
         ++length;
     }
 
+    private void putInternal(T item)
+    {
+        put_(item);
+        ++unfinishedTasks;
+        finished.clear;
+    }
+
     private void ensureCapacity()
     {
         if (length < queue.length)
@@ -263,9 +270,7 @@ class Queue(T)
         }
 
         ensureCapacity;
-        put_(item);
-        ++unfinishedTasks;
-        finished.clear;
+        putInternal(item);
     }
 
     /**
@@ -292,9 +297,7 @@ class Queue(T)
         }
 
         ensureCapacity;
-        put_(item);
-        ++unfinishedTasks;
-        finished.clear;
+        putInternal(item);
     }
 
     /**

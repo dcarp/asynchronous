@@ -41,7 +41,7 @@ class QueueFullException : Exception
 /**
  * A queue, useful for coordinating producer and consumer coroutines.
  *
- * If $(D_PSYMBOL maxsize) is equal to zero, the queue size is infinite.
+ * If $(D_PSYMBOL maxSize) is equal to zero, the queue size is infinite.
  * Otherwise $(D_PSYMBOL put()) will block when the queue reaches maxsize, until
  * an item is removed by $(D_PSYMBOL get()).
  *
@@ -52,10 +52,9 @@ class QueueFullException : Exception
  *
  * This class is not thread safe.
  */
-class Queue(T)
+class Queue(T, size_t maxSize = 0)
 {
     private EventLoop eventLoop;
-    private size_t maxsize_;
     private Waiter[] getters;
     private Waiter[] putters;
     private size_t unfinishedTasks = 0;
@@ -64,15 +63,13 @@ class Queue(T)
     private size_t start = 0;
     private size_t length = 0;
 
-    this(EventLoop eventLoop = null, size_t maxsize = 0)
+    this(EventLoop eventLoop = null)
     {
         if (eventLoop is null)
             this.eventLoop = getEventLoop;
         else
             this.eventLoop = eventLoop;
         
-        this.maxsize_ = maxsize;
-
         this.finished = new Event(this.eventLoop);
         this.finished.set;
     }
@@ -82,7 +79,7 @@ class Queue(T)
         import std.string;
 
         return "%s(maxsize %s, queue %s, getters %s, putters %s, unfinisedTasks %s)"
-            .format(typeid(this), maxsize, queue, getters, putters,
+            .format(typeid(this), maxSize, queue, getters, putters,
                 unfinishedTasks);
     }
 
@@ -115,20 +112,21 @@ class Queue(T)
         if (length < queue.length)
             return;
 
-        assert(maxsize_ == 0 || length < maxsize_);
+        static if (maxSize > 0)
+            assert(length < maxSize);
         assert(length == queue.length);
 
         size_t newLength = max(8, length * 2);
 
-        if (maxsize_ > 0)
-            newLength = min(newLength, maxsize_);
+        static if (maxSize > 0)
+            newLength = min(newLength, maxSize);
 
         bringToFront(queue[0 .. start], queue[start .. $]);
         start = 0;
 
         queue.length = newLength;
 
-        if (maxsize_ == 0)
+        static if (maxSize == 0)
             queue.length = queue.capacity;
     }
 
@@ -161,10 +159,10 @@ class Queue(T)
      */
     @property bool full()
     {
-        if (maxsize == 0)
+        static if (maxSize == 0)
             return false;
         else
-            return qsize >= maxsize;
+            return qsize >= maxSize;
     }
 
     /**
@@ -260,13 +258,19 @@ class Queue(T)
             getter.setResult;
             getters.popFront;
         }
-        else if (maxsize > 0 && maxsize <= qsize)
+        else
         {
-            auto waiter = new Waiter(eventLoop);
+            static if (maxSize > 0)
+            {
+                if (maxSize <= qsize)
+                {
+                    auto waiter = new Waiter(eventLoop);
 
-            putters ~= waiter;
-            eventLoop.waitFor(waiter);
-            assert(qsize < maxsize);
+                    putters ~= waiter;
+                    eventLoop.waitFor(waiter);
+                    assert(qsize < maxSize);
+                }
+            }
         }
 
         ensureCapacity;
@@ -293,7 +297,8 @@ class Queue(T)
         }
         else
         {
-            enforceEx!QueueFullException(maxsize == 0 || qsize < maxsize);
+            static if (maxSize > 0)
+                enforceEx!QueueFullException(qsize < maxSize);
         }
 
         ensureCapacity;
@@ -337,7 +342,7 @@ class Queue(T)
      */
     @property size_t maxsize()
     {
-        return maxsize_;
+        return maxSize;
     }
 }
 
@@ -354,7 +359,7 @@ unittest
 
 unittest
 {
-    auto queue = new Queue!int(null, 10);
+    auto queue = new Queue!(int, 10);
 
     foreach (i; iota(10))
         queue.putNowait(i);
@@ -368,15 +373,16 @@ unittest
  *
  * Entries are typically tuples of the form: (priority number, data).
  */
-class PriorityQueue(T, alias less = "a < b") : Queue!T
+class PriorityQueue(T, size_t maxSize = 0, alias less = "a < b") :
+    Queue!(T, maxSize)
 {
     import std.container : BinaryHeap;
 
     BinaryHeap!(T[], less) binaryHeap;
 
-    this(EventLoop eventLoop = null, size_t maxsize = 0)
+    this(EventLoop eventLoop = null)
     {
-        super(eventLoop, maxsize);
+        super(eventLoop);
         binaryHeap.acquire(queue, length);
     }
 
@@ -416,11 +422,11 @@ unittest
  * A subclass of $(D_PSYMBOL Queue) that retrieves most recently added entries
  * first.
  */
-class LifoQueue(T) : Queue!T
+class LifoQueue(T, size_t maxSize = 0) : Queue!(T, maxSize)
 {
-    this(EventLoop eventLoop = null, size_t maxsize = 0)
+    this(EventLoop eventLoop = null)
     {
-        super(eventLoop, maxsize);
+        super(eventLoop);
     }
 
     protected override T get_()

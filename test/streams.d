@@ -10,7 +10,7 @@ import asynchronous;
 @Coroutine
 void echoSession(StreamReader reader, StreamWriter writer)
 {
-    debug(tasks) std.stdio.writefln("Server session task %s",
+    debug (tasks) std.stdio.writefln("Server session task %s",
         cast(void*) TaskHandle.currentTask);
 
     while (true)
@@ -29,7 +29,7 @@ unittest
 
     void asyncTest()
     {
-        debug(tasks) std.stdio.writefln("Client task %s",
+        debug (tasks) std.stdio.writefln("Client task %s",
             cast(void*) TaskHandle.currentTask);
 
         // setup

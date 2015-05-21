@@ -78,7 +78,7 @@ package class LibasyncEventLoop : EventLoop
 
                 if (callbacks.data.empty)
                 {
-                    this.eventLoop.loop(0.seconds);
+                    this.eventLoop.loop(-1.msecs);
                 }
                 else
                 {

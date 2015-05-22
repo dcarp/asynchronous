@@ -1,9 +1,9 @@
 module asynchronous.types;
 
 import std.algorithm;
-import std.array;
+import std.container.array;
 import std.exception;
-import std.typecons;
+import std.traits;
 
 struct Coroutine
 {
@@ -67,12 +67,12 @@ class NotImplementedException : Exception
 }
 
 class ResourcePool(T, TArgs...)
+    if (is(T == class))
 {
-    alias ResourceStatus = Tuple!(T, T.stringof, bool, "inUse");
+    private Array!bool inUseFlags;
+    private Array!T resources;
 
     private TArgs tArgs;
-
-    private ResourceStatus[] resources;
 
     this(TArgs tArgs)
     {
@@ -80,37 +80,47 @@ class ResourcePool(T, TArgs...)
     }
 
     T acquire()
+    out (result)
     {
-        auto found = resources.find!"a.inUse == false";
+        assert(result !is null);
+    }
+    body
+    {
+        auto count = inUseFlags[].countUntil!"!a";
+        T result = null;
 
-        if (!found.empty)
+        if (count >= 0)
         {
-            found[0].inUse = true;
-            return found[0][0];
+            inUseFlags[count] = true;
+            result = resources[count];
+        }
+        else
+        {
+            inUseFlags.insertBack(true);
+            result = new T(tArgs);
+            resources.insertBack(result);
         }
 
-        auto t = new T(tArgs);
-        resources ~= ResourceStatus(t, true);
-        return t;
+        static if (hasMember!(T, "acquired"))
+            result.acquired;
+
+        return result;
     }
 
     void release(T t)
     {
-        auto found = resources.find!(a => a[0] is t);
+        auto count = resources[].countUntil!(a => a is t);
 
-        enforce(!found.empty, "Cannot release non-acquired resource");
+        enforce(count >= 0, "Cannot release non-acquired resource");
 
-        found[0].inUse = false;
+        static if (hasMember!(T, "released"))
+            resources[count].released;
+
+        inUseFlags[count] = false;
     }
-
-    //ptrdiff_t idOf(T t)
-    //{
-    //    auto result = resource.countUntil!(a => a[0] is t);
-    //    return resouces[result].inUse ? result : -1;
-    //}
 
     bool empty()
     {
-        return !resources.canFind!"a.inUse";
+        return !inUseFlags[].canFind!"a";
     }
 }

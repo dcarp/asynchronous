@@ -5,7 +5,7 @@ import std.array;
 import std.exception;
 import asynchronous.events : EventLoop, getEventLoop;
 import asynchronous.futures : Waiter;
-import asynchronous.tasks : TaskHandle, yield;
+import asynchronous.tasks : TaskHandle;
 import asynchronous.types : Coroutine;
 
 /// Synchronization primitives.
@@ -108,7 +108,7 @@ final class Lock
         waiter.addDoneCallback(&TaskHandle.currentTask(eventLoop).scheduleStep);
         waiters ~= waiter;
 
-        eventLoop.yield;
+        TaskHandle.yield;
         locked_ = true;
         return true;
     }
@@ -226,7 +226,7 @@ final class Event
         waiter.addDoneCallback(&TaskHandle.currentTask(eventLoop).scheduleStep);
         waiters ~= waiter;
 
-        eventLoop.yield;
+        TaskHandle.yield;
         return true;
     }
 }
@@ -376,7 +376,7 @@ final class Condition
         waiter.addDoneCallback(&TaskHandle.currentTask(eventLoop).scheduleStep);
         waiters ~= waiter;
 
-        eventLoop.yield;
+        TaskHandle.yield;
         return true;
     }
 
@@ -465,7 +465,7 @@ class Semaphore
         waiter.addDoneCallback(&TaskHandle.currentTask(eventLoop).scheduleStep);
         waiters ~= waiter;
 
-        eventLoop.yield;
+        TaskHandle.yield;
         --value;
         return true;
     }

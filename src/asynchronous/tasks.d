@@ -16,13 +16,6 @@ package class TaskRepository
 
     private static __gshared TaskHandle[][EventLoop] tasks;
 
-    private static __gshared ResourcePool!(Fiber, void function()) fibers;
-
-    static this()
-    {
-        fibers = new ResourcePool!(Fiber, void function())({ });
-    }
-
     static TaskHandle[] allTasks(EventLoop eventLoop)
     in
     {
@@ -54,23 +47,14 @@ package class TaskRepository
         currentTasks[eventLoop] = taskHandle;
     }
 
-    package static void registerTask(EventLoop eventLoop, TaskHandle taskHandle,
-        void delegate() dg)
+    package static void registerTask(EventLoop eventLoop, TaskHandle taskHandle)
     in
     {
         assert(eventLoop !is null);
         assert(taskHandle !is null);
-        assert(taskHandle.fiber is null);
-    }
-    out
-    {
-        assert(taskHandle.fiber.state == Fiber.State.HOLD);
     }
     body
     {
-        taskHandle.fiber = fibers.acquire;
-        taskHandle.fiber.reset(dg);
-
         tasks[eventLoop] ~= taskHandle;
     }
 
@@ -80,24 +64,18 @@ package class TaskRepository
     {
         assert(eventLoop !is null);
         assert(taskHandle !is null);
-        assert(taskHandle.fiber.state == Fiber.State.TERM);
     }
     body
     {
-        taskHandle.fiber.reset;
-        fibers.release(taskHandle.fiber);
-        taskHandle.fiber = null;
-
         tasks[eventLoop].remove!(a => a is taskHandle);
     }
 }
 
 interface TaskHandle : FutureHandle
 {
-    protected @property Fiber fiber();
-    protected @property Fiber fiber(Fiber fiber_);
-
     protected @property Throwable injectException();
+
+    protected void run();
 
     protected void scheduleStep();
     protected void scheduleStep(Throwable throwable);
@@ -130,6 +108,68 @@ interface TaskHandle : FutureHandle
 
         return TaskRepository.currentTask(eventLoop);
     }
+
+    /**
+     * Forces a context switch to occur away from the calling task.
+     *
+     * Params:
+     *  eventLoop = event loop, $(D_PSYMBOL getEventLoop) if not specified.
+     */
+    package static void yield()
+    {
+        Fiber.yield;
+
+        auto taskFiber = cast(TaskFiber) Fiber.getThis;
+        auto task = taskFiber.taskHandle;
+        enforce(task !is null, "'yield' can be used in a task only");
+        //assert(task is TaskRepository.currentTask(task.eventLoop));
+        assert(taskFiber.state == Fiber.State.EXEC);
+
+        if (task.injectException !is null)
+            throw task.injectException;
+    }    
+}
+
+private class TaskFiber : Fiber
+{
+    private TaskHandle task_ = null;
+
+    this()
+    {
+        super({});
+    }
+
+    @property TaskHandle taskHandle()
+    {
+        return task_;
+    }
+
+    void reset(TaskHandle task = null)
+    in
+    {
+        assert(state == (task is null ? Fiber.State.TERM : Fiber.State.HOLD));
+    }
+    body
+    {
+        task_ = task;
+        if (task is null)
+            super.reset;
+        else
+            super.reset(&(task.run));
+    }
+
+    static void yield()
+    {
+        TaskHandle.yield;
+    }
+}
+
+
+private static __gshared ResourcePool!TaskFiber taskFibers;
+
+static this()
+{
+    taskFibers = new ResourcePool!TaskFiber;
 }
 
 /**
@@ -165,19 +205,10 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
 {
     alias ResultType = ReturnType!Coroutine;
 
-    private Fiber fiber_;
+    package TaskFiber fiber;
 
-    protected override @property Fiber fiber()
-    {
-        return this.fiber_;
-    }
-
-    protected override @property Fiber fiber(Fiber fiber_)
-    {
-        enforce(this.fiber_ is null && fiber_ !is null ||
-                this.fiber_.state == Fiber.State.TERM && fiber_ is null);
-        return this.fiber_ = fiber_;
-    }
+    private Coroutine coroutine;
+    private Args args;
 
     private Throwable injectException_;
 
@@ -186,34 +217,47 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
         return this.injectException_;
     }
 
+    debug (tasks)
+        package string id()
+        {
+            return (cast(void*) cast(TaskHandle) this).toString;
+        }
+
     public this(EventLoop eventLoop, Coroutine coroutine, Args args)
     {
         super(eventLoop);
 
-        TaskRepository.registerTask(this.eventLoop, this, {
-            debug (tasks)
-                std.stdio.writefln("Start task %s",
-                    cast(void*) cast(TaskHandle) this);
+        this.coroutine = coroutine;
+        static if (args.length > 0)
+        {
+            this.args = args;
+        }
 
-            static if (is(ResultType : void))
-            {
-                coroutine(args);
-                setResult;
-            }
-            else
-            {
-                setResult(coroutine(args));
-            }
-
-            debug (tasks)
-                std.stdio.writefln("End task %s",
-                    cast(void*) cast(TaskHandle) this);
-        });
+        this.fiber = taskFibers.acquire(this);
+        TaskRepository.registerTask(this.eventLoop, this);
         this.eventLoop.callSoon(&step, null);
 
         debug (tasks)
-            std.stdio.writefln("Create task %s",
-                cast(void*) cast(TaskHandle) this);
+            std.stdio.writeln("Create task ", id);
+    }
+
+    override protected void run()
+    {
+        debug (tasks)
+            std.stdio.writeln("Start task ", id);
+
+        static if (is(ResultType : void))
+        {
+            coroutine(args);
+            setResult;
+        }
+        else
+        {
+            setResult(coroutine(args));
+        }
+
+        debug (tasks)
+            std.stdio.writeln("End task ", id);
     }
 
     /**
@@ -247,8 +291,7 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
     private void step(Throwable throwable = null)
     {
         debug (tasks)
-            std.stdio.writefln("Resume task %s",
-                cast(void*) cast(TaskHandle) this);
+            std.stdio.writeln("Resume task ", id);
 
         final switch (this.fiber.state)
         {
@@ -283,12 +326,13 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
         case Fiber.State.TERM:
             assert(done);
             TaskRepository.unregisterTask(this.eventLoop, this);
+            taskFibers.release(this.fiber);
+            this.fiber = null;
             break;
         }
 
         debug (tasks)
-            std.stdio.writefln("Suspend task %s",
-                cast(void*) cast(TaskHandle) this);
+            std.stdio.writeln("Suspend task ", id);
     }
 
     protected override void scheduleStep()
@@ -301,11 +345,10 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
         debug (tasks)
         {
             if (throwable is null)
-                std.stdio.writefln("Schedule task %s",
-                    cast(void*) cast(TaskHandle) this);
+                std.stdio.writeln("Schedule task ", id);
             else
-                std.stdio.writefln("Schedule task %s to throw %s",
-                    cast(void*) cast(TaskHandle) this, throwable);
+                std.stdio.writeln("Schedule task ", id, " to throw ",
+                    throwable);
         }
 
         if (TaskRepository.currentTask(this.eventLoop) is null)
@@ -334,7 +377,7 @@ auto sleep(EventLoop eventLoop, Duration delay)
     assert(thisTask !is null);
     eventLoop.callLater(delay, &thisTask.scheduleStep);
 
-    eventLoop.yield;
+    TaskHandle.yield;
 }
 
 deprecated ("use ensureFuture instead")
@@ -388,28 +431,6 @@ unittest
     assert(task1 == ensureFuture(null, task1));
 }
 
-/**
- * Forces a context switch to occur away from the calling task.
- *
- * Params:
- *  eventLoop = event loop, $(D_PSYMBOL getEventLoop) if not specified.
- */
-package void yield(EventLoop eventLoop)
-{
-    Fiber.yield;
-
-    if (eventLoop is null)
-        eventLoop = getEventLoop;
-
-    auto currentTask = TaskRepository.currentTask(eventLoop);
-
-    enforce(currentTask !is null, "'yield' can be used in a task only");
-    assert(currentTask.fiber.state == Fiber.State.EXEC);
-
-    if (currentTask.injectException !is null)
-        throw currentTask.injectException;
-}
-
 enum ReturnWhen
 {
     FIRST_COMPLETED,
@@ -459,7 +480,7 @@ auto wait(Future)(EventLoop eventLoop, Future[] futures,
     if (futures.empty)
     {
         thisTask.scheduleStep;
-        eventLoop.yield;
+        TaskHandle.yield;
 
         return Tuple!(Future[], "done", Future[], "notDone")(null, null);
     }
@@ -490,7 +511,7 @@ auto wait(Future)(EventLoop eventLoop, Future[] futures,
 
     while (!completed)
     {
-        eventLoop.yield;
+        TaskHandle.yield;
 
         if (completed)
             break;
@@ -612,7 +633,7 @@ auto waitFor(Future)(EventLoop eventLoop, Future future,
 
     while (true)
     {
-        eventLoop.yield;
+        TaskHandle.yield;
 
         if (cancelFuture)
         {

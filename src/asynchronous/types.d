@@ -79,7 +79,7 @@ class ResourcePool(T, TArgs...)
         this.tArgs = tArgs;
     }
 
-    T acquire()
+    T acquire(TResetArgs...)(TResetArgs tResetArgs)
     out (result)
     {
         assert(result !is null);
@@ -101,8 +101,8 @@ class ResourcePool(T, TArgs...)
             resources.insertBack(result);
         }
 
-        static if (hasMember!(T, "acquired"))
-            result.acquired;
+        static if (hasMember!(T, "reset"))
+            result.reset(tResetArgs);
 
         return result;
     }
@@ -113,8 +113,8 @@ class ResourcePool(T, TArgs...)
 
         enforce(count >= 0, "Cannot release non-acquired resource");
 
-        static if (hasMember!(T, "released"))
-            resources[count].released;
+        static if (hasMember!(T, "reset"))
+            resources[count].reset;
 
         inUseFlags[count] = false;
     }
@@ -122,5 +122,13 @@ class ResourcePool(T, TArgs...)
     bool empty()
     {
         return !inUseFlags[].canFind!"a";
+    }
+
+    override string toString()
+    {
+        import std.string;
+
+        return "%s(lenght: %s, capacity: %s)".format(typeid(this),
+            inUseFlags[].count!"a", inUseFlags.length);
     }
 }

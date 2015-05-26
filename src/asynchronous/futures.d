@@ -75,7 +75,7 @@ abstract class FutureBase : FutureHandle
         FINISHED,
     }
 
-    protected EventLoop eventLoop;
+    package EventLoop eventLoop;
 
     private void delegate()[] callbacks = null;
 

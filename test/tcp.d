@@ -45,9 +45,6 @@ class TestHelper
 
     public string[] actualEvents()
     {
-       import std.stdio;
-       writeln(actualEvents_.data);
-
        return actualEvents_.data;
     }
 

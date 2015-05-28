@@ -119,7 +119,7 @@ interface TaskHandle : FutureHandle
     {
         Fiber.yield;
 
-        auto taskFiber = cast(TaskFiber) Fiber.getThis;
+        auto taskFiber = TaskFiber.getThis;
         auto task = taskFiber.taskHandle;
         enforce(task !is null, "'yield' can be used in a task only");
         //assert(task is TaskRepository.currentTask(task.eventLoop));
@@ -128,6 +128,13 @@ interface TaskHandle : FutureHandle
         if (task.injectException !is null)
             throw task.injectException;
     }    
+
+    static TaskHandle getThis()
+    {
+        auto taskFiber = TaskFiber.getThis;
+        assert(taskFiber !is null);
+        return taskFiber.taskHandle;
+    }
 }
 
 private class TaskFiber : Fiber
@@ -161,6 +168,11 @@ private class TaskFiber : Fiber
     static void yield()
     {
         TaskHandle.yield;
+    }
+
+    static TaskFiber getThis()
+    {
+        return cast(TaskFiber) Fiber.getThis;
     }
 }
 
@@ -351,7 +363,7 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
                     throwable);
         }
 
-        if (TaskRepository.currentTask(this.eventLoop) is null)
+        if (TaskFiber.getThis is null)
             step(throwable);
         else
             this.eventLoop.callSoon(&step, throwable);
@@ -372,7 +384,7 @@ auto sleep(EventLoop eventLoop, Duration delay)
     if (eventLoop is null)
         eventLoop = getEventLoop;
 
-    auto thisTask = TaskRepository.currentTask(eventLoop);
+    auto thisTask = TaskHandle.getThis;
 
     assert(thisTask !is null);
     eventLoop.callLater(delay, &thisTask.scheduleStep);
@@ -474,7 +486,7 @@ auto wait(Future)(EventLoop eventLoop, Future[] futures,
     if (eventLoop is null)
         eventLoop = getEventLoop;
 
-    auto thisTask = TaskRepository.currentTask(eventLoop);
+    auto thisTask = TaskHandle.getThis;
 
     assert(thisTask !is null);
     if (futures.empty)
@@ -609,7 +621,7 @@ auto waitFor(Future)(EventLoop eventLoop, Future future,
     if (eventLoop is null)
         eventLoop = getEventLoop;
 
-    auto thisTask = TaskRepository.currentTask(eventLoop);
+    auto thisTask = TaskHandle.getThis;
 
     assert(thisTask !is null);
 

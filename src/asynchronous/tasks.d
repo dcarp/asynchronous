@@ -692,7 +692,7 @@ unittest
         try
         {
             eventLoop.waitFor(task2, 10.msecs);
-            assert(0, "Should not get hier");
+            assert(0, "Should not get here");
         }
         catch (TimeoutException timeoutException)
         {
@@ -703,4 +703,52 @@ unittest
     });
 
     eventLoop.runUntilComplete(waitTask);
+}
+
+class GeneratorTask(T, Coroutine, Args...) : Task!(Coroutine, Args)
+    if (is(ReturnType!Coroutine == void))
+{
+    T* frontValue = null;
+
+    this(EventLoop eventLoop, Coroutine coroutine, Args args)
+    {
+        super(eventLoop, coroutine, args);
+    }
+
+    @Coroutine
+    bool empty()
+    {
+        if (done)
+            return true;
+
+        if (frontValue !is null)
+            return false;
+
+        auto thisTask = TaskHandle.getThis;
+
+        assert(thisTask !is null);
+        assert(thisTask !is this, "empty() called in the task routine");
+
+        if (eventLoop is null)
+            eventLoop = getEventLoop;
+
+        this.addDoneCallback(&thisTask.scheduleStep);
+        TaskHandle.yield;
+        assert(done || frontValue !is null);
+
+        return empty;
+    }
+}
+
+unittest
+{
+    auto eventLoop = getEventLoop;
+
+    auto generatorTask = new GeneratorTask!(int, void delegate())(eventLoop, {});
+
+    auto testTask = eventLoop.createTask({
+        assert(generatorTask.empty);
+    });
+
+    eventLoop.runUntilComplete(testTask);
 }

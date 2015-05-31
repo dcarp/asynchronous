@@ -109,32 +109,31 @@ interface TaskHandle : FutureHandle
         return TaskRepository.currentTask(eventLoop);
     }
 
+    static TaskHandle getThis()
+    {
+        auto taskFiber = TaskFiber.getThis;
+
+        return taskFiber is null ? null : taskFiber.taskHandle;
+    }
+
     /**
      * Forces a context switch to occur away from the calling task.
      *
      * Params:
      *  eventLoop = event loop, $(D_PSYMBOL getEventLoop) if not specified.
      */
+    @Coroutine
     package static void yield()
     {
         Fiber.yield;
 
-        auto taskFiber = TaskFiber.getThis;
-        auto task = taskFiber.taskHandle;
-        enforce(task !is null, "'yield' can be used in a task only");
-        //assert(task is TaskRepository.currentTask(task.eventLoop));
-        assert(taskFiber.state == Fiber.State.EXEC);
+        auto thisTask = getThis;
+        enforce(thisTask !is null,
+            "'TaskHandle.yield' called outside of a task.");
 
-        if (task.injectException !is null)
-            throw task.injectException;
+        if (thisTask.injectException !is null)
+            throw thisTask.injectException;
     }    
-
-    static TaskHandle getThis()
-    {
-        auto taskFiber = TaskFiber.getThis;
-        assert(taskFiber !is null);
-        return taskFiber.taskHandle;
-    }
 }
 
 private class TaskFiber : Fiber
@@ -143,7 +142,7 @@ private class TaskFiber : Fiber
 
     this()
     {
-        super({});
+        super({ });
     }
 
     @property TaskHandle taskHandle()
@@ -163,11 +162,6 @@ private class TaskFiber : Fiber
             super.reset;
         else
             super.reset(&(task.run));
-    }
-
-    static void yield()
-    {
-        TaskHandle.yield;
     }
 
     static TaskFiber getThis()
@@ -390,13 +384,6 @@ auto sleep(EventLoop eventLoop, Duration delay)
     eventLoop.callLater(delay, &thisTask.scheduleStep);
 
     TaskHandle.yield;
-}
-
-deprecated ("use ensureFuture instead")
-auto task(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
-     Args args)
-{
-    return ensureFuture(eventLoop, coroutine, args);
 }
 
 /**
@@ -681,7 +668,7 @@ unittest
     });
 
     auto task2 = eventLoop.createTask({
-        eventLoop.sleep(50.msecs);
+        eventLoop.sleep(40.msecs);
         return add(10, 11);
     });
 
@@ -689,6 +676,7 @@ unittest
         eventLoop.waitFor(task1, 20.msecs);
         assert(task1.done);
         assert(task1.result == 21);
+        assert(!task2.done);
         try
         {
             eventLoop.waitFor(task2, 10.msecs);
@@ -696,7 +684,7 @@ unittest
         }
         catch (TimeoutException timeoutException)
         {
-            eventLoop.sleep(40.msecs);
+            eventLoop.sleep(20.msecs);
             assert(task2.done);
             assert(task2.cancelled);
         }
@@ -705,18 +693,40 @@ unittest
     eventLoop.runUntilComplete(waitTask);
 }
 
-class GeneratorTask(T, Coroutine, Args...) : Task!(Coroutine, Args)
-    if (is(ReturnType!Coroutine == void))
+/**
+ * A $(D_PSYMBOL GeneratorTask) is a $(D_PSYMBOL Task) that periodically returns
+ * values of type $(D_PSYMBOL T) to the caller via $(D_PSYMBOL yieldValue). This
+ * is represented as an $(D_PSYMBOL InputRange).
+ */
+class GeneratorTask(T) : Task!(void delegate())
 {
-    T* frontValue = null;
+    private T* frontValue = null;
+    private TaskHandle waitingTask = null;
 
-    this(EventLoop eventLoop, Coroutine coroutine, Args args)
+    this(EventLoop eventLoop, void delegate() coroutine)
     {
-        super(eventLoop, coroutine, args);
+        super(eventLoop, coroutine);
+        addDoneCallback({
+            if (waitingTask)
+            {
+                waitingTask.scheduleStep;
+                waitingTask = null;
+            }
+        });
+    }
+
+    package void setFrontValue(ref T value)
+    {
+        frontValue = &value;
+        if (waitingTask)
+        {
+            waitingTask.scheduleStep;
+            waitingTask = null;
+        }
     }
 
     @Coroutine
-    bool empty()
+    @property bool empty()
     {
         if (done)
             return true;
@@ -732,23 +742,72 @@ class GeneratorTask(T, Coroutine, Args...) : Task!(Coroutine, Args)
         if (eventLoop is null)
             eventLoop = getEventLoop;
 
-        this.addDoneCallback(&thisTask.scheduleStep);
+        assert(waitingTask is null, "another Task is already waiting");
+        waitingTask = thisTask;
         TaskHandle.yield;
         assert(done || frontValue !is null);
 
         return empty;
     }
+
+    @property ref T front()
+    {
+        assert(frontValue !is null);
+        return *frontValue;
+    }
+
+    void popFront()
+    {
+        assert(frontValue !is null);
+        frontValue = null;
+        scheduleStep;
+    }
+}
+
+/**
+ * Yield a value to the caller of the currently executing generator task. The
+ * type of the yielded value and of type of the generator must be the same;
+ */
+@Coroutine
+void yieldValue(T)(auto ref T value)
+{
+    auto generatorTask = cast(GeneratorTask!T) TaskHandle.getThis;
+    enforce(generatorTask !is null,
+        "'TaskHandle.yieldValue' called outside of a generator task.");
+
+    generatorTask.setFrontValue(value);
+
+    TaskHandle.yield;
+}
+
+auto generatorTask(T)(EventLoop eventLoop, void delegate() coroutine)
+{
+    return new GeneratorTask!(T)(eventLoop, coroutine);
 }
 
 unittest
 {
+    import std.functional : toDelegate;
+
     auto eventLoop = getEventLoop;
-
-    auto generatorTask = new GeneratorTask!(int, void delegate())(eventLoop, {});
-
+    auto task1 = generatorTask!int(eventLoop, {}.toDelegate);
     auto testTask = eventLoop.createTask({
-        assert(generatorTask.empty);
+        assert(task1.empty);
     });
 
     eventLoop.runUntilComplete(testTask);
+
+    auto task2 = generatorTask!int(eventLoop, {
+        yieldValue(8);
+        yieldValue(10);
+    }.toDelegate);
+
+    auto testTask2 = eventLoop.createTask({
+        int[] array1 = task2.array;
+
+        assert(array1 == [8, 10]);
+        assert(task2.empty);
+    });
+
+    eventLoop.runUntilComplete(testTask2);
 }

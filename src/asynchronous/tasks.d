@@ -430,6 +430,102 @@ unittest
     assert(task1 == ensureFuture(null, task1));
 }
 
+/**
+ * Wait for a future, shielding it from cancellation.
+ *
+ * The statement
+ *
+ *   $(D_CODE res = shield(something());)
+ *
+ * is exactly equivalent to the statement
+ *
+ *   $(D_CODE res = something();)
+ *
+ * $(I except) that if the coroutine containing it is cancelled, the task
+ * running in $(D_PSYMBOL something()) is not cancelled. From the point of view
+ * of $(D_PSYMBOL something()), the cancellation did not happen. But its caller
+ * is still cancelled, so the call still raises $(D_PSYMBOL CancelledException).
+ * Note: If $(D_PSYMBOL something()) is cancelled by other means this will still
+ * cancel $(D_PSYMBOL shield()).
+ *
+ * If you want to completely ignore cancellation (not recommended) you can
+ * combine $(D_PSYMBOL shield()) with a try/except clause, as follows:
+ *
+ * $(D_CODE
+ *   try
+ *       res = shield(something());
+ *   catch (CancelledException)
+ *       res = null;
+ * )
+ */
+auto shield(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
+    Args args)
+{
+    auto inner = ensureFuture(eventLoop, coroutine, args);
+    if (inner.done())
+        return inner;
+
+    auto outer = new Future!(inner.ResultType)(eventLoop);
+
+    void doneCallback()
+    {
+        if (outer.cancelled())
+        {
+            if (!inner.cancelled())
+                inner.exception(); // Mark inner's result as retrieved.
+            return;
+        }
+
+        if (inner.cancelled())
+        {
+            outer.cancel();
+        }
+        else
+        {
+            auto exception = inner.exception();
+            if (exception !is null)
+            {
+                outer.setException(exception);
+            }
+            else
+            {
+                static if (!is(T == void))
+                    outer.setResult(inner.result);
+                else
+                    outer.setResult;
+            }
+        }
+    }
+
+    inner.addDoneCallback(&doneCallback);
+    return outer;
+}
+
+unittest
+{
+    int add(int a, int b)
+    {
+        return a + b;
+    }
+
+    auto eventLoop = getEventLoop;
+
+    auto task1 = eventLoop.ensureFuture(&add, 3, 4);
+    auto future1 = eventLoop.shield(task1);
+
+    eventLoop.runUntilComplete(future1);
+    assert(future1.result == 7);
+
+    task1 = eventLoop.ensureFuture(&add, 3, 4);
+    future1 = eventLoop.shield(task1);
+    future1.cancel;
+
+    eventLoop.runUntilComplete(task1);
+    assert(future1.cancelled);
+    assert(task1.result == 7);
+}
+
+
 enum ReturnWhen
 {
     FIRST_COMPLETED,
@@ -780,24 +876,19 @@ void yieldValue(T)(auto ref T value)
     TaskHandle.yield;
 }
 
-auto generatorTask(T)(EventLoop eventLoop, void delegate() coroutine)
-{
-    return new GeneratorTask!(T)(eventLoop, coroutine);
-}
-
 unittest
 {
     import std.functional : toDelegate;
 
     auto eventLoop = getEventLoop;
-    auto task1 = generatorTask!int(eventLoop, {}.toDelegate);
+    auto task1 = new GeneratorTask!int(eventLoop, {}.toDelegate);
     auto testTask = eventLoop.createTask({
         assert(task1.empty);
     });
 
     eventLoop.runUntilComplete(testTask);
 
-    auto task2 = generatorTask!int(eventLoop, {
+    auto task2 = new GeneratorTask!int(eventLoop, {
         yieldValue(8);
         yieldValue(10);
     }.toDelegate);

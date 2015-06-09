@@ -372,20 +372,6 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
     }
 }
 
-@Coroutine
-auto sleep(EventLoop eventLoop, Duration delay)
-{
-    if (eventLoop is null)
-        eventLoop = getEventLoop;
-
-    auto thisTask = TaskHandle.getThis;
-
-    assert(thisTask !is null);
-    eventLoop.callLater(delay, &thisTask.scheduleStep);
-
-    TaskHandle.yield;
-}
-
 /**
  * Schedule the execution of a coroutine: wrap it in a future. Return a
  * $(D_PSYMBOL Task) object.
@@ -428,6 +414,47 @@ unittest
     assert(result == 42);
 
     assert(task1 == ensureFuture(null, task1));
+}
+
+/**
+ * Create a coroutine that completes after a given time. If $(D_PSYMBOL result)
+ * is provided, it is produced to the caller when the coroutine completes.
+ *
+ * The resolution of the sleep depends on the granularity of the event loop.
+ */
+@Coroutine
+auto sleep(Result...)(EventLoop eventLoop, Duration delay, Result result)
+    if (result.length <= 1)
+{
+    if (eventLoop is null)
+        eventLoop = getEventLoop;
+
+    static if (result.length == 0)
+    {
+        auto future = new Future!void(eventLoop);
+        auto handle = eventLoop.callLater(delay,
+            &future.setResultUnlessCancelled);
+    }
+    else
+    {
+        auto future = new Future!Result(eventLoop);
+        auto handle = eventLoop.callLater(delay,
+            &future.setResultUnlessCancelled, result);
+    }
+    scope (exit) handle.cancel;
+
+    return eventLoop.waitFor(future);
+}
+
+unittest
+{
+    auto eventLoop = getEventLoop;
+    auto task1 = eventLoop.ensureFuture({
+        return eventLoop.sleep(5.msecs, "foo");
+    });
+
+    eventLoop.runUntilComplete(task1);
+    assert(task1.result == "foo");
 }
 
 /**
@@ -490,9 +517,13 @@ auto shield(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
             else
             {
                 static if (!is(T == void))
+                {
                     outer.setResult(inner.result);
+                }
                 else
+                {
                     outer.setResult;
+                }
             }
         }
     }
@@ -562,7 +593,7 @@ enum ReturnWhen
  */
 @Coroutine
 auto wait(Future)(EventLoop eventLoop, Future[] futures,
-    Duration timeout = 0.seconds,
+    Duration timeout = Duration.zero,
     ReturnWhen returnWhen = ReturnWhen.ALL_COMPLETED)
     if (is(Future : FutureHandle))
 {
@@ -596,7 +627,7 @@ auto wait(Future)(EventLoop eventLoop, Future[] futures,
     bool completed = false;
     CallbackHandle timeoutCallback;
 
-    if (timeout > 0.seconds)
+    if (timeout > Duration.zero)
     {
         timeoutCallback = eventLoop.callLater(timeout, {
             completed = true;
@@ -680,8 +711,8 @@ unittest
 
 
 /**
- * Wait for the single Future to complete with timeout. If timeout is None,
- * block until the future completes.
+ * Wait for the single Future to complete with timeout. If timeout is 0 or
+ * negative, block until the future completes.
  *
  * Params:
  *  eventLoop = event loop, $(D_PSYMBOL getEventLoop) if not specified.
@@ -698,7 +729,7 @@ unittest
  */
 @Coroutine
 auto waitFor(Future)(EventLoop eventLoop, Future future,
-    Duration timeout = 0.seconds)
+    Duration timeout = Duration.zero)
     if (is(Future : FutureHandle))
 {
     if (eventLoop is null)
@@ -718,7 +749,7 @@ auto waitFor(Future)(EventLoop eventLoop, Future future,
     bool cancelFuture = false;
     CallbackHandle timeoutCallback;
 
-    if (timeout > 0.seconds)
+    if (timeout > Duration.zero)
     {
         timeoutCallback = eventLoop.callLater(timeout, {
             cancelFuture = true;
@@ -743,7 +774,7 @@ auto waitFor(Future)(EventLoop eventLoop, Future future,
     if (timeoutCallback !is null)
         timeoutCallback.cancel;
 
-    static if (is(future.result))
+    static if (!is(Future.ResultType == void))
     {
         return future.result;
     }

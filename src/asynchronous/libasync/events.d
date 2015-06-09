@@ -101,7 +101,7 @@ package class LibasyncEventLoop : EventLoop
 
     override void scheduleCallback(Duration delay, CallbackHandle callback)
     {
-        if (delay <= 0.seconds)
+        if (delay <= Duration.zero)
         {
             scheduleCallback(callback);
             return;

@@ -173,11 +173,13 @@ abstract class FutureBase : FutureHandle
 /*
  * Encapsulates the asynchronous execution of a callable.
  */
-class Future(ResultType) : FutureBase
+class Future(T) : FutureBase
 {
-    private ResultType result_;
+    private T result_;
 
-    public this(EventLoop eventLoo = null)
+    alias ResultType = T;
+
+    public this(EventLoop eventLoop = null)
     {
         super(eventLoop);
     }
@@ -190,7 +192,7 @@ class Future(ResultType) : FutureBase
      * available, throws $(D_PSYMBOL InvalidStateException). If the future is
      * done and has an exception set, this exception is thrown.
      */
-    public ResultType result()
+    public T result()
     {
         final switch (this.state)
         {
@@ -208,7 +210,7 @@ class Future(ResultType) : FutureBase
     /**
      * Helper setting the result only if the future was not cancelled.
      */
-    package void setResultUnlessCancelled(ResultType result)
+    package void setResultUnlessCancelled(T result)
     {
         if (cancelled)
             return;
@@ -221,7 +223,7 @@ class Future(ResultType) : FutureBase
      * If the future is already done when this method is called, throws
      * $(D_PSYMBOL InvalidStateError).
      */
-    public void setResult(ResultType result)
+    public void setResult(T result)
     {
         if (this.state != State.PENDING)
             throw new InvalidStateException("Result or exception already set");
@@ -234,8 +236,10 @@ class Future(ResultType) : FutureBase
 
 alias Waiter = Future!void;
 
-class Future(ResultType : void) : FutureBase
+class Future(T : void) : FutureBase
 {
+    alias ResultType = void;
+
     public this(EventLoop eventLoop = null)
     {
         super(eventLoop);

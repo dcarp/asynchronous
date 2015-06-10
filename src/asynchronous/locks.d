@@ -102,7 +102,7 @@ final class Lock
         auto waiter = new Waiter(eventLoop);
         scope (exit)
         {
-            waiters.remove!(w => w == waiter);
+            waiters = waiters.remove!(w => w is waiter);
         }
 
         waiter.addDoneCallback(&TaskHandle.currentTask(eventLoop).scheduleStep);
@@ -220,7 +220,7 @@ final class Event
         auto waiter = new Waiter(eventLoop);
         scope (exit)
         {
-            waiters.remove!(w => w == waiter);
+            waiters = waiters.remove!(w => w is waiter);
         }
 
         waiter.addDoneCallback(&TaskHandle.currentTask(eventLoop).scheduleStep);
@@ -370,7 +370,7 @@ final class Condition
         auto waiter = new Waiter(eventLoop);
         scope (exit)
         {
-            waiters.remove!(w => w == waiter);
+            waiters = waiters.remove!(w => w is waiter);
         }
 
         waiter.addDoneCallback(&TaskHandle.currentTask(eventLoop).scheduleStep);
@@ -459,7 +459,7 @@ class Semaphore
         auto waiter = new Waiter(eventLoop);
         scope (exit)
         {
-            waiters.remove!(w => w == waiter);
+            waiters = waiters.remove!(w => w is waiter);
         }
 
         waiter.addDoneCallback(&TaskHandle.currentTask(eventLoop).scheduleStep);

@@ -67,7 +67,7 @@ package class TaskRepository
     }
     body
     {
-        tasks[eventLoop].remove!(a => a is taskHandle);
+        tasks[eventLoop] = tasks[eventLoop].remove!(a => a is taskHandle);
     }
 }
 
@@ -370,6 +370,110 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
         return "%s(done: %s, cancelled: %s)".format(typeid(this), done,
             cancelled);
     }
+}
+
+/**
+ * Return an generator whose values, when waited for, are Future instances in
+ * the order in which and as soon as they complete.
+ *
+ * Raises $(D_PSYMBOL TimeoutException) if the timeout occurs before all futures
+ * are done.
+ *
+ * Example:
+ *
+ *  foreach (f; getEventLoop.asCompleted(fs))
+ *       // use f.result
+ *
+ * Note: The futures $(D_PSYMBOL f) are not necessarily members of $(D_PSYMBOL
+ *       fs).
+ */
+auto asCompleted(EventLoop eventLoop, FutureHandle[] futures,
+    Duration timeout = Duration.zero)
+in
+{
+    futures.all!"a !is null";
+}
+body
+{
+    if (eventLoop is null)
+        eventLoop = getEventLoop;
+
+    import asynchronous.queues : Queue;
+    auto done = new Queue!FutureHandle;
+    CallbackHandle timeoutCallback = null;
+    Tuple!(FutureHandle, void delegate())[] todo;
+
+    foreach (future; futures)
+    {
+        void delegate() doneCallback = (f => {
+            if (todo.empty)
+                return; // timeoutCallback was here first
+            todo = todo.remove!(a => a[0] is f);
+            done.putNowait(f);
+            if (todo.empty && timeoutCallback !is null)
+                timeoutCallback.cancel;
+        })(future); // workaround bug #2043
+
+        todo ~= tuple(future, doneCallback);
+        future.addDoneCallback(doneCallback);
+    }
+
+    if (!todo.empty && timeout > Duration.zero)
+    {
+        timeoutCallback = eventLoop.callLater(timeout, {
+            foreach (future_callback; todo)
+            {
+                future_callback[0].removeDoneCallback(future_callback[1]);
+                future_callback[0].cancel;
+            }
+            if (!todo.empty)
+                done.putNowait(null);
+            todo = null;
+        });
+    }
+
+    return new GeneratorTask!FutureHandle(eventLoop, {
+        while (!todo.empty || !done.empty)
+        {
+            auto f = done.get;
+            if (f is null)
+                throw new TimeoutException;
+            yieldValue(f);
+        }
+    });
+}
+
+unittest
+{
+    auto eventLoop = getEventLoop;
+
+    auto task1 = eventLoop.createTask({
+        eventLoop.sleep(3.msecs);
+    });
+    auto task2 = eventLoop.createTask({
+        eventLoop.sleep(2.msecs);
+    });
+    auto testTask = eventLoop.createTask({
+        auto tasks = asCompleted(eventLoop, [task1, task2]).array;
+
+        assert(tasks[0] is cast(FutureHandle) task2);
+        assert(tasks[1] is cast(FutureHandle) task1);
+    });
+    eventLoop.runUntilComplete(testTask);
+
+    task1 = eventLoop.createTask({
+        eventLoop.sleep(10.msecs);
+    });
+    task2 = eventLoop.createTask({
+        eventLoop.sleep(2.msecs);
+    });
+    testTask = eventLoop.createTask({
+        auto tasks = asCompleted(eventLoop, [task1, task2], 5.msecs).array;
+
+        assert(tasks.length == 1);
+        assert(tasks[0] is cast(FutureHandle) task2);
+    });
+    eventLoop.runUntilComplete(testTask);
 }
 
 /**

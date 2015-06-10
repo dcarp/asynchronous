@@ -148,7 +148,7 @@ class Queue(T, size_t maxSize = 0)
      */
     @property bool empty()
     {
-        return queue.empty;
+        return length == 0;
     }
 
     /**
@@ -183,13 +183,13 @@ class Queue(T, size_t maxSize = 0)
             putter.setResult;
             putters.popFront;
         }
-        else if (queue.empty)
+        else if (length == 0)
         {
             auto waiter = new Waiter(eventLoop);
 
-            putters ~= waiter;
+            getters ~= waiter;
             eventLoop.waitFor(waiter);
-            assert(!queue.empty);
+            assert(length > 0);
         }
 
         return get_;
@@ -216,7 +216,7 @@ class Queue(T, size_t maxSize = 0)
         }
         else
         {
-            enforceEx!QueueEmptyException(!queue.empty);
+            enforceEx!QueueEmptyException(length > 0);
         }
 
         return get_;
@@ -252,7 +252,7 @@ class Queue(T, size_t maxSize = 0)
 
         if (!getters.empty)
         {
-            assert(queue.empty, "queue non-empty, why are getters waiting?");
+            assert(length == 0, "queue non-empty, why are getters waiting?");
 
             auto getter = getters.front;
             getter.setResult;
@@ -289,7 +289,7 @@ class Queue(T, size_t maxSize = 0)
 
         if (!getters.empty)
         {
-            assert(queue.empty, "queue non-empty, why are getters waiting?");
+            assert(length == 0, "queue non-empty, why are getters waiting?");
 
             auto getter = getters.front;
             getter.setResult;

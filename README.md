@@ -4,6 +4,8 @@ This module provides infrastructure for writing single-threaded concurrent code 
 
 *It starts as a port of python 3 [asyncio library](https://docs.python.org/3/library/asyncio.html).*
 
+[API Reference](http://dcarp.github.io/asynchronous/index.html)
+
 Implementation status:
 
 1. Timers (done)

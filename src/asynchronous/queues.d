@@ -1,3 +1,6 @@
+/**
+ * Queues.
+ */
 module asynchronous.queues;
 
 import std.algorithm;
@@ -9,8 +12,6 @@ import asynchronous.futures : Waiter;
 import asynchronous.locks : Event;
 import asynchronous.tasks : waitFor;
 import asynchronous.types : Coroutine;
-
-/// Queues
 
 /**
  * Exception thrown when $(D_PSYMBOL Queue.getNowait()) is called on a

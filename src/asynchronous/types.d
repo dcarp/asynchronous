@@ -1,3 +1,6 @@
+/**
+ * Miscellaneous types.
+ */
 module asynchronous.types;
 
 import std.algorithm;
@@ -10,7 +13,7 @@ struct Coroutine
 }
 
 template UNSPECIFIED(E)
-    if (is(E == enum))
+if (is(E == enum))
 {
     E UNSPECIFIED()
     {
@@ -67,7 +70,7 @@ class NotImplementedException : Exception
 }
 
 class ResourcePool(T, TArgs...)
-    if (is(T == class))
+if (is(T == class))
 {
     private Array!bool inUseFlags;
     private Array!T resources;

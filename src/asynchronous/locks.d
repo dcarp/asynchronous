@@ -1,3 +1,6 @@
+/**
+ * Synchronization primitives.
+ */
 module asynchronous.locks;
 
 import std.algorithm;
@@ -8,9 +11,7 @@ import asynchronous.futures : Waiter;
 import asynchronous.tasks : TaskHandle;
 import asynchronous.types : Coroutine;
 
-/// Synchronization primitives.
-
-/// Locks
+// Locks
 
 /**
  * Primitive lock objects.
@@ -396,7 +397,7 @@ final class Condition
     }
 }
 
-/// Semaphores
+// Semaphores
 
 /**
  * A Semaphore implementation.

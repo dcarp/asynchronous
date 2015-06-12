@@ -1,3 +1,6 @@
+/**
+ * High-level stream API.
+ */
 module asynchronous.streams;
 
 import std.algorithm : findSplit;

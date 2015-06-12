@@ -1,3 +1,6 @@
+/**
+ * Protocol interfaces.
+ */
 module asynchronous.protocols;
 
 import asynchronous.transports;
@@ -13,7 +16,7 @@ import asynchronous.transports;
  */
 interface BaseProtocol
 {
-    /// Connection callbacks
+    // Connection callbacks
     /**
      * $(D_PSYMBOL connectionMade()) and $(D_PSYMBOL connectionLost()) are
      * called exactly once per successful connection. All other callbacks will
@@ -40,7 +43,7 @@ interface BaseProtocol
      */
     void connectionLost(Exception exception);
 
-    /// Flow control callbacks
+    // Flow control callbacks
     /**
      * $(D_PSYMBOL pauseWriting()) and $(D_PSYMBOL resumeWriting()) calls are
      * paired – $(D_PSYMBOL pauseWriting()) is called once when the buffer goes

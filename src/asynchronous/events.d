@@ -1,3 +1,6 @@
+/**
+ * Event loop and event loop policy.
+ */
 module asynchronous.events;
 
 import core.thread;
@@ -23,17 +26,21 @@ alias Protocol = asynchronous.protocols.Protocol;
  */
 interface Server
 {
-    /// Stop serving.  This leaves existing connections open.
+    /**
+     * Stop serving. This leaves existing connections open.
+     */
     void close();
 
-    /// Coroutine to wait until service is closed.
+    /**
+     * Coroutine to wait until service is closed.
+     */
     @Coroutine
     void waitClosed();
 }
 
 interface CallbackHandle
 {
-    public void cancel();
+    void cancel();
 
     package void opCall()
     {
@@ -50,10 +57,10 @@ interface SslContext
 /**
  * A callback wrapper object returned by $(D_PSYMBOL EventLoop.callSoon),
  * $(D_PSYMBOL EventLoop.callSoonThreadsafe),
- * $(D_PSYMBOL BaseEventLoop.callLater), and $(D_PSYMBOL BaseEventLoop.callAt).
+ * $(D_PSYMBOL EventLoop.callLater), and $(D_PSYMBOL EventLoop.callAt).
  */
 class Callback(Dg, Args...) : CallbackHandle
-    if (isDelegate!Dg)
+if (isDelegate!Dg)
 {
     private bool cancelled;
 
@@ -65,7 +72,7 @@ class Callback(Dg, Args...) : CallbackHandle
 
     alias ResultType = ReturnType!Dg;
 
-    public this(EventLoop eventLoop, Dg dg, Args args)
+    this(EventLoop eventLoop, Dg dg, Args args)
     {
         this.eventLoop = eventLoop;
         this.cancelled = false;
@@ -76,7 +83,7 @@ class Callback(Dg, Args...) : CallbackHandle
         }
     }
 
-    public override void cancel()
+    override void cancel()
     {
         this.cancelled = true;
     }
@@ -99,7 +106,7 @@ class Callback(Dg, Args...) : CallbackHandle
         }
     }
 
-    override public string toString()
+    override string toString()
     {
         import std.string;
 
@@ -209,22 +216,8 @@ abstract class EventLoop
     }
 
     protected State state = State.STOPPED;
-    //private size_t timerCancelledCount = 0;
-    //self._ready = collections.deque()
-    //self._scheduled = []
-    //self._default_executor = None
-    //self._internal_fds = 0
-    //self._clock_resolution = time.get_clock_info('monotonic').resolution
-    //self._exception_handler = None
-    //self._debug = (not sys.flags.ignore_environment
-    //               and bool(os.environ.get('PYTHONASYNCIODEBUG')))
-    //# In debug mode, if the execution of a callback or a step of a task
-    //# exceed this duration in seconds, the slow callback/task is logged.
-    //self.slow_callback_duration = 0.1
 
-public:
-    /// Run an event loop
-
+    // Run an event loop
     /**
      * Run until $(D_PSYMBOL stop()) is called.
      */
@@ -315,7 +308,7 @@ public:
         }
     }
 
-    /// Calls
+    // Calls
 
     /**
      * Arrange for a callback to be called as soon as possible.
@@ -326,7 +319,7 @@ public:
      * Any positional arguments after the callback will be passed to the
      * callback when it is called.
      *
-     * Returns: an instance of $(D_PSYMBOL Future).
+     * Returns: an instance of $(D_PSYMBOL Callback).
      */
     final auto callSoon(Dg, Args...)(Dg dg, Args args)
     {
@@ -337,15 +330,17 @@ public:
         return callback;
     }
 
+    /+
     /**
      * Like $(D_PSYMBOL call_soon()), but thread safe.
      */
-    //ReturnType!callback callSoonThreadsafe(alias callback, Args...)(Args args)
-    //{
-    //    return callLater!callback(0, args);
-    //}
+    final auto callSoonThreadsafe(alias callback, Args...)(Args args)
+    {
+        return callLater!callback(0, args);
+    }
+    +/
 
-    /// Delayed calls
+    // Delayed calls
 
     /**
      * Arrange for the callback to be called after the given delay.
@@ -394,7 +389,7 @@ public:
     }
 
 
-    /// Fibers
+    // Fibers
 
     /**
      * Schedule the execution of a fiber object: wrap it in a future.
@@ -407,24 +402,24 @@ public:
      * See_Also: $(D_PSYMBOL task()).
      */
     final auto createTask(Coroutine, Args...)(Coroutine coroutine, Args args)
-        if (isDelegate!Coroutine)
+    if (isDelegate!Coroutine)
     {
         return new Task!(Coroutine, Args)(this, coroutine, args);
     }
+/*
+    // Methods for interacting with threads.
 
-    //// Methods for interacting with threads.
+    ReturnType!callback runInExecutor(alias callback, Args...)(executor, Args args);
 
-    //ReturnType!callback runInExecutor(alias callback, Args...)(executor, Args args);
+    void setDefaultExecutor(executor);
 
-    //void setDefaultExecutor(executor);
+    // Network I/O methods returning Futures.
 
-    //// Network I/O methods returning Futures.
+    AddressInfo[] getAddressInfo(T...)(in char[] node, T options);
 
-    //AddressInfo[] getAddressInfo(T...)(in char[] node, T options);
-
-    //// def getNameInfo(sockaddr, flags = 0);
-
-    /// Creating connections
+    // def getNameInfo(sockaddr, flags = 0);
+*/
+    // Creating connections
 
     /**
      * Create a streaming transport connection to a given Internet host and
@@ -735,7 +730,7 @@ public:
      *
      * This method is a coroutine which will try to establish the connection in
      * the background. When successful, the coroutine returns a $(D_PSYMBOL
-     * Tuple!(Transport, "transport", Protocol, "protocol")
+     * Tuple!(Transport, "transport", Protocol, "protocol"))
      *
      * See the $(D_PSYMBOL EventLoop.createConnection()) method for parameters.
      */
@@ -972,65 +967,65 @@ public:
 
         return server;
     }
+/*
+    // Pipes and subprocesses.
 
-    //// Pipes and subprocesses.
+    //"""Register read pipe in event loop.
 
-    ////"""Register read pipe in event loop.
+    //protocol_factory should instantiate object with Protocol interface.
+    //pipe is file-like object already switched to nonblocking.
+    //Return pair (transport, protocol), where transport support
+    //ReadTransport interface."""
+    //# The reason to accept file-like object instead of just file descriptor
+    //# is: we need to own pipe and close it at transport finishing
+    //# Can got complicated errors if pass f.fileno(),
+    //# close fd in pipe transport then close f and vise versa.
+    Tuple!(Transport, Protocol) connectReadPipe(Protocol function() protocol_factory,
+        Pipe pipe);
 
-    ////protocol_factory should instantiate object with Protocol interface.
-    ////pipe is file-like object already switched to nonblocking.
-    ////Return pair (transport, protocol), where transport support
-    ////ReadTransport interface."""
-    ////# The reason to accept file-like object instead of just file descriptor
-    ////# is: we need to own pipe and close it at transport finishing
-    ////# Can got complicated errors if pass f.fileno(),
-    ////# close fd in pipe transport then close f and vise versa.
-    //Tuple!(Transport, Protocol) connectReadPipe(Protocol function() protocol_factory,
-    //    Pipe pipe);
+    //"""Register write pipe in event loop.
 
-    ////"""Register write pipe in event loop.
+    //protocol_factory should instantiate object with BaseProtocol interface.
+    //Pipe is file-like object already switched to nonblocking.
+    //Return pair (transport, protocol), where transport support
+    //WriteTransport interface."""
+    //# The reason to accept file-like object instead of just file descriptor
+    //# is: we need to own pipe and close it at transport finishing
+    //# Can got complicated errors if pass f.fileno(),
+    //# close fd in pipe transport then close f and vise versa.
+    Tuple!(Transport, Protocol) connectWritePipe(Protocol function() protocol_factory,
+        Pipe pipe);
 
-    ////protocol_factory should instantiate object with BaseProtocol interface.
-    ////Pipe is file-like object already switched to nonblocking.
-    ////Return pair (transport, protocol), where transport support
-    ////WriteTransport interface."""
-    ////# The reason to accept file-like object instead of just file descriptor
-    ////# is: we need to own pipe and close it at transport finishing
-    ////# Can got complicated errors if pass f.fileno(),
-    ////# close fd in pipe transport then close f and vise versa.
-    //Tuple!(Transport, Protocol) connectWritePipe(Protocol function() protocol_factory,
-    //    Pipe pipe);
+    Tuple!(Transport, Protocol) processShell(Protocol function() protocol_factory,
+        in char[] cmd, File stdin = subprocess.PIPE, File stdout = subprocess.PIPE,
+        File stderr = subprocess.PIPE);
 
-    //Tuple!(Transport, Protocol) processShell(Protocol function() protocol_factory,
-    //    in char[] cmd, File stdin = subprocess.PIPE, File stdout = subprocess.PIPE,
-    //    File stderr = subprocess.PIPE);
+    Tuple!(Transport, Protocol) processProcess(Protocol function() protocol_factory,
+        in char[][] args, File stdin = subprocess.PIPE, File stdout = subprocess.PIPE,
+        File stderr = subprocess.PIPE);
 
-    //Tuple!(Transport, Protocol) processProcess(Protocol function() protocol_factory,
-    //    in char[][] args, File stdin = subprocess.PIPE, File stdout = subprocess.PIPE,
-    //    File stderr = subprocess.PIPE);
+    //# Ready-based callback registration methods.
+    //# The add_*() methods return None.
+    //# The remove_*() methods return True if something was removed,
+    //# False if there was nothing to delete.
 
-    ////# Ready-based callback registration methods.
-    ////# The add_*() methods return None.
-    ////# The remove_*() methods return True if something was removed,
-    ////# False if there was nothing to delete.
+    void addReader(int fd, void delegate() callback);
 
-    //void addReader(int fd, void delegate() callback);
+    void removeReader(int fd);
 
-    //void removeReader(int fd);
+    void addWriter(int fd, void delegate() callback);
 
-    //void addWriter(int fd, void delegate() callback);
+    void removeWriter(int fd);
 
-    //void removeWriter(int fd);
+    // # Completion based I/O methods returning Futures.
 
-    //// # Completion based I/O methods returning Futures.
+    ptrdiff_t socketReceive(Socket sock, void[] buf);
 
-    //ptrdiff_t socketReceive(Socket sock, void[] buf);
+    ptrdiff_t socketSend(Socket sock, void[] buf);
 
-    //ptrdiff_t socketSend(Socket sock, void[] buf);
-
-    //Socket socketAccept(Socket sock);
-
-    /// Resolve host name
+    Socket socketAccept(Socket sock);
+*/
+    // Resolve host name
 
     @Coroutine
     AddressInfo[] getAddressInfo(in char[] host, in char[] service,
@@ -1040,7 +1035,7 @@ public:
         AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags);
 
 
-    /// Signal handling.
+    // Signal handling.
     version (Posix)
     {
         void addSignalHandler(int sig, void delegate() handler);
@@ -1048,23 +1043,19 @@ public:
         void removeSignalHandler(int sig);
     }
 
-    /// Error handlers.
-    //void setExceptionHandler(void function(EventLoop, ExceptionContext) handler);
+    // Error handlers.
+    /+
+    void setExceptionHandler(void function(EventLoop, ExceptionContext) handler);
 
-    //void defaultExceptionHandler(ExceptionContext context);
+    void defaultExceptionHandler(ExceptionContext context);
 
-    //void callExceptionHandler(ExceptionContext context);
+    void callExceptionHandler(ExceptionContext context);
+    +/
 
     override string toString()
     {
         return "%s(%s)".format(typeid(this), this.state);
     }
-
-    //// # Debug flag management.
-
-    //bool getDebug();
-
-    //void setDebug(bool enabled);
 
 protected:
 

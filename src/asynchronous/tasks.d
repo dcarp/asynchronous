@@ -1,3 +1,6 @@
+/**
+ * Support for tasks, coroutines and the scheduler.
+ */
 module asynchronous.tasks;
 
 import core.thread;
@@ -85,7 +88,7 @@ interface TaskHandle : FutureHandle
      *
      * By default all tasks for the current event loop are returned.
      */
-    public static TaskHandle[] allTasks(EventLoop eventLoop = null)
+    static TaskHandle[] allTasks(EventLoop eventLoop = null)
     {
         if (eventLoop is null)
             eventLoop = getEventLoop;
@@ -101,7 +104,7 @@ interface TaskHandle : FutureHandle
      *
      * $(D_KEYWORD null) is returned when called not in the context of a Task.
      */
-    public static TaskHandle currentTask(EventLoop eventLoop = null)
+    static TaskHandle currentTask(EventLoop eventLoop = null)
     {
         if (eventLoop is null)
             eventLoop = getEventLoop;
@@ -207,7 +210,7 @@ static this()
  * task()) function or the $(D_PSYMBOL EventLoop.create_task()) method.
  */
 class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
-    if (isDelegate!Coroutine)
+if (isDelegate!Coroutine)
 {
     alias ResultType = ReturnType!Coroutine;
 
@@ -229,7 +232,7 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
             return (cast(void*) cast(TaskHandle) this).toString;
         }
 
-    public this(EventLoop eventLoop, Coroutine coroutine, Args args)
+    this(EventLoop eventLoop, Coroutine coroutine, Args args)
     {
         super(eventLoop);
 
@@ -285,7 +288,7 @@ class Task(Coroutine, Args...) : Future!(ReturnType!Coroutine), TaskHandle
      * with a $(D_PSYMBOL CancelledException) (even if cancel() was not
      * called).
      */
-    override public bool cancel()
+    override bool cancel()
     {
         if (done)
             return false;
@@ -528,7 +531,7 @@ unittest
  */
 @Coroutine
 auto sleep(Result...)(EventLoop eventLoop, Duration delay, Result result)
-    if (result.length <= 1)
+if (result.length <= 1)
 {
     if (eventLoop is null)
         eventLoop = getEventLoop;
@@ -699,7 +702,7 @@ enum ReturnWhen
 auto wait(Future)(EventLoop eventLoop, Future[] futures,
     Duration timeout = Duration.zero,
     ReturnWhen returnWhen = ReturnWhen.ALL_COMPLETED)
-    if (is(Future : FutureHandle))
+if (is(Future : FutureHandle))
 {
     if (eventLoop is null)
         eventLoop = getEventLoop;
@@ -834,7 +837,7 @@ unittest
 @Coroutine
 auto waitFor(Future)(EventLoop eventLoop, Future future,
     Duration timeout = Duration.zero)
-    if (is(Future : FutureHandle))
+if (is(Future : FutureHandle))
 {
     if (eventLoop is null)
         eventLoop = getEventLoop;

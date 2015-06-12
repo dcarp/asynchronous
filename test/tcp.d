@@ -15,24 +15,24 @@ class TestHelper
 
     private Server server_;
 
-    public void putEvent(string event)
+    void putEvent(string event)
     {
         actualEvents_.put(event);
     }
 
-    public void addConnection(Connection connection)
+    void addConnection(Connection connection)
     {
         connections_ ~= connection;
     }
 
     @property
-    public Server server()
+    Server server()
     {
         return server_;
     }
 
     @property
-    public void server(Server server)
+    void server(Server server)
     in
     {
         assert(server !is null);
@@ -43,12 +43,12 @@ class TestHelper
         server_ = server;
     }
 
-    public string[] actualEvents()
+    string[] actualEvents()
     {
        return actualEvents_.data;
     }
 
-    public Connection[] connections()
+    Connection[] connections()
     {
         return connections_;
     }

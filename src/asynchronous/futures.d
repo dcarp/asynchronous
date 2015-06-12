@@ -1,3 +1,6 @@
+/**
+ * Future classes.
+ */
 module asynchronous.futures;
 
 import std.algorithm;
@@ -179,7 +182,7 @@ class Future(T) : FutureBase
 
     alias ResultType = T;
 
-    public this(EventLoop eventLoop = null)
+    this(EventLoop eventLoop = null)
     {
         super(eventLoop);
     }
@@ -192,7 +195,7 @@ class Future(T) : FutureBase
      * available, throws $(D_PSYMBOL InvalidStateException). If the future is
      * done and has an exception set, this exception is thrown.
      */
-    public T result()
+    T result()
     {
         final switch (this.state)
         {
@@ -223,7 +226,7 @@ class Future(T) : FutureBase
      * If the future is already done when this method is called, throws
      * $(D_PSYMBOL InvalidStateError).
      */
-    public void setResult(T result)
+    void setResult(T result)
     {
         if (this.state != State.PENDING)
             throw new InvalidStateException("Result or exception already set");
@@ -240,7 +243,7 @@ class Future(T : void) : FutureBase
 {
     alias ResultType = void;
 
-    public this(EventLoop eventLoop = null)
+    this(EventLoop eventLoop = null)
     {
         super(eventLoop);
     }
@@ -261,7 +264,7 @@ class Future(T : void) : FutureBase
      * If the future is already done when this method is called, throws
      * $(D_PSYMBOL InvalidStateError).
      */
-    public void setResult()
+    void setResult()
     {
         if (this.state != State.PENDING)
             throw new InvalidStateException("Result or exception already set");

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Function EventLoop.createUnixConnection</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">asynchronous</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/events.html" class="selected module">events</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/futures.html" class=" module">futures</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/locks.html" class=" module">locks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/protocols.html" class=" module">protocols</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/queues.html" class=" module">queues</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/streams.html" class=" module">streams</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/tasks.html" class=" module">tasks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/transports.html" class=" module">transports</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../asynchronous.html" class=" module">asynchronous</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Function EventLoop.createUnixConnection</h1>
+			<section>
+				<p> Create UNIX connection: <a href="../../asynchronous/events/EventLoop.createUnixConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> family <u>AddressFamily.UNIX</u>,
+ <a href="../../asynchronous/events/EventLoop.createUnixConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> type <u>SocketType.STREAM</u>. The UNIX <a href="../../asynchronous/events/EventLoop.createUnixConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> family is
+ used to communicate between processes on the same machine efficiently.
+</p>
+<section>
+<p> This method is a coroutine which will try to establish the connection in
+ the background. When successful, the coroutine returns a <u>Tuple!(Transport, "transport", Protocol, "protocol")</u>
+</p>
+
+<p> See the <u><a href="../../asynchronous/events/EventLoop.createConnection.html"><code class="prettyprint lang-d">EventLoop.createConnection</code></a>()</u> method for parameters.
+</p>
+</section>
+
+					<section>
+						<h3>Prototype</h3>
+						<pre class="code prettyprint lang-d prototype">
+auto std.<wbr/>typecons.<wbr/>__T5TupleTC12asynchronous10transports9TransportVAyaa9_7472616e73706f7274TC12asynchronous9protocols8ProtocolVAyaa8_70726f746f636f6cZ.<wbr/>Tuple createUnixConnection(
+&nbsp;&nbsp;<a href="../../asynchronous/protocols/Protocol.html">Protocol</a> delegate() protocolFactory,
+&nbsp;&nbsp;const(char[]) path = null,
+&nbsp;&nbsp;asynchronous.<wbr/>events.<wbr/>SslContext sslContext = null,
+&nbsp;&nbsp;std.<wbr/>socket.<wbr/>Socket socket = null,
+&nbsp;&nbsp;const(char[]) serverHostname = null
+);</pre>
+					</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+
+			</section>
+			<section>
+				<h2>License</h2>
+
+			</section>
+		</div>
+	</body>
+</html>

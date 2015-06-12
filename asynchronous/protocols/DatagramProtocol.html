@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Interface DatagramProtocol</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">asynchronous</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/events.html" class=" module">events</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/futures.html" class=" module">futures</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/locks.html" class=" module">locks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/protocols.html" class="selected module">protocols</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/queues.html" class=" module">queues</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/streams.html" class=" module">streams</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/tasks.html" class=" module">tasks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/transports.html" class=" module">transports</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../asynchronous.html" class=" module">asynchronous</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Interface DatagramProtocol</h1>
+			<section>
+				<p> Interface for datagram protocol.
+</p>
+
+					<section>
+						<h3>Inherits from</h3>
+						<ul>
+							<li>
+								<code class="prettyprint lang-d"><code class="prettyprint lang-d"><a href="../../asynchronous/protocols/BaseProtocol.html">BaseProtocol</a></code></code>
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Methods</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/protocols/DatagramProtocol.datagramReceived.html" class="public">
+										<code>datagramReceived</code>
+									</a>
+								</td>
+								<td> Called when a datagram is received.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/protocols/DatagramProtocol.errorReceived.html" class="public">
+										<code>errorReceived</code>
+									</a>
+								</td>
+								<td> Called when a previous send or receive operation raises an <a href="../../asynchronous/protocols/DatagramProtocol.errorReceived.html#exception"><code class="prettyprint lang-d">exception</code></a>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html" class="public inherited">
+										<code>connectionLost</code>
+									</a>
+								</td>
+								<td> Called when the connection is lost or closed.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html" class="public inherited">
+										<code>connectionMade</code>
+									</a>
+								</td>
+								<td> <u><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><code class="prettyprint lang-d">connectionMade</code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="prettyprint lang-d">connectionLost</code></a>()</u> are
+ called exactly once per successful connection. All other callbacks will
+ be called between those two methods, which allows for easier resource
+ management in your protocol implementation.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html" class="public inherited">
+										<code>pauseWriting</code>
+									</a>
+								</td>
+								<td> <u><a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html"><code class="prettyprint lang-d">pauseWriting</code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="prettyprint lang-d">resumeWriting</code></a>()</u> calls are
+ paired – <u><a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html"><code class="prettyprint lang-d">pauseWriting</code></a>()</u> is called once when the buffer goes
+ strictly over the high-water mark (even if subsequent writes increases
+ the buffer size even more), and eventually <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="prettyprint lang-d">resumeWriting</code></a>()</u>
+ is called once when the buffer size reaches the low-water mark.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html" class="public inherited">
+										<code>resumeWriting</code>
+									</a>
+								</td>
+								<td> Called when the transport’s buffer drains below the low-water mark.
+</td>
+							</tr>
+						</table>
+					</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+
+			</section>
+			<section>
+				<h2>License</h2>
+
+			</section>
+		</div>
+	</body>
+</html>

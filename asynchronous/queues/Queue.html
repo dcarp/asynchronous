@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Class Queue</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">asynchronous</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/events.html" class=" module">events</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/futures.html" class=" module">futures</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/locks.html" class=" module">locks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/protocols.html" class=" module">protocols</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/queues.html" class="selected module">queues</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/streams.html" class=" module">streams</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/tasks.html" class=" module">tasks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/transports.html" class=" module">transports</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../asynchronous.html" class=" module">asynchronous</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Class Queue</h1>
+			<section>
+				<p> A queue, useful for coordinating producer and consumer coroutines.
+</p>
+<section>
+<p> If <u>maxSize</u> is equal to zero, the queue size is infinite.
+ Otherwise <u><a href="../../asynchronous/queues/Queue.put.html"><code class="prettyprint lang-d">put</code></a>()</u> will block when the queue reaches <a href="../../asynchronous/queues/Queue.maxsize.html"><code class="prettyprint lang-d">maxsize</code></a>, until
+ an item is removed by <u><a href="../../asynchronous/queues/Queue.get.html"><code class="prettyprint lang-d">get</code></a>()</u>.
+</p>
+
+<p> You can reliably know this <u><code class="prettyprint lang-d">Queue</code></u>'s size with <u><a href="../../asynchronous/queues/Queue.qsize.html"><code class="prettyprint lang-d">qsize</code></a>()</u>, since your single-threaded asynchronous application won't be
+ interrupted between calling <u><a href="../../asynchronous/queues/Queue.qsize.html"><code class="prettyprint lang-d">qsize</code></a>()</u> and doing an operation on
+ the <code class="prettyprint lang-d">Queue</code>.
+</p>
+
+<p> This class is not thread safe.
+</p>
+</section>
+
+					<section>
+						<h3>Inherits from</h3>
+						<ul>
+							<li>
+								<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
+ (base class)
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Properties</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Type</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/queues/Queue.empty.html" class="public property"><code>empty</code></a>
+									<span class="tableEntryAnnotation">[get]</span>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">bool</code></td>
+								<td> Return <font color=blue>true</font> if the queue is <code class="prettyprint lang-d">empty</code>, <font color=blue>false</font>
+ otherwise.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/queues/Queue.full.html" class="public property"><code>full</code></a>
+									<span class="tableEntryAnnotation">[get]</span>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">bool</code></td>
+								<td> Return <font color=blue>true</font> if there are <a href="../../asynchronous/queues/Queue.maxsize.html"><code class="prettyprint lang-d">maxsize</code></a> items in the queue.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/queues/Queue.maxsize.html" class="public property"><code>maxsize</code></a>
+									<span class="tableEntryAnnotation">[get]</span>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">size_t</code></td>
+								<td> Number of items allowed in the queue.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/queues/Queue.qsize.html" class="public property"><code>qsize</code></a>
+									<span class="tableEntryAnnotation">[get]</span>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d">size_t</code></td>
+								<td> Number of items in the queue.
+</td>
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h3>Methods</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/queues/Queue.get.html" class="public">
+										<code>get</code>
+									</a>
+								</td>
+								<td> Remove and return an item from the queue.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/queues/Queue.getNowait.html" class="public">
+										<code>getNowait</code>
+									</a>
+								</td>
+								<td> Remove and return an item from the queue.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/queues/Queue.join.html" class="public">
+										<code>join</code>
+									</a>
+								</td>
+								<td> Block until all items in the queue have been gotten and processed.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/queues/Queue.put.html" class="public">
+										<code>put</code>
+									</a>
+								</td>
+								<td> Put an <a href="../../asynchronous/queues/Queue.put.html#item"><code class="prettyprint lang-d">item</code></a> into the queue.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/queues/Queue.putNowait.html" class="public">
+										<code>putNowait</code>
+									</a>
+								</td>
+								<td> Put an <a href="../../asynchronous/queues/Queue.putNowait.html#item"><code class="prettyprint lang-d">item</code></a> into the queue without blocking.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/queues/Queue.taskDone.html" class="public">
+										<code>taskDone</code>
+									</a>
+								</td>
+								<td> Indicate that a formerly enqueued task is complete.
+</td>
+							</tr>
+						</table>
+					</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+
+			</section>
+			<section>
+				<h2>License</h2>
+
+			</section>
+		</div>
+	</body>
+</html>

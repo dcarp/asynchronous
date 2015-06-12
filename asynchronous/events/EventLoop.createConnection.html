@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Function EventLoop.createConnection</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">asynchronous</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/events.html" class="selected module">events</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/futures.html" class=" module">futures</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/locks.html" class=" module">locks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/protocols.html" class=" module">protocols</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/queues.html" class=" module">queues</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/streams.html" class=" module">streams</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/tasks.html" class=" module">tasks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/transports.html" class=" module">transports</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../asynchronous.html" class=" module">asynchronous</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Function EventLoop.createConnection</h1>
+			<section>
+				<p> Create a streaming transport connection to a given Internet <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a> and
+</p>
+
+					<section>
+						<h3>Prototype</h3>
+						<pre class="code prettyprint lang-d prototype">
+auto std.<wbr/>typecons.<wbr/>__T5TupleTC12asynchronous10transports9TransportVAyaa9_7472616e73706f7274TC12asynchronous9protocols8ProtocolVAyaa8_70726f746f636f6cZ.<wbr/>Tuple createConnection(
+&nbsp;&nbsp;<a href="../../asynchronous/protocols/Protocol.html">Protocol</a> delegate() protocolFactory,
+&nbsp;&nbsp;const(char[]) host = null,
+&nbsp;&nbsp;const(char[]) service = null,
+&nbsp;&nbsp;asynchronous.<wbr/>events.<wbr/>SslContext sslContext = null,
+&nbsp;&nbsp;std.<wbr/>socket.<wbr/>AddressFamily addressFamily = UNSPECIFIED(),
+&nbsp;&nbsp;std.<wbr/>socket.<wbr/>ProtocolType protocolType = UNSPECIFIED(),
+&nbsp;&nbsp;std.<wbr/>socket.<wbr/>AddressInfoFlags addressInfoFlags = UNSPECIFIED(),
+&nbsp;&nbsp;std.<wbr/>socket.<wbr/>Socket socket = null,
+&nbsp;&nbsp;const(char[]) localHost = null,
+&nbsp;&nbsp;const(char[]) localService = null,
+&nbsp;&nbsp;const(char[]) serverHostname = null
+);</pre>
+					</section>
+<section><h3>port</h3>
+<p><a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> family <u>AddressFamily.INET</u> or <u>AddressFamily.INET6</u> depending on <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a> (or family if specified), <a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="prettyprint lang-d">socket</code></a>
+ type <u>SocketType.STREAM</u>.
+</p>
+
+<p> This method is a coroutine which will try to establish the connection in
+ the background. When successful, the coroutine returns a (transport,
+ protocol) tuple.
+</p>
+
+<p> The chronological synopsis of the underlying operation is as follows:
+</p>
+
+<p> The connection is established, and a transport is created to represent
+ it. <u><a href="../../asynchronous/events/EventLoop.createConnection.html#protocolFactory"><code class="prettyprint lang-d">protocolFactory</code></a></u> is called without arguments and must
+ return a protocol instance.
+ The protocol instance is tied to the transport, and its <u>connectionMade()</u> method is called.
+ The coroutine returns successfully with the <u>(transport,
+ protocol)</u> tuple.
+</p>
+
+<p> The created transport is an implementation-dependent bidirectional
+ stream.
+</p>
+
+<p> Options allowing to change how the connection is created:
+</p>
+</section>
+<section><h3>Parameters</h3>
+<table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
+<tr><td id="protocolFactory">protocolFactory</td><td> is a callable returning a protocol instance
+</td></tr>
+<tr><td id="host">host</td><td> if empty then the $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="prettyprint lang-d">socket</code></a>) parameter should be
+      specified.
+</td></tr>
+<tr><td id="service">service</td><td> <a href="../../asynchronous/events/EventLoop.createConnection.html#service"><code class="prettyprint lang-d">service</code></a> name or port number.
+</td></tr>
+<tr><td id="sslContext">sslContext</td><td> if not $(D_KEYWORD null), a SSL/TLS transport is created
+      (by default a plain TCP transport is created).
+</td></tr>
+<tr><td id="serverHostname">serverHostname</td><td> is only for use together with ssl, and sets or
+      overrides the hostname that the target server’s certificate will be
+      matched against. By default the value of the <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a> argument is used.
+      If <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a> is empty, there is no default and you must pass a value for
+      $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#serverHostname"><code class="prettyprint lang-d">serverHostname</code></a>). If $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#serverHostname"><code class="prettyprint lang-d">serverHostname</code></a>) is an
+      empty, hostname matching is disabled (which is a serious security
+      risk, allowing for man-in-the-middle-attacks).
+</td></tr>
+<tr><td id="addressFamily">addressFamily</td><td> optional adress family.
+</td></tr>
+<tr><td id="protocolType">protocolType</td><td> optional protocol.
+</td></tr>
+<tr><td id="addressInfoFlags">addressInfoFlags</td><td> optional flags.
+</td></tr>
+<tr><td id="socket">socket</td><td> if not $(D_KEYWORD null), should be an existing, already
+      connected $(D_PSYMBOL Socket) object to be used by the transport. If
+      $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="prettyprint lang-d">socket</code></a>) is given, none of $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a>), $(D_PSYMBOL
+      <a href="../../asynchronous/events/EventLoop.createConnection.html#service"><code class="prettyprint lang-d">service</code></a>), $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#addressFamily"><code class="prettyprint lang-d">addressFamily</code></a>), $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#protocolType"><code class="prettyprint lang-d">protocolType</code></a>),
+      $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#addressInfoFlags"><code class="prettyprint lang-d">addressInfoFlags</code></a>) and $(D_PSYMBOL localAddress) should
+      be specified.
+</td></tr>
+<tr><td id="localHost">localHost</td><td> if given, together with $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#localService"><code class="prettyprint lang-d">localService</code></a>) is used to
+      bind the <a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> to locally. The $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#localHost"><code class="prettyprint lang-d">localHost</code></a>) and
+      $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#localService"><code class="prettyprint lang-d">localService</code></a>) are looked up using $(D_PSYMBOL
+      getAddressInfo()), similarly to <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a> and <a href="../../asynchronous/events/EventLoop.createConnection.html#service"><code class="prettyprint lang-d">service</code></a>.
+</td></tr>
+<tr><td id="localService">localService</td><td> see $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#localHost"><code class="prettyprint lang-d">localHost</code></a>).
+</td></tr>
+</table>
+</section>
+<section><h3>Returns</h3>
+<p>Tuple!(Transport, "transport", Protocol, "protocol")
+</p>
+</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+
+			</section>
+			<section>
+				<h2>License</h2>
+
+			</section>
+		</div>
+	</body>
+</html>

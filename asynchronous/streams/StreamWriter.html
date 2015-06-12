@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Class StreamWriter</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">asynchronous</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/events.html" class=" module">events</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/futures.html" class=" module">futures</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/locks.html" class=" module">locks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/protocols.html" class=" module">protocols</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/queues.html" class=" module">queues</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/streams.html" class="selected module">streams</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/tasks.html" class=" module">tasks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/transports.html" class=" module">transports</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../asynchronous.html" class=" module">asynchronous</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Class StreamWriter</h1>
+			<section>
+				<p> Wraps a Transport.
+</p>
+<section>
+<p> This exposes <u><a href="../../asynchronous/streams/StreamWriter.write.html"><code class="prettyprint lang-d">write</code></a>()</u>, <u><a href="../../asynchronous/streams/StreamWriter.writeEof.html"><code class="prettyprint lang-d">writeEof</code></a>()</u>, <u><a href="../../asynchronous/streams/StreamWriter.canWriteEof.html"><code class="prettyprint lang-d">canWriteEof</code></a>()</u>, <u><a href="../../asynchronous/streams/StreamWriter.getExtraInfo.html"><code class="prettyprint lang-d">getExtraInfo</code></a>()</u> and <u><a href="../../asynchronous/streams/StreamWriter.close.html"><code class="prettyprint lang-d">close</code></a>()</u>. It adds
+ <u><a href="../../asynchronous/streams/StreamWriter.drain.html"><code class="prettyprint lang-d">drain</code></a>()</u> coroutine for waiting for flow control.  It also adds a
+ <u><a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a></u> property which references the Transport directly.
+</p>
+
+<p> This class is not thread safe.
+</p>
+</section>
+
+					<section>
+						<h3>Inherits from</h3>
+						<ul>
+							<li>
+								<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
+ (base class)
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Properties</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Type</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/streams/StreamWriter.transport.html" class="public property"><code>transport</code></a>
+									<span class="tableEntryAnnotation">[get]</span>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><a href="../../asynchronous/transports/WriteTransport.html">WriteTransport</a></code></td>
+								<td> Transport.
+</td>
+							</tr>
+						</table>
+					</section>
+					<section>
+						<h3>Methods</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/streams/StreamWriter.canWriteEof.html" class="public">
+										<code>canWriteEof</code>
+									</a>
+								</td>
+								<td> Return <font color=blue>true</font> if the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a> supports <u><a href="../../asynchronous/streams/StreamWriter.writeEof.html"><code class="prettyprint lang-d">writeEof</code></a>()</u>, <font color=blue>false</font> if not. See <u>WriteTransport.canWriteEof()</u>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/streams/StreamWriter.close.html" class="public">
+										<code>close</code>
+									</a>
+								</td>
+								<td> Close the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a>: see <u>BaseTransport.close()</u>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/streams/StreamWriter.drain.html" class="public">
+										<code>drain</code>
+									</a>
+								</td>
+								<td> Let the <a href="../../asynchronous/streams/StreamWriter.write.html"><code class="prettyprint lang-d">write</code></a> buffer of the underlying <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a> a chance to be flushed.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/streams/StreamWriter.getExtraInfo.html" class="public">
+										<code>getExtraInfo</code>
+									</a>
+								</td>
+								<td> Return optional <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a> information: see <u>BaseTransport.getExtraInfo()</u>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/streams/StreamWriter.write.html" class="public">
+										<code>write</code>
+									</a>
+								</td>
+								<td> Write some <a href="../../asynchronous/streams/StreamWriter.write.html#data"><code class="prettyprint lang-d">data</code></a> bytes to the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a>: see <u>WriteTransport.write()</u>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/streams/StreamWriter.writeEof.html" class="public">
+										<code>writeEof</code>
+									</a>
+								</td>
+								<td> Close the <a href="../../asynchronous/streams/StreamWriter.write.html"><code class="prettyprint lang-d">write</code></a> end of the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a> after flushing buffered data: see
+ <u>WriteTransport.write_eof()</u>.
+</td>
+							</tr>
+						</table>
+					</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+
+			</section>
+			<section>
+				<h2>License</h2>
+
+			</section>
+		</div>
+	</body>
+</html>

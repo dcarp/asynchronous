@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Function openConnection</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">asynchronous</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/events.html" class=" module">events</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/futures.html" class=" module">futures</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/locks.html" class=" module">locks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/protocols.html" class=" module">protocols</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/queues.html" class=" module">queues</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/streams.html" class="selected module">streams</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/tasks.html" class=" module">tasks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/transports.html" class=" module">transports</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../asynchronous.html" class=" module">asynchronous</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Function openConnection</h1>
+			<section>
+				<p> A wrapper for <u>createConnection()</u> returning a (reader, writer)
+ pair.
+</p>
+<section>
+<p> The reader returned is a <u>StreamReader</u> instance; the writer is a
+ <u><a href="../../asynchronous/streams/StreamWriter.html"><code class="prettyprint lang-d">StreamWriter</code></a></u> instance.
+</p>
+
+<p> The arguments are all the usual arguments to <u>createConnection()</u>
+ except protocolFactory; most common are <a href="../../asynchronous/streams/openConnection.html#host"><code class="prettyprint lang-d">host</code></a> and port, with various optional
+ arguments following.
+</p>
+
+<p> Additional arguments are <u><a href="../../asynchronous/streams/openConnection.html#eventLoop"><code class="prettyprint lang-d">eventLoop</code></a></u> (to set the event loop
+ instance to use) and <u><a href="../../asynchronous/streams/openConnection.html#limit"><code class="prettyprint lang-d">limit</code></a></u> (to set the buffer <a href="../../asynchronous/streams/openConnection.html#limit"><code class="prettyprint lang-d">limit</code></a> passed to
+ the <u>StreamReader</u>).
+</p>
+
+<p> (If you want to customize the <u>StreamReader</u> and/or
+ <u><a href="../../asynchronous/streams/StreamReaderProtocol.html"><code class="prettyprint lang-d">StreamReaderProtocol</code></a></u> classes, just copy the code -- there's
+ really nothing special here except some convenience.)
+</p>
+</section>
+
+					<section>
+						<h3>Prototype</h3>
+						<pre class="code prettyprint lang-d prototype">
+auto std.<wbr/>typecons.<wbr/>__T5TupleTC12asynchronous7streams12StreamReaderVAyaa6_726561646572TC12asynchronous7streams12StreamWriterVAyaa6_777269746572Z.<wbr/>Tuple openConnection(
+&nbsp;&nbsp;<a href="../../asynchronous/events/EventLoop.html">EventLoop</a> eventLoop,
+&nbsp;&nbsp;const(char[]) host = null,
+&nbsp;&nbsp;const(char[]) service = null,
+&nbsp;&nbsp;ulong limit = 65536LU,
+&nbsp;&nbsp;asynchronous.<wbr/>events.<wbr/>SslContext sslContext = null,
+&nbsp;&nbsp;std.<wbr/>socket.<wbr/>AddressFamily addressFamily = UNSPECIFIED(),
+&nbsp;&nbsp;std.<wbr/>socket.<wbr/>ProtocolType protocolType = UNSPECIFIED(),
+&nbsp;&nbsp;std.<wbr/>socket.<wbr/>AddressInfoFlags addressInfoFlags = UNSPECIFIED(),
+&nbsp;&nbsp;std.<wbr/>socket.<wbr/>Socket socket = null,
+&nbsp;&nbsp;const(char[]) localHost = null,
+&nbsp;&nbsp;const(char[]) localService = null,
+&nbsp;&nbsp;const(char[]) serverHostname = null
+);</pre>
+					</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+
+			</section>
+			<section>
+				<h2>License</h2>
+
+			</section>
+		</div>
+	</body>
+</html>

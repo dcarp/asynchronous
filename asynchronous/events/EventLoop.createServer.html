@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Function EventLoop.createServer</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">asynchronous</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/events.html" class="selected module">events</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/futures.html" class=" module">futures</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/locks.html" class=" module">locks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/protocols.html" class=" module">protocols</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/queues.html" class=" module">queues</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/streams.html" class=" module">streams</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/tasks.html" class=" module">tasks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/transports.html" class=" module">transports</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../asynchronous.html" class=" module">asynchronous</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Function EventLoop.createServer</h1>
+			<section>
+				<p> A coroutine which creates a TCP server bound to <a href="../../asynchronous/events/EventLoop.createServer.html#host"><code class="prettyprint lang-d">host</code></a> and port.
+</p>
+<section>
+</section>
+
+					<section>
+						<h3>Prototype</h3>
+						<pre class="code prettyprint lang-d prototype">
+<a href="../../asynchronous/events/Server.html">Server</a> createServer(
+&nbsp;&nbsp;<a href="../../asynchronous/protocols/Protocol.html">Protocol</a> delegate() protocolFactory,
+&nbsp;&nbsp;const(char[]) host = null,
+&nbsp;&nbsp;const(char[]) service = null,
+&nbsp;&nbsp;std.<wbr/>socket.<wbr/>AddressFamily addressFamily = UNSPECIFIED(),
+&nbsp;&nbsp;std.<wbr/>socket.<wbr/>AddressInfoFlags addressInfoFlags = cast(AddressInfoFlags)1,
+&nbsp;&nbsp;std.<wbr/>socket.<wbr/>Socket socket = null,
+&nbsp;&nbsp;int backlog = 100,
+&nbsp;&nbsp;asynchronous.<wbr/>events.<wbr/>SslContext sslContext = null,
+&nbsp;&nbsp;bool reuseAddress = true
+);</pre>
+					</section>
+<section><h3>Parameters</h3>
+<table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
+<tr><td id="protocolFactory">protocolFactory</td><td> is a callable returning a protocol instance.
+</td></tr>
+<tr><td id="host">host</td><td> if empty then all interfaces are assumed and a list of multiple
+      sockets will be returned (most likely one for IPv4 and another one
+      for IPv6).
+</td></tr>
+<tr><td id="service">service</td><td> <a href="../../asynchronous/events/EventLoop.createServer.html#service"><code class="prettyprint lang-d">service</code></a> name or port number.
+</td></tr>
+<tr><td id="addressFamily">addressFamily</td><td> can be set to either $(D_PSYMBOL AddressFamily.INET) or
+      $(D_PSYMBOL AddressFamily.INET6) to force the <a href="../../asynchronous/events/EventLoop.createServer.html#socket"><code class="prettyprint lang-d">socket</code></a> to use IPv4 or
+      IPv6. If not set it will be determined from <a href="../../asynchronous/events/EventLoop.createServer.html#host"><code class="prettyprint lang-d">host</code></a> (defaults to
+      $(D_PSYMBOL AddressFamily.UNSPEC)).
+</td></tr>
+<tr><td id="addressInfoFlags">addressInfoFlags</td><td> a bitmask for getAddressInfo().
+</td></tr>
+<tr><td id="socket">socket</td><td> can optionally be specified in order to use a preexisting
+      <a href="../../asynchronous/events/EventLoop.createServer.html#socket"><code class="prettyprint lang-d">socket</code></a> object.
+</td></tr>
+<tr><td id="backlog">backlog</td><td> the maximum number of queued connections passed to listen()
+      (defaults to 100).
+</td></tr>
+<tr><td id="sslContext">sslContext</td><td> can be set to an SSLContext to enable SSL over the accepted
+      connections.
+</td></tr>
+<tr><td id="reuseAddress">reuseAddress</td><td> tells the kernel to reuse a local <a href="../../asynchronous/events/EventLoop.createServer.html#socket"><code class="prettyprint lang-d">socket</code></a> in TIME_WAIT
+      state, without waiting for its natural timeout to expire. If not
+      specified will automatically be set to $(D_KEYWORD true) on UNIX.
+</td></tr>
+</table>
+</section>
+<section><h3>Returns</h3>
+<p>a <a href="../../asynchronous/events/Server.html"><code class="prettyprint lang-d">Server</code></a> object which can be used to <a href="../../asynchronous/events/EventLoop.stop.html"><code class="prettyprint lang-d">stop</code></a> the <a href="../../asynchronous/events/EventLoop.createServer.html#service"><code class="prettyprint lang-d">service</code></a>.
+</p>
+</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+
+			</section>
+			<section>
+				<h2>License</h2>
+
+			</section>
+		</div>
+	</body>
+</html>

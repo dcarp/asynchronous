@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Class EventLoop</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">asynchronous</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/events.html" class="selected module">events</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/futures.html" class=" module">futures</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/locks.html" class=" module">locks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/protocols.html" class=" module">protocols</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/queues.html" class=" module">queues</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/streams.html" class=" module">streams</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/tasks.html" class=" module">tasks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/transports.html" class=" module">transports</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../asynchronous.html" class=" module">asynchronous</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Class EventLoop</h1>
+			<section>
+				<p> Interface of event loop.
+</p>
+
+					<section>
+						<h3>Inherits from</h3>
+						<ul>
+							<li>
+								<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
+ (base class)
+							</li>
+						</ul>
+					</section>
+					<section>
+						<h3>Methods</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.callAt.html" class="public">
+										<code>callAt</code>
+									</a>
+								</td>
+								<td> Arrange for the callback to be called at the given absolute timestamp
+ <a href="../../asynchronous/events/EventLoop.callAt.html#when"><code class="prettyprint lang-d">when</code></a> (an int or float), using the same <a href="../../asynchronous/events/EventLoop.time.html"><code class="prettyprint lang-d">time</code></a> reference as <a href="../../asynchronous/events/EventLoop.time.html"><code class="prettyprint lang-d">time</code></a>().
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.callLater.html" class="public">
+										<code>callLater</code>
+									</a>
+								</td>
+								<td> Arrange for the callback to be called after the given <a href="../../asynchronous/events/EventLoop.callLater.html#delay"><code class="prettyprint lang-d">delay</code></a>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.callSoon.html" class="public">
+										<code>callSoon</code>
+									</a>
+								</td>
+								<td> Arrange for a callback to be called as soon as possible.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.close.html" class="public">
+										<code>close</code>
+									</a>
+								</td>
+								<td> Close the event loop. The loop must not be running.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.createConnection.html" class="public">
+										<code>createConnection</code>
+									</a>
+								</td>
+								<td> Create a streaming transport connection to a given Internet <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a> and
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.createDatagramEndpoint.html" class="public">
+										<code>createDatagramEndpoint</code>
+									</a>
+								</td>
+								<td> Create datagram connection: socket family <u>AddressFamily.INET</u>
+ or <u>AddressFamily.INET6</u> depending on host (or family if
+ specified), socket type <u>SocketType.DGRAM</u>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.createServer.html" class="public">
+										<code>createServer</code>
+									</a>
+								</td>
+								<td> A coroutine which creates a TCP server bound to <a href="../../asynchronous/events/EventLoop.createServer.html#host"><code class="prettyprint lang-d">host</code></a> and port.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.createTask.html" class="public">
+										<code>createTask</code>
+									</a>
+								</td>
+								<td> Schedule the execution of a fiber object: wrap it in a future.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.createUnixConnection.html" class="public">
+										<code>createUnixConnection</code>
+									</a>
+								</td>
+								<td> Create UNIX connection: <a href="../../asynchronous/events/EventLoop.createUnixConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> family <u>AddressFamily.UNIX</u>,
+ <a href="../../asynchronous/events/EventLoop.createUnixConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> type <u>SocketType.STREAM</u>. The UNIX <a href="../../asynchronous/events/EventLoop.createUnixConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> family is
+ used to communicate between processes on the same machine efficiently.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.createUnixServer.html" class="public">
+										<code>createUnixServer</code>
+									</a>
+								</td>
+								<td> Similar to <u><a href="../../asynchronous/events/EventLoop.createServer.html"><code class="prettyprint lang-d">EventLoop.createServer</code></a>()</u>, but specific to the
+ <a href="../../asynchronous/events/EventLoop.createUnixServer.html#socket"><code class="prettyprint lang-d">socket</code></a> family <u>AddressFamily.UNIX</u>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.isClosed.html" class="public">
+										<code>isClosed</code>
+									</a>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.isRunning.html" class="public">
+										<code>isRunning</code>
+									</a>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.runForever.html" class="public">
+										<code>runForever</code>
+									</a>
+								</td>
+								<td> Run until <u><a href="../../asynchronous/events/EventLoop.stop.html"><code class="prettyprint lang-d">stop</code></a>()</u> is called.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.runUntilComplete.html" class="public">
+										<code>runUntilComplete</code>
+									</a>
+								</td>
+								<td> Run until <a href="../../asynchronous/events/EventLoop.runUntilComplete.html#future"><code class="prettyprint lang-d">future</code></a> is done.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.stop.html" class="public">
+										<code>stop</code>
+									</a>
+								</td>
+								<td> Stop running the event loop.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.time.html" class="public">
+										<code>time</code>
+									</a>
+								</td>
+								<td> Return the current <code class="prettyprint lang-d">time</code> according to the event loop’s internal clock.
+</td>
+							</tr>
+						</table>
+					</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+
+			</section>
+			<section>
+				<h2>License</h2>
+
+			</section>
+		</div>
+	</body>
+</html>

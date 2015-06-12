@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Module asynchronous.tasks</title>
+		<link rel="stylesheet" type="text/css" href="../styles/ddox.css"/>
+		<link rel="stylesheet" href="../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">asynchronous</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../asynchronous/events.html" class=" module">events</a>
+							</li>
+							<li>
+								<a href="../asynchronous/futures.html" class=" module">futures</a>
+							</li>
+							<li>
+								<a href="../asynchronous/locks.html" class=" module">locks</a>
+							</li>
+							<li>
+								<a href="../asynchronous/protocols.html" class=" module">protocols</a>
+							</li>
+							<li>
+								<a href="../asynchronous/queues.html" class=" module">queues</a>
+							</li>
+							<li>
+								<a href="../asynchronous/streams.html" class=" module">streams</a>
+							</li>
+							<li>
+								<a href="../asynchronous/tasks.html" class="selected module">tasks</a>
+							</li>
+							<li>
+								<a href="../asynchronous/transports.html" class=" module">transports</a>
+							</li>
+							<li>
+								<a href="../asynchronous/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../asynchronous.html" class=" module">asynchronous</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Module asynchronous.tasks</h1>
+			<p> Support for tasks, coroutines and the scheduler.
+</p>
+
+			<section></section>
+			<section>
+				<h2>Functions</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="asCompleted" class="public" href="../asynchronous/tasks/asCompleted.html">
+								<code>asCompleted</code>
+							</a>
+						</td>
+						<td> Return an generator whose values, when waited for, are Future instances in
+ the order in which and as soon as they complete.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="ensureFuture" class="public" href="../asynchronous/tasks/ensureFuture.html">
+								<code>ensureFuture</code>
+							</a>
+						</td>
+						<td> Schedule the execution of a <a href="../asynchronous/tasks/ensureFuture.html#coroutine"><code class="prettyprint lang-d">coroutine</code></a>: wrap it in a future. Return a
+ <u><a href="../asynchronous/tasks/Task.html"><code class="prettyprint lang-d">Task</code></a></u> object.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="shield" class="public" href="../asynchronous/tasks/shield.html">
+								<code>shield</code>
+							</a>
+						</td>
+						<td> Wait for a future, shielding it from cancellation.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="sleep" class="public" href="../asynchronous/tasks/sleep.html">
+								<code>sleep</code>
+							</a>
+						</td>
+						<td> Create a coroutine that completes after a given time. If <u><a href="../asynchronous/tasks/sleep.html#result"><code class="prettyprint lang-d">result</code></a></u>
+ is provided, it is produced to the caller when the coroutine completes.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="wait" class="public" href="../asynchronous/tasks/wait.html">
+								<code>wait</code>
+							</a>
+						</td>
+						<td> Wait for the Future instances given by <a href="../asynchronous/tasks/wait.html#futures"><code class="prettyprint lang-d">futures</code></a> to complete.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="waitFor" class="public" href="../asynchronous/tasks/waitFor.html">
+								<code>waitFor</code>
+							</a>
+						</td>
+						<td> Wait for the single Future to complete with <a href="../asynchronous/tasks/waitFor.html#timeout"><code class="prettyprint lang-d">timeout</code></a>. If <a href="../asynchronous/tasks/waitFor.html#timeout"><code class="prettyprint lang-d">timeout</code></a> is 0 or
+ negative, block until the <a href="../asynchronous/tasks/waitFor.html#future"><code class="prettyprint lang-d">future</code></a> completes.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="yieldValue" class="public" href="../asynchronous/tasks/yieldValue.html">
+								<code>yieldValue</code>
+							</a>
+						</td>
+						<td> Yield a <a href="../asynchronous/tasks/yieldValue.html#value"><code class="prettyprint lang-d">value</code></a> to the caller of the currently executing generator task. The
+ type of the yielded <a href="../asynchronous/tasks/yieldValue.html#value"><code class="prettyprint lang-d">value</code></a> and of type of the generator must be the same;
+</td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Classes</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="GeneratorTask" class="public" href="../asynchronous/tasks/GeneratorTask.html">
+								<code>GeneratorTask</code>
+							</a>
+						</td>
+						<td> A <u><code class="prettyprint lang-d">GeneratorTask</code></u> is a <u><a href="../asynchronous/tasks/Task.html"><code class="prettyprint lang-d">Task</code></a></u> that periodically returns
+ values of type <u>T</u> to the caller via <u><a href="../asynchronous/tasks/yieldValue.html"><code class="prettyprint lang-d">yieldValue</code></a></u>. This
+ is represented as an <u>InputRange</u>.
+</td>
+					</tr>
+					<tr>
+						<td>
+							<a id="Task" class="public" href="../asynchronous/tasks/Task.html">
+								<code>Task</code>
+							</a>
+						</td>
+						<td> Schedule the execution of a fiber: wrap it in a future. A task is a
+ subclass of Future.
+</td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Authors</h2>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+
+			</section>
+			<section>
+				<h2>License</h2>
+
+			</section>
+		</div>
+	</body>
+</html>

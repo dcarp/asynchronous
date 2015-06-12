@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Function wait</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">asynchronous</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/events.html" class=" module">events</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/futures.html" class=" module">futures</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/locks.html" class=" module">locks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/protocols.html" class=" module">protocols</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/queues.html" class=" module">queues</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/streams.html" class=" module">streams</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/tasks.html" class="selected module">tasks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/transports.html" class=" module">transports</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../asynchronous.html" class=" module">asynchronous</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Function wait</h1>
+			<section>
+				<p> Wait for the Future instances given by <a href="../../asynchronous/tasks/wait.html#futures"><code class="prettyprint lang-d">futures</code></a> to complete.
+</p>
+<section>
+</section>
+
+					<section>
+						<h3>Prototype</h3>
+						<pre class="code prettyprint lang-d prototype">
+auto wait(Future)(
+&nbsp;&nbsp;<a href="../../asynchronous/events/EventLoop.html">EventLoop</a> eventLoop,
+&nbsp;&nbsp;Future[] futures,
+&nbsp;&nbsp;Duration timeout = Duration.zero,
+&nbsp;&nbsp;ReturnWhen returnWhen = ReturnWhen.ALL_COMPLETED
+)
+if (is(Future : FutureHandle));</pre>
+					</section>
+<section><h3>Parameters</h3>
+<table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
+<tr><td id="eventLoop">eventLoop</td><td> event loop, $(D_PSYMBOL getEventLoop) if not specified.
+</td></tr>
+<tr><td id="futures">futures</td><td> <a href="../../asynchronous/tasks/wait.html#futures"><code class="prettyprint lang-d">futures</code></a> to <code class="prettyprint lang-d">wait</code> for.
+</td></tr>
+<tr><td id="timeout">timeout</td><td> can be used to control the maximum number of seconds to <code class="prettyprint lang-d">wait</code>
+      before returning. If $(PARAM <a href="../../asynchronous/tasks/wait.html#timeout"><code class="prettyprint lang-d">timeout</code></a>) is 0 or negative there is no limit
+      to the <code class="prettyprint lang-d">wait</code> time.
+</td></tr>
+<tr><td id="returnWhen">returnWhen</td><td> indicates when this function should return. It must be one of
+      the following constants:
+          FIRST_COMPLETED The function will return when any future finishes or
+              is cancelled.
+          FIRST_EXCEPTION The function will return when any future finishes by
+              raising an exception. If no future raises an exception then it
+              is equivalent to ALL_COMPLETED.
+          ALL_COMPLETED The function will return when all <a href="../../asynchronous/tasks/wait.html#futures"><code class="prettyprint lang-d">futures</code></a> finish or
+              are cancelled.
+</td></tr>
+</table>
+</section>
+<section><h3>Returns</h3>
+<p>a named 2-tuple of arrays. The first array, named <u>done</u>,
+      contains the <a href="../../asynchronous/tasks/wait.html#futures"><code class="prettyprint lang-d">futures</code></a> that completed (finished or were cancelled) before
+      the <code class="prettyprint lang-d">wait</code> completed. The second array, named <u>notDone</u>,
+      contains uncompleted <a href="../../asynchronous/tasks/wait.html#futures"><code class="prettyprint lang-d">futures</code></a>.
+</p>
+</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+
+			</section>
+			<section>
+				<h2>License</h2>
+
+			</section>
+		</div>
+	</body>
+</html>

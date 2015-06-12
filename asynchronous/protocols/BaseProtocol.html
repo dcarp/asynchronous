@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Interface BaseProtocol</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="prettyPrint(); setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">asynchronous</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/events.html" class=" module">events</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/futures.html" class=" module">futures</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/locks.html" class=" module">locks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/protocols.html" class="selected module">protocols</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/queues.html" class=" module">queues</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/streams.html" class=" module">streams</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/tasks.html" class=" module">tasks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/transports.html" class=" module">transports</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../asynchronous.html" class=" module">asynchronous</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Interface BaseProtocol</h1>
+			<section>
+				<p> Common interface for protocol interfaces.
+</p>
+<section>
+<p> Usually user implements protocols that derived from <code class="prettyprint lang-d">BaseProtocol</code> like
+ <a href="../../asynchronous/protocols/Protocol.html"><code class="prettyprint lang-d">Protocol</code></a> or ProcessProtocol.
+</p>
+
+<p> The only case when <code class="prettyprint lang-d">BaseProtocol</code> should be implemented directly is write-only
+ transport like write pipe
+</p>
+</section>
+
+					<section>
+						<h3>Methods</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html" class="public">
+										<code>connectionLost</code>
+									</a>
+								</td>
+								<td> Called when the connection is lost or closed.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html" class="public">
+										<code>connectionMade</code>
+									</a>
+								</td>
+								<td> <u><code class="prettyprint lang-d">connectionMade</code>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="prettyprint lang-d">connectionLost</code></a>()</u> are
+ called exactly once per successful connection. All other callbacks will
+ be called between those two methods, which allows for easier resource
+ management in your protocol implementation.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html" class="public">
+										<code>pauseWriting</code>
+									</a>
+								</td>
+								<td> <u><code class="prettyprint lang-d">pauseWriting</code>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="prettyprint lang-d">resumeWriting</code></a>()</u> calls are
+ paired – <u><code class="prettyprint lang-d">pauseWriting</code>()</u> is called once when the buffer goes
+ strictly over the high-water mark (even if subsequent writes increases
+ the buffer size even more), and eventually <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="prettyprint lang-d">resumeWriting</code></a>()</u>
+ is called once when the buffer size reaches the low-water mark.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html" class="public">
+										<code>resumeWriting</code>
+									</a>
+								</td>
+								<td> Called when the transport’s buffer drains below the low-water mark.
+</td>
+							</tr>
+						</table>
+					</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+
+			</section>
+			<section>
+				<h2>License</h2>
+
+			</section>
+		</div>
+	</body>
+</html>

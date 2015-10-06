@@ -83,9 +83,15 @@ if (isDelegate!Dg)
         }
     }
 
+    /**
+     * Cancel the call. If the callback is already canceled or executed, this
+     * method has no effect.
+     */
     override void cancel()
     {
         this.cancelled = true;
+        this.dg = null;
+        this.args = Args.init;
     }
 
     protected override void opCallImpl()

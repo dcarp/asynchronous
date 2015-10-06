@@ -2,6 +2,7 @@
 var symbols = [
 {name: 'asynchronous.events', kind: "module", path: './asynchronous/events.html', attributes: []},
 {name: 'asynchronous.events.Callback', kind: "classdeclaration", path: './asynchronous/events/Callback.html', attributes: []},
+{name: 'asynchronous.events.Callback.cancel', kind: "functiondeclaration", path: './asynchronous/events/Callback.cancel.html', attributes: ["override"]},
 {name: 'asynchronous.events.EventLoop', kind: "classdeclaration", path: './asynchronous/events/EventLoop.html', attributes: []},
 {name: 'asynchronous.events.EventLoop.callAt', kind: "functiondeclaration", path: './asynchronous/events/EventLoop.callAt.html', attributes: ["auto", "final"]},
 {name: 'asynchronous.events.EventLoop.callLater', kind: "functiondeclaration", path: './asynchronous/events/EventLoop.callLater.html', attributes: ["auto", "final"]},

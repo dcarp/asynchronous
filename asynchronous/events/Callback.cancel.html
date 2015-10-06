@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Class Callback</title>
+		<title>Function Callback.cancel</title>
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
@@ -64,41 +64,16 @@ $('#symbolSearchPane').show();
 				</div>
 		</nav>
 		<div id="main-contents">
-			<h1>Class Callback</h1>
+			<h1>Function Callback.cancel</h1>
 			<section>
-				<p> A callback wrapper object returned by <u><a href="../../asynchronous/events/EventLoop.callSoon.html"><code class="prettyprint lang-d">EventLoop.callSoon</code></a></u>,
- <u>EventLoop.callSoonThreadsafe</u>,
- <u><a href="../../asynchronous/events/EventLoop.callLater.html"><code class="prettyprint lang-d">EventLoop.callLater</code></a></u>, and <u><a href="../../asynchronous/events/EventLoop.callAt.html"><code class="prettyprint lang-d">EventLoop.callAt</code></a></u>.
+				<p> Cancel the call. If the callback is already canceled or executed, this
+ method has no effect.
 </p>
 
 					<section>
-						<h3>Inherits from</h3>
-						<ul>
-							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
- (base class)
-							</li>
-						</ul>
-					</section>
-					<section>
-						<h3>Methods</h3>
-						<table>
-							<col class="caption"/>
-							<tr>
-								<th>Name</th>
-								<th>Description</th>
-							</tr>
-							<tr>
-								<td>
-									<a href="../../asynchronous/events/Callback.cancel.html" class="public">
-										<code>cancel</code>
-									</a>
-								</td>
-								<td> Cancel the call. If the callback is already canceled or executed, this
- method has no effect.
-</td>
-							</tr>
-						</table>
+						<h3>Prototype</h3>
+						<pre class="code prettyprint lang-d prototype">
+override void cancel();</pre>
 					</section>
 
 			</section>

@@ -3,6 +3,7 @@
 <url><loc>http://127.0.0.1/index.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/Callback.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/Callback.cancel.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.callAt.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.callLater.html</loc></url>

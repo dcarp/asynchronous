@@ -369,7 +369,7 @@ abstract class EventLoop
      *
      * This method’s behavior is the same as $(D_PSYMBOL callLater()).
      */
-    final auto callAt(Callback, Args...)(SysTime when, Dg dg, Args args)
+    final auto callAt(Dg, Args...)(SysTime when, Dg dg, Args args)
     {
         auto callback = new Callback!(Dg, Args)(this, dg, args);
 

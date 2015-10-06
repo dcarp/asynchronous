@@ -3,7 +3,9 @@
     "description": "Asynchonous IO library for D",
     "license": "Boost 1.0",
     "copyright": "Copyright © 2014-2015 Dragoş Carp",
-    "authors": ["Dragoş Carp"],
+    "authors": [
+        "Dragoş Carp"
+    ],
     "targetType": "library",
     "targetPath": "build",
     "workingDirectory": "build",
@@ -13,6 +15,13 @@
     "configurations": [
         {
             "name": "library"
+        },
+        {
+            "name": "unittest",
+            "targetType": "executable",
+            "sourcePaths": ["test"],
+            "buildOptions": ["debugInfoC", "unittests"],
+            "dflags": ["-main"]
         }
     ]
 }

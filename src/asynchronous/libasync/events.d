@@ -411,6 +411,7 @@ private final class LibasyncTransport : Transport
     }
     body
     {
+        this.connection = null;
         this.eventLoop.callSoon(&this.protocol.connectionLost,
             socketOSException);
     }
@@ -524,6 +525,8 @@ private final class LibasyncTransport : Transport
     }
     body
     {
+        enforce(this.connection !is null, "Disconnected transport");
+
         if (this.writeBuffer.empty)
         {
             auto sent = this.connection.send(cast(const ubyte[]) data);

@@ -229,7 +229,9 @@ if (isDelegate!Coroutine)
     debug (tasks)
         package string id()
         {
-            return (cast(void*) cast(TaskHandle) this).toString;
+            import std.format : format;
+
+            return "%s".format(cast(void*) cast(TaskHandle) this);
         }
 
     this(EventLoop eventLoop, Coroutine coroutine, Args args)
@@ -299,12 +301,16 @@ if (isDelegate!Coroutine)
 
     private void step(Throwable throwable = null)
     {
-        debug (tasks)
-            std.stdio.writeln("Resume task ", id);
+        // TODO why rescheduled when it is already terminated?
+        if (this.fiber is null)
+            return;
 
         final switch (this.fiber.state)
         {
         case Fiber.State.HOLD:
+            debug (tasks)
+                std.stdio.writeln("Resume task ", id);
+
             TaskRepository.resetCurrentTask(this.eventLoop, this);
 
             if (throwable !is null)
@@ -325,10 +331,13 @@ if (isDelegate!Coroutine)
                 setException(throwable);
             }
 
-            if (this.fiber.state == Fiber.State.TERM)
-                scheduleStep;
-
             TaskRepository.resetCurrentTask(this.eventLoop);
+
+            if (this.fiber.state == Fiber.State.TERM)
+                goto case Fiber.State.TERM;
+
+            debug (tasks)
+                std.stdio.writeln("Suspend task ", id);
             break;
         case Fiber.State.EXEC:
             assert(0, "Internal error");
@@ -339,9 +348,6 @@ if (isDelegate!Coroutine)
             this.fiber = null;
             break;
         }
-
-        debug (tasks)
-            std.stdio.writeln("Suspend task ", id);
     }
 
     protected override void scheduleStep()

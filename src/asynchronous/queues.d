@@ -77,10 +77,12 @@ class Queue(T, size_t maxSize = 0)
 
     override string toString()
     {
-        import std.string;
+        import std.string : format;
 
-        return "%s(maxsize %s, queue %s, getters %s, putters %s, unfinisedTasks %s)"
-            .format(typeid(this), maxSize, queue, getters, putters,
+        auto data = chain(queue, queue)[start .. start + length];
+
+        return "%s(maxsize %s, queue %s, getters %s, putters %s, unfinishedTasks %s)"
+            .format(typeid(this), maxSize, data, getters, putters,
                 unfinishedTasks);
     }
 
@@ -99,13 +101,6 @@ class Queue(T, size_t maxSize = 0)
     {
         queue[(start + length) % $] = item;
         ++length;
-    }
-
-    private void putInternal(T item)
-    {
-        put_(item);
-        ++unfinishedTasks;
-        finished.clear;
     }
 
     private void ensureCapacity()
@@ -131,10 +126,20 @@ class Queue(T, size_t maxSize = 0)
             queue.length = queue.capacity;
     }
 
-    private void consumeDoneGetters()
+    private void wakeupNextGetter()
     {
-        // Delete waiters at the head of the get() queue who've timed out.
-        getters = getters.find!(g => !g.done);
+        getters = getters.remove!(a => a.done);
+
+        if (!getters.empty)
+            getters[0].setResult;
+    }
+
+    private void wakeupNextPutter()
+    {
+        putters = putters.remove!(a => a.done);
+
+        if (!putters.empty)
+            putters[0].setResult;
     }
 
     private void consumeDonePutters()
@@ -174,26 +179,15 @@ class Queue(T, size_t maxSize = 0)
     @Coroutine
     T get()
     {
-        consumeDonePutters;
-
-        if (!putters.empty)
-        {
-            assert(full, "queue not full, why are putters waiting?");
-
-            auto putter = putters.front;
-            putter.setResult;
-            putters.popFront;
-        }
-        else if (length == 0)
+        while (empty)
         {
             auto waiter = new Waiter(eventLoop);
 
             getters ~= waiter;
             eventLoop.waitFor(waiter);
-            assert(length > 0);
         }
 
-        return get_;
+        return getNowait;
     }
 
     /**
@@ -205,22 +199,13 @@ class Queue(T, size_t maxSize = 0)
     @Coroutine
     T getNowait()
     {
-        consumeDonePutters;
+        enforceEx!QueueEmptyException(length > 0);
 
-        if (!putters.empty)
-        {
-            assert(full, "queue not full, why are putters waiting?");
+        T item = get_;
 
-            auto putter = putters.front;
-            putter.setResult;
-            putters.popFront;
-        }
-        else
-        {
-            enforceEx!QueueEmptyException(length > 0);
-        }
+        wakeupNextPutter;
 
-        return get_;
+        return item;
     }
 
     /**
@@ -249,33 +234,18 @@ class Queue(T, size_t maxSize = 0)
     @Coroutine
     void put(T item)
     {
-        consumeDoneGetters;
-
-        if (!getters.empty)
+        static if (maxSize > 0)
         {
-            assert(length == 0, "queue non-empty, why are getters waiting?");
-
-            auto getter = getters.front;
-            getter.setResult;
-            getters.popFront;
-        }
-        else
-        {
-            static if (maxSize > 0)
+            while (full)
             {
-                if (maxSize <= qsize)
-                {
-                    auto waiter = new Waiter(eventLoop);
+                auto waiter = new Waiter(eventLoop);
 
-                    putters ~= waiter;
-                    eventLoop.waitFor(waiter);
-                    assert(qsize < maxSize);
-                }
+                putters ~= waiter;
+                eventLoop.waitFor(waiter);
             }
         }
 
-        ensureCapacity;
-        putInternal(item);
+        putNowait(item);
     }
 
     /**
@@ -286,24 +256,15 @@ class Queue(T, size_t maxSize = 0)
      */
     void putNowait(T item)
     {
-        consumeDoneGetters;
-
-        if (!getters.empty)
-        {
-            assert(length == 0, "queue non-empty, why are getters waiting?");
-
-            auto getter = getters.front;
-            getter.setResult;
-            getters.popFront;
-        }
-        else
-        {
-            static if (maxSize > 0)
-                enforceEx!QueueFullException(qsize < maxSize);
-        }
+        static if (maxSize > 0)
+            enforceEx!QueueFullException(qsize < maxSize);
 
         ensureCapacity;
-        putInternal(item);
+        put_(item);
+        ++unfinishedTasks;
+        finished.clear;
+
+        wakeupNextGetter;
     }
 
     /**

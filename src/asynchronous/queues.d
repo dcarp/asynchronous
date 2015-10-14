@@ -126,20 +126,12 @@ class Queue(T, size_t maxSize = 0)
             queue.length = queue.capacity;
     }
 
-    private void wakeupNextGetter()
+    private void wakeupNext(ref Waiter[] waiters)
     {
-        getters = getters.remove!(a => a.done);
+        waiters = waiters.remove!(a => a.done);
 
-        if (!getters.empty)
-            getters[0].setResult;
-    }
-
-    private void wakeupNextPutter()
-    {
-        putters = putters.remove!(a => a.done);
-
-        if (!putters.empty)
-            putters[0].setResult;
+        if (!waiters.empty)
+            waiters[0].setResult;
     }
 
     private void consumeDonePutters()
@@ -203,7 +195,7 @@ class Queue(T, size_t maxSize = 0)
 
         T item = get_;
 
-        wakeupNextPutter;
+        wakeupNext(putters);
 
         return item;
     }
@@ -264,7 +256,7 @@ class Queue(T, size_t maxSize = 0)
         ++unfinishedTasks;
         finished.clear;
 
-        wakeupNextGetter;
+        wakeupNext(getters);
     }
 
     /**

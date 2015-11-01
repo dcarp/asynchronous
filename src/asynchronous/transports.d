@@ -4,7 +4,7 @@
 module asynchronous.transports;
 
 import std.process : Pid, Pipe;
-import std.socket : Address;
+import std.socket : Address, Socket;
 import std.typecons;
 
 /**
@@ -15,7 +15,22 @@ interface BaseTransport
     /**
      * Get optional transport information.
      */
-    string getExtraInfo(string name)();
+
+    final auto getExtraInfo(string name)()
+    {
+        static if (name == "peername")
+            return getExtraInfoPeername;
+        else static if (name == "socket")
+            return getExtraInfoSocket;
+        else static if (name == "sockname")
+            return getExtraInfoSockname;
+        else
+            assert(0, "Unknown extra info name");
+    }
+
+    protected string getExtraInfoPeername();
+    protected Socket getExtraInfoSocket();
+    protected string getExtraInfoSockname();
 
     /**
      * Close the transport.
@@ -238,4 +253,26 @@ interface SubprocessTransport : BaseTransport
      * stdout and stderr).
      */
     void close();
+}
+
+package abstract class AbstractBaseTransport : BaseTransport
+{
+    protected override string getExtraInfoPeername()
+    {
+        auto socket = getExtraInfoSocket;
+
+        return socket !is null ? socket.remoteAddress.toString : null;
+    }
+
+    protected override Socket getExtraInfoSocket()
+    {
+        return null;
+    }
+
+    protected override string getExtraInfoSockname()
+    {
+        auto socket = getExtraInfoSocket;
+
+        return socket !is null ? socket.localAddress.toString : null;
+    }
 }

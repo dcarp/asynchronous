@@ -740,7 +740,7 @@ final class StreamWriter
      * Return optional transport information: see $(D_PSYMBOL
      * BaseTransport.getExtraInfo()).
      */
-    string getExtraInfo(string name)()
+    auto getExtraInfo(string name)()
     {
         return transport_.getExtraInfo!name;
     }

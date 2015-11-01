@@ -69,7 +69,7 @@ interface FutureHandle
     string toString();
 }
 
-abstract class FutureBase : FutureHandle
+abstract class BaseFuture : FutureHandle
 {
     private enum State
     {
@@ -176,7 +176,7 @@ abstract class FutureBase : FutureHandle
 /*
  * Encapsulates the asynchronous execution of a callable.
  */
-class Future(T) : FutureBase
+class Future(T) : BaseFuture
 {
     private T result_;
 
@@ -239,7 +239,7 @@ class Future(T) : FutureBase
 
 alias Waiter = Future!void;
 
-class Future(T : void) : FutureBase
+class Future(T : void) : BaseFuture
 {
     alias ResultType = void;
 

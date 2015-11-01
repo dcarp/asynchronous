@@ -167,7 +167,6 @@ unittest
         loop.runUntilComplete(loop.createTask(() => testHelper.tearDown));
     }
 
-
     // execute
     loop.runUntilComplete(loop.createTask(() => testHelper.createConnection));
     loop.runUntilComplete(loop.createTask(() => testHelper.sendToServer("foo")));

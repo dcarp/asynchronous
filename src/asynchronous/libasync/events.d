@@ -290,7 +290,7 @@ class LibasyncEventLoopPolicy : EventLoopPolicy
     //}
 }
 
-private final class LibasyncTransport : Transport
+private final class LibasyncTransport : AbstractBaseTransport, Transport
 {
     private EventLoop eventLoop;
     private Socket _socket;
@@ -440,10 +440,9 @@ private final class LibasyncTransport : Transport
     /**
      * Transport interface
      */
-
-    override string getExtraInfo(string name)()
+    override Socket getExtraInfoSocket()
     {
-        assert(0, "Unknown transport information " ~ name);
+        return socket;
     }
 
     void close()
@@ -551,7 +550,7 @@ private final class LibasyncTransport : Transport
     }
 }
 
-private final class LibasyncDatagramTransport : DatagramTransport
+private final class LibasyncDatagramTransport : AbstractBaseTransport,  DatagramTransport
 {
     private EventLoop eventLoop;
     private Socket _socket;
@@ -645,9 +644,9 @@ private final class LibasyncDatagramTransport : DatagramTransport
      * DatagramTransport interface
      */
 
-    string getExtraInfo(string name)
+    override Socket getExtraInfoSocket()
     {
-        assert(0, "Unknown transport information " ~ name);
+        return socket;
     }
 
     void close()

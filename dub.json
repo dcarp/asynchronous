@@ -1,6 +1,6 @@
 {
     "name": "asynchronous",
-    "description": "Asynchonous IO library for D",
+    "description": "Asynchonous library for D",
     "license": "Boost 1.0",
     "copyright": "Copyright © 2014-2015 Dragoş Carp",
     "authors": [
@@ -10,7 +10,7 @@
     "targetPath": "build",
     "workingDirectory": "build",
     "dependencies": {
-        "libasync": "~>0.7.5"
+        "libasync": "~>0.7.7"
     },
     "configurations": [
         {

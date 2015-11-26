@@ -453,7 +453,7 @@ final class StreamReader
     }
 
     /**
-     * Wakeup $(D_PSYMBOL read()) or $(D_PSYMBOL readline()) function waiting
+     * Wakeup $(D_PSYMBOL read()) or $(D_PSYMBOL readLine()) function waiting
      * for data or EOF.
      */
     private void wakeupWaiter()
@@ -480,15 +480,14 @@ final class StreamReader
      * Wait until $(D_PSYMBOL feedData()) or $(D_PSYMBOL feedEof()) is called.
      */
     @Coroutine
-    private void waitForData(string functionName)
+    private void waitForData(string functionName)()
     {
         // StreamReader uses a future to link the protocol feed_data() method
         // to a read coroutine. Running two read coroutines at the same time
         // would have an unexpected behaviour. It would not possible to know
         // which coroutine would get the next data.
-        enforce(flowWaiter is null,
-            "%s() called while another coroutine is already waiting for incoming data"
-                .format(functionName));
+        enforce(flowWaiter is null, functionName
+            ~ "() called while another coroutine is already waiting for incoming data");
 
         flowWaiter = new Waiter(eventLoop);
         eventLoop.waitFor(flowWaiter);
@@ -531,7 +530,7 @@ final class StreamReader
         }
 
         if (buffer.empty && !eof)
-            waitForData("read");
+            waitForData!"read";
 
         const(void)[] data;
 
@@ -561,7 +560,7 @@ final class StreamReader
      * array.
      */
     @Coroutine
-    const(char)[] readline()
+    const(char)[] readLine()
     {
         if (exception !is null)
             throw exception;
@@ -592,7 +591,7 @@ final class StreamReader
                 break;
 
             if (notEnough)
-                waitForData("readline");
+                waitForData!"readLine";
         }
 
         maybeResumeTransport;
@@ -606,7 +605,7 @@ final class StreamReader
      * attribute of the exception contains the partial read bytes.
      */
     @Coroutine
-    const(void)[] readexactly(size_t n)
+    const(void)[] readExactly(size_t n)
     {
         if (exception !is null)
             throw exception;

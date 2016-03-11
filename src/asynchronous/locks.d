@@ -125,7 +125,7 @@ final class Lock
      */
     void release()
     {
-        enforce(!locked_, "Lock is not acquired.");
+        enforce(locked_, "Lock is not acquired.");
 
         locked_ = false;
 

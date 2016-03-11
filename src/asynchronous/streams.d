@@ -8,7 +8,6 @@ import std.array : Appender, empty;
 import std.exception : enforce, enforceEx;
 import std.socket : AddressFamily, AddressInfoFlags, ProtocolType, Socket,
     SocketOSException;
-import std.string : format;
 import std.typecons : tuple;
 import asynchronous.events;
 import asynchronous.futures;
@@ -674,7 +673,7 @@ final class StreamWriter
     {
         import std.format : format;
 
-        return "%s(transport = %s, reader = %s)".format(typeof(this).stringof,
+        return "%s(transport = %s, reader = %s)".format(typeid(this),
             cast(WriteTransport) transport_, cast(StreamReader) streamReader);
     }
 

@@ -77,13 +77,14 @@ class Queue(T, size_t maxSize = 0)
 
     override string toString() const
     {
-        import std.string : format;
+        import std.format : format;
 
-        auto data = chain(queue, queue)[start .. start + length];
+        import std.format : format;
+
+        auto data = chain(cast(T[]) queue, cast(T[]) queue)[start .. start + length];
 
         return "%s(maxsize %s, queue %s, getters %s, putters %s, unfinishedTasks %s)"
-            .format(typeid(this), maxSize, data, getters, putters,
-                unfinishedTasks);
+            .format(typeid(this), maxSize, data, getters, putters, unfinishedTasks);
     }
 
     protected T get_()

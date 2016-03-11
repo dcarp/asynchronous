@@ -36,7 +36,7 @@ class IncompleteReadError : Exception
     this(const(void)[] partial, size_t expected, string file = __FILE__,
         size_t line = __LINE__, Throwable next = null) @safe pure
     {
-        import std.string;
+        import std.format : format;
 
         this.partial = partial;
         this.expected = expected;
@@ -637,7 +637,7 @@ final class StreamReader
      * Return $(D_KEYWORD true) if the buffer is empty and $(D_PSYMBOL feedEof())
      * was called.
      */
-    bool atEof()
+    bool atEof() const
     {
         return eof && buffer.empty;
     }
@@ -670,12 +670,12 @@ final class StreamWriter
         this.streamReader = streamReader;
     }
 
-    override string toString()
+    override string toString() const
     {
-        import std.string;
+        import std.format : format;
 
         return "%s(transport = %s, reader = %s)".format(typeof(this).stringof,
-            transport, streamReader);
+            cast(WriteTransport) transport_, cast(StreamReader) streamReader);
     }
 
     /**

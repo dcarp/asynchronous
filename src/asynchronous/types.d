@@ -72,6 +72,7 @@ class NotImplementedException : Exception
 class ResourcePool(T, TArgs...)
 if (is(T == class))
 {
+    private size_t inUseCount;
     private Array!bool inUseFlags;
     private Array!T resources;
 
@@ -107,6 +108,7 @@ if (is(T == class))
         static if (hasMember!(T, "reset"))
             result.reset(tResetArgs);
 
+        ++inUseCount;
         return result;
     }
 
@@ -120,18 +122,19 @@ if (is(T == class))
             resources[count].reset;
 
         inUseFlags[count] = false;
+        --inUseCount;
     }
 
     bool empty()
     {
-        return !inUseFlags[].canFind!"a";
+        return inUseCount == 0;
     }
 
-    override string toString()
+    override string toString() const
     {
-        import std.string;
+        import std.format : format;
 
-        return "%s(lenght: %s, capacity: %s)".format(typeid(this),
-            inUseFlags[].count!"a", inUseFlags.length);
+        return "%s(length: %s, capacity: %s)".format(typeid(this),
+            inUseCount, inUseFlags.length);
     }
 }

@@ -112,9 +112,9 @@ if (isDelegate!Dg)
         }
     }
 
-    override string toString()
+    override string toString() const
     {
-        import std.string;
+        import std.format : format;
 
         return "%s(dg: %s, cancelled: %s".format(typeid(this),
             __traits(identifier, dg), cancelled);
@@ -167,14 +167,14 @@ package class ServerImpl : Server
 
     override void close()
     {
-        Socket[] sockets = this.sockets;
-
-        if (sockets.empty)
+        if (this.sockets.empty)
             return;
+
+        Socket[] stopSockets = this.sockets;
 
         this.sockets = null;
 
-        foreach (socket; sockets)
+        foreach (socket; stopSockets)
             this.eventLoop.stopServing(socket);
 
         if (this.activeCount == 0)
@@ -183,11 +183,11 @@ package class ServerImpl : Server
 
     private void wakeup()
     {
-        Waiter[] waiters = this.waiters;
+        Waiter[] doneWaiters = this.waiters;
 
         this.waiters = null;
 
-        foreach (waiter; waiters)
+        foreach (waiter; doneWaiters)
         {
             if (!waiter.done)
                 waiter.setResult;
@@ -942,7 +942,7 @@ abstract class EventLoop
             }
             catch (SocketOSException socketOSException)
             {
-                import core.stdc.errno;
+                import core.stdc.errno : EADDRINUSE;
 
                 socket.close;
                 if (socketOSException.errorCode == EADDRINUSE)
@@ -1058,7 +1058,7 @@ abstract class EventLoop
     void callExceptionHandler(ExceptionContext context);
     +/
 
-    override string toString()
+    override string toString() const
     {
         return "%s(%s)".format(typeid(this), this.state);
     }

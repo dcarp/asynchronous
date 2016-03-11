@@ -22,7 +22,7 @@ interface FutureHandle
     /**
      * Return $(D_KEYWORD true) if the future was cancelled.
      */
-    bool cancelled();
+    bool cancelled() const;
 
     /**
      * Return $(D_KEYWORD true) if the future is done.
@@ -30,7 +30,7 @@ interface FutureHandle
      * Done means either that a result/exception are available, or that the
      * future was cancelled.
      */
-    bool done();
+    bool done() const;
 
     /**
      * Returns: the exception that was set on this future.
@@ -66,7 +66,7 @@ interface FutureHandle
      */
     void setException(Throwable exception);
 
-    string toString();
+    string toString() const;
 }
 
 abstract class BaseFuture : FutureHandle
@@ -115,12 +115,12 @@ abstract class BaseFuture : FutureHandle
         }
     }
 
-    bool cancelled()
+    bool cancelled() const
     {
         return this.state == State.CANCELLED;
     }
 
-    bool done()
+    bool done() const
     {
         return this.state != State.PENDING;
     }
@@ -165,15 +165,15 @@ abstract class BaseFuture : FutureHandle
         scheduleCallbacks;
     }
 
-    override string toString()
+    override string toString() const
     {
-        import std.string;
+        import std.format : format;
 
         return "%s(done: %s, cancelled: %s)".format(typeid(this), done, cancelled);
     }
 }
 
-/*
+/**
  * Encapsulates the asynchronous execution of a callable.
  */
 class Future(T) : BaseFuture
@@ -276,7 +276,7 @@ class Future(T : void) : BaseFuture
 
 unittest
 {
-    import std.exception;
+    import std.exception : assertThrown, Exception;
 
     auto future = new Future!int;
     assert(!future.done);

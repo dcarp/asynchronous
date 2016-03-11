@@ -69,9 +69,9 @@ final class Lock
             this.eventLoop = eventLoop;
     }
 
-    override string toString()
+    override string toString() const
     {
-        import std.string;
+        import std.format : format;
 
         return "%s(%s, waiters %s)".format(typeid(this),
             locked ? "locked" : "unlocked", waiters);
@@ -80,7 +80,7 @@ final class Lock
     /**
      * Return $(D_KEYWORD true) if lock is acquired.
      */
-    @property bool locked()
+    @property bool locked() const
     {
         return locked_;
     }
@@ -161,9 +161,9 @@ final class Event
             this.eventLoop = eventLoop;
     }
 
-    override string toString()
+    override string toString() const
     {
-        import std.string;
+        import std.format : format;
 
         return "%s(%s, waiters %s)".format(typeid(this),
             value ? "set" : "unset", waiters);
@@ -182,7 +182,7 @@ final class Event
     /**
      * Return $(D_KEYWORD true) if and only if the internal flag is true.
      */
-    bool isSet()
+    bool isSet() const
     {
         return value;
     }
@@ -266,9 +266,9 @@ final class Condition
         this.lock = lock;
     }
 
-    override string toString()
+    override string toString() const
     {
-        import std.string;
+        import std.format : format;
 
         return "%s(%s, waiters %s)".format(typeid(this),
             locked ? "locked" : "unlocked", waiters);
@@ -315,7 +315,7 @@ final class Condition
     /**
      * Return $(D_KEYWORD true) if the underlying lock is acquired.
      */
-    @property bool locked()
+    @property bool locked() const
     {
         return lock.locked;
     }
@@ -429,9 +429,9 @@ class Semaphore
         this.value = value;
     }
 
-    override string toString()
+    override string toString() const
     {
-        import std.string;
+        import std.format : format;
 
         if (locked)
             return "%s(locked, waiters %s)".format(typeid(this), waiters);
@@ -474,7 +474,7 @@ class Semaphore
     /**
      * Returns $(D_KEYWORD true) if semaphore can not be acquired immediately.
      */
-    @property bool locked()
+    @property bool locked() const
     {
         return value == 0;
     }

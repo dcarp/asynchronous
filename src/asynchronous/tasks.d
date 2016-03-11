@@ -372,9 +372,9 @@ if (isDelegate!Coroutine)
             this.eventLoop.callSoon(&step, throwable);
     }
 
-    override string toString()
+    override string toString() const
     {
-        import std.string;
+        import std.format : format;
 
         return "%s(done: %s, cancelled: %s)".format(typeid(this), done,
             cancelled);
@@ -508,7 +508,7 @@ auto ensureFuture(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
 
 unittest
 {
-    import std.functional;
+    import std.functional : toDelegate;
 
     auto task1 = ensureFuture(null, toDelegate({
         return 3 + 39;
@@ -520,7 +520,7 @@ unittest
     task1.cancel;
     assert(!task1.cancelled);
 
-    auto result = getEventLoop.runUntilComplete(task1);
+    const result = getEventLoop.runUntilComplete(task1);
 
     assert(task1.done);
     assert(!task1.cancelled);
@@ -809,7 +809,7 @@ unittest
         return eventLoop.wait(tasks, 50.msecs);
     });
 
-    auto result = eventLoop.runUntilComplete(waitTask);
+    const result = eventLoop.runUntilComplete(waitTask);
 
     assert(tasks[0].done);
     assert(tasks[1].done);

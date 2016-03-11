@@ -75,7 +75,7 @@ class Queue(T, size_t maxSize = 0)
         this.finished.set;
     }
 
-    override string toString()
+    override string toString() const
     {
         import std.string : format;
 
@@ -332,7 +332,7 @@ class PriorityQueue(T, size_t maxSize = 0, alias less = "a < b") :
 {
     import std.container : BinaryHeap;
 
-    BinaryHeap!(T[], less) binaryHeap;
+    private BinaryHeap!(T[], less) binaryHeap;
 
     this(EventLoop eventLoop = null)
     {

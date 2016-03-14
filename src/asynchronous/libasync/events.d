@@ -67,6 +67,9 @@ package class LibasyncEventLoop : EventLoop
                 this.state = State.STOPPED;
                 return;
             case State.RUNNING:
+                if (this.currentAppender.data.empty)
+                    this.eventLoop.loop(-1.msecs);
+
                 auto callbacks = this.currentAppender;
 
                 if (this.currentAppender == &this.nextCallbacks1)
@@ -76,17 +79,10 @@ package class LibasyncEventLoop : EventLoop
 
                 assert(this.currentAppender.data.empty);
 
-                if (callbacks.data.empty)
-                {
-                    this.eventLoop.loop(-1.msecs);
-                }
-                else
-                {
-                    foreach (callback; callbacks.data.filter!(a => !a.cancelled))
-                        callback();
+                foreach (callback; callbacks.data.filter!(a => !a.cancelled))
+                    callback();
 
-                    callbacks.clear;
-                }
+                callbacks.clear;
                 break;
             case State.CLOSED:
                 throw new Exception("Event loop closed while running.");
@@ -151,12 +147,7 @@ package class LibasyncEventLoop : EventLoop
 
         auto transport = this.pendingConnections[index];
 
-        if (this.pendingConnections.length > 1)
-        {
-            this.pendingConnections[index] = this.pendingConnections[$ - 1];
-        }
-        this.pendingConnections.length -= 1;
-
+        this.pendingConnections = this.pendingConnections.remove(index);
         transport.setProtocol(protocol, waiter);
 
         return transport;
@@ -592,9 +583,8 @@ private final class LibasyncDatagramTransport : AbstractBaseTransport,  Datagram
         enforce(length < readBuffer.length,
             "Unexpected UDP package size > 1500 bytes");
 
-        Address tmp;
         Address address = new UnknownAddressReference(
-            cast(typeof(tmp.name)) networkAddress.sockAddr,
+            cast(typeof(Address.init.name)) networkAddress.sockAddr,
             cast(uint) networkAddress.sockAddrLen);
 
         this.eventLoop.callSoon(&this.datagramProtocol.datagramReceived,

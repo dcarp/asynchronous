@@ -82,7 +82,7 @@ package class LibasyncEventLoop : EventLoop
                 }
                 else
                 {
-                    foreach (callback; callbacks.data)
+                    foreach (callback; callbacks.data.filter!(a => !a.cancelled))
                         callback();
 
                     callbacks.clear;
@@ -96,7 +96,8 @@ package class LibasyncEventLoop : EventLoop
 
     override void scheduleCallback(CallbackHandle callback)
     {
-        currentAppender.put(callback);
+        if (!callback.cancelled)
+            currentAppender.put(callback);
     }
 
     override void scheduleCallback(Duration delay, CallbackHandle callback)
@@ -109,7 +110,7 @@ package class LibasyncEventLoop : EventLoop
 
         auto timer = this.timers.acquire();
         timer.duration(delay).run({
-            callback();
+            scheduleCallback(callback);
             this.timers.release(timer);
         });
     }

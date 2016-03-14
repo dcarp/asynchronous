@@ -15,9 +15,9 @@ import asynchronous.types;
 
 package class TaskRepository
 {
-    private static __gshared TaskHandle[EventLoop] currentTasks;
+    private static TaskHandle[EventLoop] currentTasks;
 
-    private static __gshared TaskHandle[][EventLoop] tasks;
+    private static TaskHandle[][EventLoop] tasks;
 
     static TaskHandle[] allTasks(EventLoop eventLoop)
     in
@@ -174,7 +174,7 @@ private class TaskFiber : Fiber
 }
 
 
-private static __gshared ResourcePool!TaskFiber taskFibers;
+private static ResourcePool!TaskFiber taskFibers;
 
 static this()
 {

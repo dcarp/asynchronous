@@ -21,6 +21,153 @@ import asynchronous.types;
 
 alias Protocol = asynchronous.protocols.Protocol;
 
+interface CallbackHandle
+{
+    /**
+     * Cancel the call. If the callback is already canceled or executed, this
+     * method has no effect.
+     */
+    void cancel();
+
+    /**
+     * Return $(D_KEYWORD true) if the callback was cancelled.
+     */
+    bool cancelled() const;
+
+    package void opCall()
+    {
+        opCallImpl;
+    }
+
+    protected void opCallImpl();
+}
+
+/**
+ * A callback wrapper object returned by $(D_PSYMBOL EventLoop.callSoon),
+ * $(D_PSYMBOL EventLoop.callSoonThreadsafe),
+ * $(D_PSYMBOL EventLoop.callLater), and $(D_PSYMBOL EventLoop.callAt).
+ */
+class Callback(Dg, Args...) : CallbackHandle
+if (isDelegate!Dg)
+{
+    private bool _cancelled;
+
+    private EventLoop eventLoop;
+
+    private Dg dg;
+
+    private Args args;
+
+    alias ResultType = ReturnType!Dg;
+
+    this(EventLoop eventLoop, Dg dg, Args args)
+    {
+        this.eventLoop = eventLoop;
+        this._cancelled = false;
+        this.dg = dg;
+        static if (args.length > 0)
+        {
+            this.args = args;
+        }
+    }
+
+    override void cancel()
+    {
+        this._cancelled = true;
+        this.dg = null;
+        this.args = Args.init;
+    }
+
+    override bool cancelled() const
+    {
+        return this._cancelled;
+    }
+
+    protected override void opCallImpl()
+    {
+        try
+        {
+            enforceEx!CancelledException(!this._cancelled, "Callback cancelled");
+
+            this.dg(this.args);
+        }
+        catch (Throwable throwable)
+        {
+            if (this.eventLoop is null)
+                this.eventLoop = getEventLoop;
+
+            auto context = ExceptionContext("Exception on calling " ~ toString, throwable);
+            context.callback = this;
+            eventLoop.callExceptionHandler(context);
+        }
+    }
+
+    override string toString() const
+    {
+        return "%s(dg: %s, cancelled: %s)".format(typeid(this),
+            __traits(identifier, dg), _cancelled);
+    }
+}
+
+auto callback(Dg, Args...)(EventLoop eventLoop, Dg dg, Args args)
+{
+    return new Callback!(Dg, Args)(eventLoop, dg, args);
+}
+
+alias ExceptionHandler = void delegate(EventLoop, ExceptionContext);
+
+/**
+ * Exception conxtext for event exceptions
+ */
+struct ExceptionContext
+{
+    string message;            /// Error message.
+    Throwable throwable;       /// (optional) Throwable object.
+    FutureHandle future;       /// (optional) Future instance.
+    CallbackHandle callback;   /// (optional): CallbackHandle instance.
+    Protocol protocol;         /// (optional): Protocol instance.
+    Transport transport;       /// (optional): Transport instance.
+    Socket socket;             /// (optional): Socket instance.
+    ExceptionContext* context; /// (optional): Chained context.
+
+    string toString() const
+    {
+        import std.array : appender;
+        import std.conv : to;
+
+        auto result = appender("message: \"" ~ message ~ "\"");
+
+        if (throwable !is null)
+            result ~= ", throwable: " ~ (cast(Throwable) throwable).to!string;
+        if (future !is null)
+            result ~= ", future: " ~ future.to!string;
+        if (callback !is null)
+            result ~= ", callback: " ~ callback.to!string;
+        if (protocol !is null)
+            result ~= ", protocol: " ~ protocol.to!string;
+        if (transport !is null)
+            result ~= ", transport: " ~ transport.to!string;
+        if (socket !is null)
+            result ~= ", socket: " ~ (cast(Socket) socket).to!string;
+        if (context !is null)
+            result ~= ", context: " ~ (*context).to!string;
+
+        return "%s(%s)".format(typeid(this).to!string, result.data);
+    }
+}
+
+unittest
+{
+    auto exceptionContext = ExceptionContext("foo");
+    assert(!exceptionContext.toString.canFind("future"));
+    exceptionContext.future = new Future!int;
+    assert(exceptionContext.toString.canFind("future"));
+}
+
+interface SslContext
+{
+}
+
 /**
  * Interface server returned by $(D createServer()).
  */
@@ -36,94 +183,6 @@ interface Server
      */
     @Coroutine
     void waitClosed();
-}
-
-interface CallbackHandle
-{
-    void cancel();
-
-    package void opCall()
-    {
-        opCallImpl;
-    }
-
-    protected void opCallImpl();
-}
-
-interface SslContext
-{
-}
-
-/**
- * A callback wrapper object returned by $(D_PSYMBOL EventLoop.callSoon),
- * $(D_PSYMBOL EventLoop.callSoonThreadsafe),
- * $(D_PSYMBOL EventLoop.callLater), and $(D_PSYMBOL EventLoop.callAt).
- */
-class Callback(Dg, Args...) : CallbackHandle
-if (isDelegate!Dg)
-{
-    private bool cancelled;
-
-    private EventLoop eventLoop;
-
-    private Dg dg;
-
-    private Args args;
-
-    alias ResultType = ReturnType!Dg;
-
-    this(EventLoop eventLoop, Dg dg, Args args)
-    {
-        this.eventLoop = eventLoop;
-        this.cancelled = false;
-        this.dg = dg;
-        static if (args.length > 0)
-        {
-            this.args = args;
-        }
-    }
-
-    /**
-     * Cancel the call. If the callback is already canceled or executed, this
-     * method has no effect.
-     */
-    override void cancel()
-    {
-        this.cancelled = true;
-        this.dg = null;
-        this.args = Args.init;
-    }
-
-    protected override void opCallImpl()
-    {
-        try
-        {
-            enforceEx!CancelledException(!this.cancelled, "Callback cancelled");
-
-            this.dg(this.args);
-        }
-        catch (Throwable throwable)
-        {
-            if (this.eventLoop is null)
-                this.eventLoop = getEventLoop;
-
-            //TODO
-            //this.eventLoop.callExceptionHandler(this, throwable, "Exception on calling " ~ toString);
-        }
-    }
-
-    override string toString() const
-    {
-        import std.format : format;
-
-        return "%s(dg: %s, cancelled: %s".format(typeid(this),
-            __traits(identifier, dg), cancelled);
-    }
-}
-
-auto callback(Dg, Args...)(EventLoop eventLoop, Dg dg, Args args)
-{
-    return new Callback!(Dg, Args)(eventLoop, dg, args);
 }
 
 package class ServerImpl : Server
@@ -1050,13 +1109,69 @@ abstract class EventLoop
     }
 
     // Error handlers.
-    /+
-    void setExceptionHandler(void function(EventLoop, ExceptionContext) handler);
 
-    void defaultExceptionHandler(ExceptionContext context);
+    private ExceptionHandler exceptionHandler;
 
-    void callExceptionHandler(ExceptionContext context);
-    +/
+    /**
+     * Set handler as the new event loop exception handler.
+     *
+     * If handler is $(D_KEYWORD null), the default exception handler will be set.
+     *
+     * See_Also: $(D_PSYMBOL callExceptionHandler()).
+     */
+    final void setExceptionHandler(ExceptionHandler exceptionHandler)
+    {
+        this.exceptionHandler = exceptionHandler;
+    }
+
+    /**
+     * Default exception handler.
+     *
+     * This is called when an exception occurs and no exception handler is set,
+     * and can be called by a custom exception handler that wants to defer to
+     * the default behavior.
+     * The context parameter has the same meaning as in $(D_PSYMBOL
+     * callExceptionHandler()).
+     */
+    final void defaultExceptionHandler(ExceptionContext exceptionContext)
+    {
+        import std.stdio : stderr;
+
+        if (exceptionContext.message.empty)
+            exceptionContext.message = "Unhandled exception in event loop";
+
+        if (cast(Error) exceptionContext.throwable)
+            throw new Error("Uncaught Error: %s".format(exceptionContext));
+
+        stderr.writefln("Uncaught Exception: %s", exceptionContext);
+    }
+
+    /**
+     * Call the current event loop's exception handler.
+     *
+     * Note: New ExceptionContext members may be introduced in the future.
+     */
+    final void callExceptionHandler(ExceptionContext exceptionContext)
+    {
+        if (exceptionHandler is null)
+        {
+            defaultExceptionHandler(exceptionContext);
+            return;
+        }
+
+        try
+        {
+            exceptionHandler(this, exceptionContext);
+        }
+        catch (Throwable throwable)
+        {
+            auto context = ExceptionContext("Unhandled error in exception handler",
+                throwable);
+            context.context = &exceptionContext;
+
+            defaultExceptionHandler(context);
+        }
+    }
 
     override string toString() const
     {
@@ -1120,13 +1235,6 @@ private:
 
         return tuple!("transport", "protocol")(transport, protocol);
     }
-}
-
-struct ExceptionContext
-{
-    string message;
-    Exception exception;
-    //AbstractHandle handle;
 }
 
 /**

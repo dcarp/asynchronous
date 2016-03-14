@@ -2,7 +2,7 @@
     "name": "asynchronous",
     "description": "Asynchonous library for D",
     "license": "Boost 1.0",
-    "copyright": "Copyright © 2014-2015 Dragoş Carp",
+    "copyright": "Copyright © 2014-2016 Dragoş Carp",
     "authors": [
         "Dragoş Carp"
     ],

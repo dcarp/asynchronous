@@ -1135,15 +1135,13 @@ abstract class EventLoop
      */
     final void defaultExceptionHandler(ExceptionContext exceptionContext)
     {
-        import std.stdio : stderr;
-
         if (exceptionContext.message.empty)
             exceptionContext.message = "Unhandled exception in event loop";
 
         if (cast(Error) exceptionContext.throwable)
             throw new Error("Uncaught Error: %s".format(exceptionContext));
-
-        stderr.writefln("Uncaught Exception: %s", exceptionContext);
+        else
+            throw new Exception("Uncaught Exception: %s".format(exceptionContext));
     }
 
     /**

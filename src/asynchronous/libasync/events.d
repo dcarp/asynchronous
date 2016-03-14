@@ -240,7 +240,6 @@ package class LibasyncEventLoop : EventLoop
         scheduleCallback(10.msecs, callback(this, &server.detach));
     }
 
-
     version (Posix)
     {
         override void addSignalHandler(int sig, void delegate() handler)
@@ -253,21 +252,6 @@ package class LibasyncEventLoop : EventLoop
             assert(0, "removeSignalHandler not implemented yet");
         }
     }
-
-    //void setExceptionHandler(void function(EventLoop, ExceptionContext) handler)
-    //{
-
-    //}
-
-    //void defaultExceptionHandler(ExceptionContext context)
-    //{
-
-    //}
-
-    //void callExceptionHandler(ExceptionContext context)
-    //{
-
-    //}
 }
 
 class LibasyncEventLoopPolicy : EventLoopPolicy

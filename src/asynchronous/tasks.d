@@ -82,6 +82,7 @@ interface TaskHandle : FutureHandle
 
     protected void scheduleStep();
     protected void scheduleStep(Throwable throwable);
+    protected void scheduleStep(FutureHandle future);
 
     /**
      * Returns: a set of all tasks for an event loop.
@@ -219,11 +220,11 @@ if (isDelegate!Coroutine)
     private Coroutine coroutine;
     private Args args;
 
-    private Throwable injectException_;
+    private Throwable _injectException;
 
     protected override @property Throwable injectException()
     {
-        return this.injectException_;
+        return this._injectException;
     }
 
     debug (tasks)
@@ -295,7 +296,7 @@ if (isDelegate!Coroutine)
         if (done)
             return false;
 
-        this.injectException_ = new CancelledException;
+        this._injectException = new CancelledException;
         return true;
     }
 
@@ -314,7 +315,7 @@ if (isDelegate!Coroutine)
             TaskRepository.resetCurrentTask(this.eventLoop, this);
 
             if (throwable !is null)
-                this.injectException_ = throwable;
+                this._injectException = throwable;
 
             try
             {
@@ -352,7 +353,7 @@ if (isDelegate!Coroutine)
 
     protected override void scheduleStep()
     {
-        scheduleStep(null);
+        scheduleStep(cast(Throwable) null);
     }
 
     protected override void scheduleStep(Throwable throwable)
@@ -370,6 +371,11 @@ if (isDelegate!Coroutine)
             step(throwable);
         else
             this.eventLoop.callSoon(&step, throwable);
+    }
+
+    protected override void scheduleStep(FutureHandle future)
+    {
+        scheduleStep(cast(Throwable) null);
     }
 
     override string toString() const
@@ -410,18 +416,20 @@ body
     import asynchronous.queues : Queue;
     auto done = new Queue!FutureHandle;
     CallbackHandle timeoutCallback = null;
-    Tuple!(FutureHandle, void delegate())[] todo;
+    Tuple!(FutureHandle, void delegate(FutureHandle))[] todo;
 
     foreach (future; futures)
     {
-        void delegate() doneCallback = (f => {
-            if (todo.empty)
-                return; // timeoutCallback was here first
-            todo = todo.remove!(a => a[0] is f);
-            done.putNowait(f);
-            if (todo.empty && timeoutCallback !is null)
-                timeoutCallback.cancel;
-        })(future); // workaround bug #2043
+        auto doneCallback = (FutureHandle f) {
+            return (FutureHandle _) {
+                if (todo.empty)
+                    return; // timeoutCallback was here first
+                todo = todo.remove!(a => a[0] is f);
+                done.putNowait(f);
+                if (todo.empty && timeoutCallback !is null)
+                    timeoutCallback.cancel;
+            };
+        }(future); // workaround bug #2043;
 
         todo ~= tuple(future, doneCallback);
         future.addDoneCallback(doneCallback);
@@ -455,7 +463,6 @@ body
 unittest
 {
     auto eventLoop = getEventLoop;
-
     auto task1 = eventLoop.createTask({
         eventLoop.sleep(3.msecs);
     });
@@ -607,7 +614,7 @@ auto shield(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
 
     auto outer = new Future!(inner.ResultType)(eventLoop);
 
-    void doneCallback()
+    void doneCallback(FutureHandle _)
     {
         if (outer.cancelled())
         {
@@ -853,7 +860,6 @@ if (is(Future : FutureHandle))
     assert(thisTask !is null);
 
     future.addDoneCallback(&thisTask.scheduleStep);
-
     scope (exit)
     {
         future.removeDoneCallback(&thisTask.scheduleStep);
@@ -946,7 +952,7 @@ class GeneratorTask(T) : Task!(void delegate())
     this(EventLoop eventLoop, void delegate() coroutine)
     {
         super(eventLoop, coroutine);
-        addDoneCallback({
+        addDoneCallback((FutureHandle _) {
             if (waitingTask)
             {
                 waitingTask.scheduleStep;
@@ -978,10 +984,6 @@ class GeneratorTask(T) : Task!(void delegate())
 
         assert(thisTask !is null);
         assert(thisTask !is this, "empty() called in the task routine");
-
-        if (eventLoop is null)
-            eventLoop = getEventLoop;
-
         assert(waitingTask is null, "another Task is already waiting");
         waitingTask = thisTask;
         TaskHandle.yield;

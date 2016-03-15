@@ -49,14 +49,14 @@ interface FutureHandle
      * the future is already done when this is called, the callback is
      * scheduled with $(D_PSYMBOL callSoon())
      */
-    void addDoneCallback(void delegate() callback);
+    void addDoneCallback(void delegate(FutureHandle) callback);
 
     /**
      * Remove all instances of a callback from the "call when done" list.
      *
      * Returns: the number of callbacks removed;
      */
-    size_t removeDoneCallback(void delegate() callback);
+    size_t removeDoneCallback(void delegate(FutureHandle) callback);
 
     /**
      * Mark the future done and set an exception.
@@ -80,7 +80,7 @@ abstract class BaseFuture : FutureHandle
 
     package EventLoop eventLoop;
 
-    private void delegate()[] callbacks = null;
+    private void delegate(FutureHandle)[] callbacks = null;
 
     private State state = State.PENDING;
 
@@ -111,21 +111,21 @@ abstract class BaseFuture : FutureHandle
 
         foreach (callback; scheduledCallbacks)
         {
-            this.eventLoop.callSoon(callback);
+            this.eventLoop.callSoon(callback, this);
         }
     }
 
-    bool cancelled() const
+    override bool cancelled() const
     {
         return this.state == State.CANCELLED;
     }
 
-    bool done() const
+    override bool done() const
     {
         return this.state != State.PENDING;
     }
 
-    Throwable exception()
+    override Throwable exception()
     {
         final switch (this.state)
         {
@@ -138,15 +138,15 @@ abstract class BaseFuture : FutureHandle
         }
     }
 
-    void addDoneCallback(void delegate() callback)
+    override void addDoneCallback(void delegate(FutureHandle) callback)
     {
         if (this.state != State.PENDING)
-            this.eventLoop.callSoon(callback);
+            this.eventLoop.callSoon(callback, this);
         else
             this.callbacks ~= callback;
     }
 
-    size_t removeDoneCallback(void delegate() callback)
+    override size_t removeDoneCallback(void delegate(FutureHandle) callback)
     {
         size_t length = this.callbacks.length;
 
@@ -155,7 +155,7 @@ abstract class BaseFuture : FutureHandle
         return length - this.callbacks.length;
     }
 
-    void setException(Throwable exception)
+    override void setException(Throwable exception)
     {
         if (this.state != State.PENDING)
             throw new InvalidStateException("Result or exception already set");

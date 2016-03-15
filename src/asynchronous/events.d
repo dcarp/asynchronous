@@ -298,7 +298,9 @@ abstract class EventLoop
      */
     final T runUntilComplete(T)(Future!T future)
     {
-        future.addDoneCallback(&stop);
+        future.addDoneCallback((FutureHandle _) {
+            stop;
+        });
         runForever;
         assert(future.done);
         if (future.exception)

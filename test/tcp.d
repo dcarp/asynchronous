@@ -70,22 +70,22 @@ class Connection : Protocol
     {
         this.transport = cast(Transport) transport;
         testHelper.addConnection(this);
-        testHelper.putEvent(name ~ ": connected");
+        testHelper.putEvent(name ~ ": connectionMade");
     }
 
     void connectionLost(Exception exception)
     {
-        testHelper.putEvent(name ~ ": disconnected");
+        testHelper.putEvent(name ~ ": connectionLost");
     }
 
     void pauseWriting()
     {
-        testHelper.putEvent(name ~ ": pause writing");
+        testHelper.putEvent(name ~ ": pauseWriting");
     }
 
     void resumeWriting()
     {
-        testHelper.putEvent(name ~ ": resume writing");
+        testHelper.putEvent(name ~ ": resumeWriting");
     }
 
     void dataReceived(const(void)[] data)
@@ -95,7 +95,7 @@ class Connection : Protocol
 
     bool eofReceived()
     {
-        testHelper.putEvent(name ~ ": eof received");
+        testHelper.putEvent(name ~ ": eofReceived");
         return false;
     }
 }
@@ -124,8 +124,8 @@ unittest
     auto loop = getEventLoop;
     auto testHelper = new TestHelper();
     string[] expectedEvents = [
-        "client: connected",
-        "server: connected",
+        "client: connectionMade",
+        "server: connectionMade",
     ];
 
     // tear down
@@ -157,8 +157,8 @@ unittest
     auto loop = getEventLoop;
     auto testHelper = new TestHelper();
     string[] expectedEvents = [
-        "client: connected",
-        "server: connected",
+        "client: connectionMade",
+        "server: connectionMade",
         "server: dataReceived 'foo'",
     ];
     // tear down
@@ -191,8 +191,9 @@ unittest
     auto loop = getEventLoop;
     auto testHelper = new TestHelper();
     string[] expectedEvents = [
-        "client: connected",
-        "server: connected",
+        "client: connectionMade",
+        "server: connectionMade",
+        "server: eofReceived",
         "client: dataReceived 'foo'",
     ];
 
@@ -226,8 +227,8 @@ unittest
     auto loop = getEventLoop;
     auto testHelper = new TestHelper();
     string[] expectedEvents = [
-        "client: connected",
-        "server: connected",
+        "client: connectionMade",
+        "server: connectionMade",
     ];
 
     // tear down
@@ -253,8 +254,8 @@ unittest
     auto loop = getEventLoop;
     auto testHelper = new TestHelper();
     string[] expectedEvents = [
-        "client: connected",
-        "server: connected",
+        "client: connectionMade",
+        "server: connectionMade",
         "server: dataReceived 'foo'",
     ];
 
@@ -285,8 +286,8 @@ unittest
     auto loop = getEventLoop;
     auto testHelper = new TestHelper();
     string[] expectedEvents = [
-        "client: connected",
-        "server: connected",
+        "client: connectionMade",
+        "server: connectionMade",
         "client: dataReceived 'foo'",
     ];
 

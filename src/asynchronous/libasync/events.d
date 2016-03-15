@@ -268,6 +268,14 @@ class LibasyncEventLoopPolicy : EventLoopPolicy
 
 private final class LibasyncTransport : AbstractBaseTransport, Transport
 {
+    private enum State
+    {
+        CONNECTING,
+        CONNECTED,
+        EOF,
+        DISCONNECTED,
+    }
+
     private EventLoop eventLoop;
     private Socket _socket;
     private AsyncTCPConnection connection;
@@ -279,6 +287,7 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
     private bool writingPaused = false;
     private void[] writeBuffer;
     private BufferLimits writeBufferLimits;
+    private State state;
 
     this(EventLoop eventLoop, Socket socket, AsyncTCPConnection connection)
     in
@@ -289,6 +298,7 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
     }
     body
     {
+        this.state = State.CONNECTING;
         this.eventLoop = eventLoop;
         this._socket = socket;
         this.connection = connection;
@@ -304,6 +314,7 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
     void setProtocol(Protocol protocol, Waiter waiter = null)
     in
     {
+        assert(this.state == State.CONNECTING);
         assert(protocol !is null);
         assert(this.protocol is null);
         assert(this.waiter is null);
@@ -317,21 +328,28 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
     private void onConnect()
     in
     {
+        assert(this.state == State.CONNECTING);
         assert(this.connection.isConnected);
         assert(this._socket.handle == this.connection.socket);
         assert(this.protocol !is null);
     }
     body
     {
-        this.eventLoop.callSoon(&this.protocol.connectionMade, this);
+        state = State.CONNECTED;
 
         if (this.waiter !is null)
+        {
             this.eventLoop.callSoon(&this.waiter.setResultUnlessCancelled);
+            this.waiter = null;
+        }
+
+        this.eventLoop.callSoon(&this.protocol.connectionMade, this);
     }
 
     private void onRead()
     in
     {
+        assert(this.state == State.CONNECTED);
         assert(this.protocol !is null);
     }
     body
@@ -357,11 +375,17 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
             this.eventLoop.callSoon(&this.protocol.dataReceived,
                 receivedData.data);
         }
+        else
+        {
+            this.state = State.EOF;
+            this.eventLoop.callSoon(&this.protocol.eofReceived);
+        }
     }
 
     private void onWrite()
     in
     {
+        assert(this.state == State.CONNECTED || this.state == State.EOF);
         assert(this.protocol !is null);
     }
     body
@@ -380,16 +404,45 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
         }
     }
 
-    private void onClose(SocketOSException socketOSException)
+    private void onClose()
+    in
+    {
+        assert(this.state != State.CONNECTING);
+        assert(this.protocol !is null);
+    }
+    body
+    {
+        if (this.connection is null)
+            return;
+
+        this.connection = null;
+        this.state = State.DISCONNECTED;
+        this.eventLoop.callSoon(&this.protocol.connectionLost, null);
+    }
+
+    private void onError()
     in
     {
         assert(this.protocol !is null);
     }
     body
     {
+        if (this.connection is null)
+            return;
+
+        if (this.state == State.CONNECTING)
+        {
+            if (this.waiter)
+                waiter.setException(new SocketOSException(connection.error()));
+        }
+        else
+        {
+            this.eventLoop.callSoon(&this.protocol.connectionLost,
+                new SocketOSException(connection.error()));
+        }
+
         this.connection = null;
-        this.eventLoop.callSoon(&this.protocol.connectionLost,
-            socketOSException);
+        this.state = State.DISCONNECTED;
     }
 
     void handleTCPEvent(TCPEvent event)
@@ -397,19 +450,20 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
         final switch (event)
         {
         case TCPEvent.CONNECT:
-            onConnect();
+            onConnect;
             break;
         case TCPEvent.READ:
-            onRead();
+            onRead;
             break;
         case TCPEvent.WRITE:
-            onWrite();
+            onWrite;
             break;
         case TCPEvent.CLOSE:
-            onClose(null);
+            onClose;
             break;
         case TCPEvent.ERROR:
-            onClose(new SocketOSException(connection.error()));
+            onError;
+            break;
         }
     }
 
@@ -600,18 +654,30 @@ private final class LibasyncDatagramTransport : AbstractBaseTransport,  Datagram
     {
     }
 
+    private void onError()
+    in
+    {
+        assert(this.datagramProtocol !is null);
+    }
+    body
+    {
+        this.eventLoop.callSoon(&this.datagramProtocol.errorReceived,
+            new SocketOSException(udpSocket.error()));
+    }
+
     void handleUDPEvent(UDPEvent event)
     {
         final switch (event)
         {
         case UDPEvent.READ:
-            onRead();
+            onRead;
             break;
         case UDPEvent.WRITE:
-            onWrite();
+            onWrite;
             break;
         case UDPEvent.ERROR:
-            assert(0, udpSocket.error());
+            onError;
+            break;
         }
     }
 

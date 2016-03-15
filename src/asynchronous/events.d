@@ -272,7 +272,7 @@ package class ServerImpl : Server
  */
 abstract class EventLoop
 {
-    protected enum State
+    protected enum State : ubyte
     {
         STOPPED,
         RUNNING,

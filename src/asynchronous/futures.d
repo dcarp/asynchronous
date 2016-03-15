@@ -71,7 +71,7 @@ interface FutureHandle
 
 abstract class BaseFuture : FutureHandle
 {
-    private enum State
+    private enum State : ubyte
     {
         PENDING,
         CANCELLED,

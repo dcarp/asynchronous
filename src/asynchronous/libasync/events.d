@@ -268,7 +268,7 @@ class LibasyncEventLoopPolicy : EventLoopPolicy
 
 private final class LibasyncTransport : AbstractBaseTransport, Transport
 {
-    private enum State
+    private enum State : ubyte
     {
         CONNECTING,
         CONNECTED,
@@ -281,13 +281,11 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
     private AsyncTCPConnection connection;
     private Waiter waiter = null;
     private Protocol protocol;
-    private uint connectionLost = 0;
-    private bool closing = false;
+    private State state;
     private bool readingPaused = false;
     private bool writingPaused = false;
     private void[] writeBuffer;
     private BufferLimits writeBufferLimits;
-    private State state;
 
     this(EventLoop eventLoop, Socket socket, AsyncTCPConnection connection)
     in
@@ -477,16 +475,16 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
 
     void close()
     {
-        if (this.closing)
+        if (this.state == State.DISCONNECTED)
             return;
 
-        this.closing = true;
+        this.state = State.DISCONNECTED;
         this.eventLoop.callSoon(&this.connection.kill, false);
     }
 
     void pauseReading()
     {
-        if (this.closing || this.connectionLost)
+        if (this.state != State.CONNECTED)
             throw new Exception("Cannot pauseReading() when closing");
         if (this.readingPaused)
             throw new Exception("Reading is already paused");
@@ -503,11 +501,11 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
 
     void abort()
     {
-        if (this.connectionLost)
+        if (this.state == State.DISCONNECTED)
             return;
 
+        this.state = State.DISCONNECTED;
         this.eventLoop.callSoon(&this.connection.kill, true);
-        ++this.connectionLost;
     }
 
     bool canWriteEof()

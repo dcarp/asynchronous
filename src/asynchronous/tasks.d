@@ -387,6 +387,28 @@ if (isDelegate!Coroutine)
     }
 }
 
+unittest
+{
+    import std.functional : toDelegate;
+
+    auto testCoroutine = (int i) {
+        if (i > 0)
+            throw new Exception("bar");
+        return "foo";
+    };
+    auto eventLoop = getEventLoop;
+    auto testTask = eventLoop.createTask(testCoroutine.toDelegate, 0);
+    eventLoop.runUntilComplete(testTask);
+    assert(testTask.done);
+    assert(testTask.result == "foo");
+
+    testTask = eventLoop.createTask(testCoroutine.toDelegate, 1);
+    assertThrown!Exception(eventLoop.runUntilComplete(testTask));
+    assert(testTask.done);
+    assert(testTask.exception !is null);
+    assert(testTask.exception.msg == "bar");
+}
+
 /**
  * Return an generator whose values, when waited for, are Future instances in
  * the order in which and as soon as they complete.

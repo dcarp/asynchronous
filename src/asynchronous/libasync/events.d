@@ -369,15 +369,8 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
         }
 
         if (!receivedData.data.empty)
-        {
             this.eventLoop.callSoon(&this.protocol.dataReceived,
                 receivedData.data);
-        }
-        else
-        {
-            this.state = State.EOF;
-            this.eventLoop.callSoon(&this.protocol.eofReceived);
-        }
     }
 
     private void onWrite()

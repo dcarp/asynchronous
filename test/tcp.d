@@ -193,7 +193,6 @@ unittest
     string[] expectedEvents = [
         "client: connectionMade",
         "server: connectionMade",
-        "server: eofReceived",
         "client: dataReceived 'foo'",
     ];
 

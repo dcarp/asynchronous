@@ -178,7 +178,8 @@ abstract class BaseFuture : FutureHandle
  */
 class Future(T) : BaseFuture
 {
-    private T result_;
+    static if (!is(T == void))
+        private T result_;
 
     alias ResultType = T;
 
@@ -249,6 +250,29 @@ class Future(T : void) : BaseFuture
     }
 
     /**
+     * Returns: void.
+     *
+     * If the future has been cancelled, throws
+     * $(D_PSYMBOL CancelledException). If the future's result isn't yet
+     * available, throws $(D_PSYMBOL InvalidStateException). If the future is
+     * done and has an exception set, this exception is thrown.
+     */
+    T result()
+    {
+        final switch (this.state)
+        {
+        case State.PENDING:
+            throw new InvalidStateException("Result is not ready.");
+        case State.CANCELLED:
+            throw new CancelledException;
+        case State.FINISHED:
+            if (this.exception_)
+                throw this.exception_;
+            return;
+        }
+    }
+
+    /**
      * Helper setting the result only if the future was not cancelled.
      */
     package void setResultUnlessCancelled()
@@ -276,7 +300,7 @@ class Future(T : void) : BaseFuture
 
 unittest
 {
-    import std.exception : assertThrown, Exception;
+    import std.exception : assertNotThrown, assertThrown, Exception;
 
     auto future = new Future!int;
     assert(!future.done);
@@ -304,4 +328,31 @@ unittest
     assert(!future.cancelled);
     assert(future.exception !is null);
     assertThrown(future.result);
+
+    auto future2 = new Future!void;
+    assert(!future2.done);
+    assert(!future2.cancelled);
+    assertThrown(future2.exception);
+    assertThrown(future2.result);
+
+    future2 = new Future!void;
+    future2.setResult;
+    assert(future2.done);
+    assert(!future2.cancelled);
+    assert(future2.exception is null);
+    assertNotThrown(future2.result);
+
+    future2 = new Future!void;
+    future2.cancel;
+    assert(future2.done);
+    assert(future2.cancelled);
+    assertThrown(future2.exception);
+    assertThrown(future2.result);
+
+    future2 = new Future!void;
+    future2.setException(new Exception("foo"));
+    assert(future2.done);
+    assert(!future2.cancelled);
+    assert(future2.exception !is null);
+    assertThrown(future2.result);
 }

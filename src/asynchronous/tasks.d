@@ -258,7 +258,7 @@ if (isDelegate!Coroutine)
         debug (tasks)
             std.stdio.writeln("Start task ", id);
 
-        static if (is(ResultType : void))
+        static if (is(ResultType == void))
         {
             coroutine(args);
             setResult;
@@ -658,13 +658,13 @@ auto shield(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
             }
             else
             {
-                static if (!is(T == void))
+                static if (is(inner.ResultType == void))
                 {
-                    outer.setResult(inner.result);
+                    outer.setResult;
                 }
                 else
                 {
-                    outer.setResult;
+                    outer.setResult(inner.result);
                 }
             }
         }
@@ -676,6 +676,8 @@ auto shield(Coroutine, Args...)(EventLoop eventLoop, Coroutine coroutine,
 
 unittest
 {
+    import std.functional : toDelegate;
+
     int add(int a, int b)
     {
         return a + b;
@@ -696,6 +698,14 @@ unittest
     eventLoop.runUntilComplete(task1);
     assert(future1.cancelled);
     assert(task1.result == 7);
+
+    auto task2 = eventLoop.ensureFuture({ }.toDelegate);
+    auto future2 = eventLoop.shield(task2);
+    future2.cancel;
+
+    eventLoop.runUntilComplete(task2);
+    assert(future2.cancelled);
+    assert(task2.done);
 }
 
 
@@ -915,10 +925,7 @@ if (is(Future : FutureHandle))
     if (timeoutCallback !is null)
         timeoutCallback.cancel;
 
-    static if (!is(Future.ResultType == void))
-    {
-        return future.result;
-    }
+    return future.result;
 }
 
 unittest

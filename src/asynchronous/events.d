@@ -298,18 +298,16 @@ abstract class EventLoop
      */
     final T runUntilComplete(T)(Future!T future)
     {
-        future.addDoneCallback((FutureHandle _) {
+        auto callback = (FutureHandle _) {
             stop;
-        });
-        runForever;
-        assert(future.done);
-        if (future.exception)
-            throw future.exception;
+        };
 
-        static if (!is(T == void))
-        {
-            return future.result;
-        }
+        future.addDoneCallback(callback);
+        runForever;
+        future.removeDoneCallback(callback);
+
+        enforce(future.done, "Event loop stopped before Future completed");
+        return future.result;
     }
 
     /**

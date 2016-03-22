@@ -146,7 +146,7 @@ private class TaskFiber : Fiber
 
     this()
     {
-        super({ });
+        super({ }, 16 * 4096UL);
     }
 
     @property TaskHandle taskHandle()

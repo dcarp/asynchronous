@@ -79,8 +79,6 @@ class Queue(T, size_t maxSize = 0)
     {
         import std.format : format;
 
-        import std.format : format;
-
         auto data = chain(cast(T[]) queue, cast(T[]) queue)[start .. start + length];
 
         return "%s(maxsize %s, queue %s, getters %s, putters %s, unfinishedTasks %s)"

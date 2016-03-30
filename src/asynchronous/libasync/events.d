@@ -3,6 +3,7 @@ module asynchronous.libasync.events;
 import std.algorithm;
 import std.array;
 import std.datetime;
+import std.exception : enforce;
 import std.process;
 import std.socket;
 import std.string;

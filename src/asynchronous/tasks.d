@@ -80,9 +80,24 @@ interface TaskHandle : FutureHandle
 
     protected void run();
 
-    protected void scheduleStep();
-    protected void scheduleStep(Throwable throwable);
-    protected void scheduleStep(FutureHandle future);
+    package void scheduleStep()
+    {
+        scheduleStepImpl(cast(Throwable) null);
+    }
+
+    package void scheduleStep(Throwable throwable)
+    {
+        scheduleStepImpl(throwable);
+    }
+
+    // Convenience overload for calling in addDoneCallback.
+    // It ignores the provided argument.
+    package void scheduleStep(FutureHandle future)
+    {
+        scheduleStepImpl(cast(Throwable) null);
+    }
+
+    protected void scheduleStepImpl(Throwable throwable);
 
     /**
      * Returns: a set of all tasks for an event loop.
@@ -351,12 +366,7 @@ if (isDelegate!Coroutine)
         }
     }
 
-    protected override void scheduleStep()
-    {
-        scheduleStep(cast(Throwable) null);
-    }
-
-    protected override void scheduleStep(Throwable throwable)
+    protected override void scheduleStepImpl(Throwable throwable)
     {
         debug (tasks)
         {
@@ -371,11 +381,6 @@ if (isDelegate!Coroutine)
             step(throwable);
         else
             this.eventLoop.callSoon(&step, throwable);
-    }
-
-    protected override void scheduleStep(FutureHandle future)
-    {
-        scheduleStep(cast(Throwable) null);
     }
 
     override string toString() const

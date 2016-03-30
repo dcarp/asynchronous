@@ -3,6 +3,7 @@
  */
 module asynchronous.protocols;
 
+import std.socket : Address;
 import asynchronous.transports;
 
 /**

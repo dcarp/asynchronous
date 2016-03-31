@@ -395,15 +395,17 @@ abstract class EventLoop
         return callback;
     }
 
-    /+
     /**
      * Like $(D_PSYMBOL call_soon()), but thread safe.
      */
-    final auto callSoonThreadsafe(alias callback, Args...)(Args args)
+    final auto callSoonThreadSafe(Dg, Args...)(Dg dg, Args args)
     {
-        return callLater!callback(0, args);
+        auto callback = new Callback!(Dg, Args)(this, dg, args);
+
+        scheduleCallbackThreadSafe(callback);
+
+        return callback;
     }
-    +/
 
     // Delayed calls
 
@@ -1179,6 +1181,8 @@ abstract class EventLoop
 protected:
 
     void scheduleCallback(CallbackHandle callback);
+
+    void scheduleCallbackThreadSafe(CallbackHandle callback);
 
     void scheduleCallback(Duration delay, CallbackHandle callback);
 

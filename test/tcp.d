@@ -3,9 +3,7 @@ import std.array;
 import std.conv;
 import std.datetime;
 import std.string;
-
 import asynchronous;
-
 
 class TestHelper
 {

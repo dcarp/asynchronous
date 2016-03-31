@@ -10,6 +10,7 @@ import std.string;
 import std.traits;
 import std.typecons;
 import libasync.events : EventLoop_ = EventLoop, NetworkAddress;
+import libasync.signal : AsyncSignal;
 import libasync.timer : AsyncTimer;
 import libasync.tcp : AsyncTCPConnection, AsyncTCPListener, TCPEvent;
 import libasync.threads : destroyAsyncThreads, gs_threads;
@@ -39,6 +40,9 @@ package class LibasyncEventLoop : EventLoop
     private Appender!(CallbackHandle[]) nextCallbacks2;
     private Appender!(CallbackHandle[])* currentAppender;
 
+    private Appender!(CallbackHandle[]) nextThreadSafeCallbacks;
+    private shared AsyncSignal newThreadSafeCallbacks;
+
     private LibasyncTransport[] pendingConnections;
 
     alias Listener = Tuple!(ServerImpl, "server", AsyncTCPListener, "listener");
@@ -50,6 +54,9 @@ package class LibasyncEventLoop : EventLoop
         this.eventLoop = new EventLoop_;
         this.timers = new Timers(this.eventLoop);
         this.currentAppender = &nextCallbacks1;
+
+        this.newThreadSafeCallbacks = new shared AsyncSignal(this.eventLoop);
+        this.newThreadSafeCallbacks.run(&scheduleThreadSafeCallbacks);
     }
 
     override void runForever()
@@ -95,6 +102,27 @@ package class LibasyncEventLoop : EventLoop
     {
         if (!callback.cancelled)
             currentAppender.put(callback);
+    }
+
+    private void scheduleThreadSafeCallbacks()
+    {
+        synchronized (this)
+        {
+            foreach (callback; nextThreadSafeCallbacks.data)
+                scheduleCallback(callback);
+
+            nextThreadSafeCallbacks.clear;
+        }
+    }
+
+    override void scheduleCallbackThreadSafe(CallbackHandle callback)
+    {
+        synchronized (this)
+        {
+            nextThreadSafeCallbacks ~= callback;
+        }
+
+        newThreadSafeCallbacks.trigger;
     }
 
     override void scheduleCallback(Duration delay, CallbackHandle callback)

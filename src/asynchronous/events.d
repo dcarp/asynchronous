@@ -48,7 +48,7 @@ interface CallbackHandle
 
 /**
  * A callback wrapper object returned by $(D_PSYMBOL EventLoop.callSoon),
- * $(D_PSYMBOL EventLoop.callSoonThreadsafe),
+ * $(D_PSYMBOL EventLoop.callSoonThreadSafe),
  * $(D_PSYMBOL EventLoop.callLater), and $(D_PSYMBOL EventLoop.callAt).
  */
 class Callback(Dg, Args...) : CallbackHandle
@@ -75,6 +75,10 @@ if (isDelegate!Dg)
         }
     }
 
+    /**
+     * Cancel the call. If the callback is already canceled or executed, this
+     * method has no effect.
+     */
     override void cancel()
     {
         this._cancelled = true;
@@ -82,6 +86,9 @@ if (isDelegate!Dg)
         this.args = Args.init;
     }
 
+    /**
+     * Return $(D_KEYWORD true) if the callback was cancelled.
+     */
     override bool cancelled() const
     {
         return this._cancelled;

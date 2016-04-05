@@ -396,7 +396,7 @@ abstract class EventLoop
     }
 
     /**
-     * Like $(D_PSYMBOL call_soon()), but thread safe.
+     * Like $(D_PSYMBOL callSoon()), but thread safe.
      */
     final auto callSoonThreadSafe(Dg, Args...)(Dg dg, Args args)
     {

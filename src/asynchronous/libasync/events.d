@@ -1,3 +1,10 @@
+/**
+ * libasync event loop integration.
+ *
+ * Copyright: © 2015-2016 Dragos Carp
+ * License: Boost Software License - Version 1.0
+ * Authors: Dragos Carp
+ */
 module asynchronous.libasync.events;
 
 import std.algorithm;

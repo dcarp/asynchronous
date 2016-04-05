@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -73,27 +80,30 @@ $('#symbolSearchPane').show();
 			</ul>
 			<section>
 				<h2>Function BaseProtocol.connectionMade</h2>
-				<p> <u><code class="prettyprint lang-d">connectionMade</code>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="prettyprint lang-d">connectionLost</code></a>()</u> are
+				<p><u><code class="lang-d"><span class="pln"><span class="pln">connectionMade</span></span></code>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><span class="pln">connectionLost</span></a></span></code></a>()</u> are
  called exactly once per successful connection. All other callbacks will
  be called between those two methods, which allows for easier resource
  management in your protocol implementation.
 </p>
-<section>
-<p> Called when a connection is made.
+<section><p>Called when a connection is made.
 </p>
-
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-abstract void connectionMade(
-&nbsp;&nbsp;<a href="../../asynchronous/transports/BaseTransport.html">BaseTransport</a> transport
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">abstract </span><span class="typ">void</span> <span class="pln">connectionMade</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<a href="../../asynchronous/transports/BaseTransport.html"><span class="typ">BaseTransport</span></a> <span class="pln">transport</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 <section><h3>Parameters</h3>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
-<tr><td id="transport">transport</td><td> is the <a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html#transport"><code class="prettyprint lang-d">transport</code></a> representing the connection. You are
+<tr><td id="transport">transport</td><td> is the <a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html#transport"><code class="lang-d"><span class="pln">transport</span></code></a> representing the connection. You are
       responsible for storing it somewhere if you need to.</td></tr>
 </table>
 </section>
@@ -101,27 +111,30 @@ abstract void connectionMade(
 			</section>
 			<section>
 				<h2>Function BaseProtocol.connectionMade</h2>
-				<p> <u><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><code class="prettyprint lang-d">connectionMade</code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="prettyprint lang-d">connectionLost</code></a>()</u> are
+				<p><u><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><span class="pln">connectionMade</span></a></span></code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><span class="pln">connectionLost</span></a></span></code></a>()</u> are
  called exactly once per successful connection. All other callbacks will
  be called between those two methods, which allows for easier resource
  management in your protocol implementation.
 </p>
-<section>
-<p> Called when a connection is made.
+<section><p>Called when a connection is made.
 </p>
-
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-abstract void connectionMade(
-&nbsp;&nbsp;<a href="../../asynchronous/transports/BaseTransport.html">BaseTransport</a> transport
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">abstract </span><span class="typ">void</span> <span class="pln">connectionMade</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<a href="../../asynchronous/transports/BaseTransport.html"><span class="typ">BaseTransport</span></a> <span class="pln">transport</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 <section><h3>Parameters</h3>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
-<tr><td id="transport">transport</td><td> is the <a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html#transport"><code class="prettyprint lang-d">transport</code></a> representing the connection. You are
+<tr><td id="transport">transport</td><td> is the <a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html#transport"><code class="lang-d"><span class="pln">transport</span></code></a> representing the connection. You are
       responsible for storing it somewhere if you need to.</td></tr>
 </table>
 </section>
@@ -129,27 +142,30 @@ abstract void connectionMade(
 			</section>
 			<section>
 				<h2>Function BaseProtocol.connectionMade</h2>
-				<p> <u><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><code class="prettyprint lang-d">connectionMade</code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="prettyprint lang-d">connectionLost</code></a>()</u> are
+				<p><u><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><span class="pln">connectionMade</span></a></span></code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><span class="pln">connectionLost</span></a></span></code></a>()</u> are
  called exactly once per successful connection. All other callbacks will
  be called between those two methods, which allows for easier resource
  management in your protocol implementation.
 </p>
-<section>
-<p> Called when a connection is made.
+<section><p>Called when a connection is made.
 </p>
-
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-abstract void connectionMade(
-&nbsp;&nbsp;<a href="../../asynchronous/transports/BaseTransport.html">BaseTransport</a> transport
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">abstract </span><span class="typ">void</span> <span class="pln">connectionMade</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<a href="../../asynchronous/transports/BaseTransport.html"><span class="typ">BaseTransport</span></a> <span class="pln">transport</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 <section><h3>Parameters</h3>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
-<tr><td id="transport">transport</td><td> is the <a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html#transport"><code class="prettyprint lang-d">transport</code></a> representing the connection. You are
+<tr><td id="transport">transport</td><td> is the <a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html#transport"><code class="lang-d"><span class="pln">transport</span></code></a> representing the connection. You are
       responsible for storing it somewhere if you need to.</td></tr>
 </table>
 </section>
@@ -157,27 +173,30 @@ abstract void connectionMade(
 			</section>
 			<section>
 				<h2>Function BaseProtocol.connectionMade</h2>
-				<p> <u><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><code class="prettyprint lang-d">connectionMade</code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="prettyprint lang-d">connectionLost</code></a>()</u> are
+				<p><u><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><code class="lang-d"><span class="pln">connectionMade</span></code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="lang-d"><span class="pln">connectionLost</span></code></a>()</u> are
  called exactly once per successful connection. All other callbacks will
  be called between those two methods, which allows for easier resource
  management in your protocol implementation.
 </p>
-<section>
-<p> Called when a connection is made.
+<section><p>Called when a connection is made.
 </p>
-
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-abstract void connectionMade(
-&nbsp;&nbsp;<a href="../../asynchronous/transports/BaseTransport.html">BaseTransport</a> transport
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">abstract </span><span class="typ">void</span> <span class="pln">connectionMade</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<a href="../../asynchronous/transports/BaseTransport.html"><span class="typ">BaseTransport</span></a> <span class="pln">transport</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 <section><h3>Parameters</h3>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
-<tr><td id="transport">transport</td><td> is the <a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html#transport"><code class="prettyprint lang-d">transport</code></a> representing the connection. You are
+<tr><td id="transport">transport</td><td> is the <a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html#transport"><code class="lang-d"><span class="pln">transport</span></code></a> representing the connection. You are
       responsible for storing it somewhere if you need to.</td></tr>
 </table>
 </section>
@@ -185,14 +204,20 @@ abstract void connectionMade(
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

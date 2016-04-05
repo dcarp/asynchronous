@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class="selected module">events</a>
 							</li>
@@ -66,16 +73,16 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Class Callback</h1>
 			<section>
-				<p> A callback wrapper object returned by <u><a href="../../asynchronous/events/EventLoop.callSoon.html"><code class="prettyprint lang-d">EventLoop.callSoon</code></a></u>,
- <u>EventLoop.callSoonThreadsafe</u>,
- <u><a href="../../asynchronous/events/EventLoop.callLater.html"><code class="prettyprint lang-d">EventLoop.callLater</code></a></u>, and <u><a href="../../asynchronous/events/EventLoop.callAt.html"><code class="prettyprint lang-d">EventLoop.callAt</code></a></u>.
+				<p>A callback wrapper object returned by <u><a href="../asynchronous/events/EventLoop.callSoon.html"><code class="lang-d"><span class="typ"><a href="../../asynchronous/events/EventLoop.html"><span class="typ">EventLoop</span></a><wbr/></span><span class="pun">.</span><span class="pln">callSoon</span></code></a></u>,
+ <u><a href="../asynchronous/events/EventLoop.callSoonThreadSafe.html"><code class="lang-d"><span class="typ"><a href="../../asynchronous/events/EventLoop.html"><span class="typ">EventLoop</span></a><wbr/></span><span class="pun">.</span><span class="pln">callSoonThreadSafe</span></code></a></u>,
+ <u><a href="../asynchronous/events/EventLoop.callLater.html"><code class="lang-d"><span class="typ"><a href="../../asynchronous/events/EventLoop.html"><span class="typ">EventLoop</span></a><wbr/></span><span class="pun">.</span><span class="pln">callLater</span></code></a></u>, and <u><a href="../asynchronous/events/EventLoop.callAt.html"><code class="lang-d"><span class="typ"><a href="../../asynchronous/events/EventLoop.html"><span class="typ">EventLoop</span></a><wbr/></span><span class="pun">.</span><span class="pln">callAt</span></code></a></u>.
 </p>
 
 					<section>
 						<h3>Inherits from</h3>
 						<ul>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
+								<code class="prettyprint lang-d"><span class="typ">Object</span></code>
  (base class)
 							</li>
 						</ul>
@@ -94,8 +101,17 @@ $('#symbolSearchPane').show();
 										<code>cancel</code>
 									</a>
 								</td>
-								<td> Cancel the call. If the callback is already canceled or executed, this
+								<td>Cancel the call. If the callback is already canceled or executed, this
  method has no effect.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/Callback.cancelled.html" class="public">
+										<code>cancelled</code>
+									</a>
+								</td>
+								<td>Return <font color=blue>true</font> if the callback was <code class="lang-d"><span class="pln"><span class="pln">cancelled</span></span></code>.
 </td>
 							</tr>
 						</table>
@@ -104,14 +120,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

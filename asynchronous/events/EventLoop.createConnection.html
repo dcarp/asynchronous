@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class="selected module">events</a>
 							</li>
@@ -66,28 +73,43 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function EventLoop.createConnection</h1>
 			<section>
-				<p> Create a streaming transport connection to a given Internet <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a> and
+				<p>Create a streaming transport connection to a given Internet <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="lang-d"><span class="pln"><a href="../../asynchronous/events/EventLoop.createConnection.html#host"><span class="pln">host</span></a></span></code></a> and
 </p>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-auto std.<wbr/>typecons.<wbr/>__T5TupleTC12asynchronous10transports9TransportVAyaa9_7472616e73706f7274TC12asynchronous9protocols8ProtocolVAyaa8_70726f746f636f6cZ.<wbr/>Tuple createConnection(
-&nbsp;&nbsp;<a href="../../asynchronous/protocols/Protocol.html">Protocol</a> delegate() protocolFactory,
-&nbsp;&nbsp;const(char[]) host = null,
-&nbsp;&nbsp;const(char[]) service = null,
-&nbsp;&nbsp;asynchronous.<wbr/>events.<wbr/>SslContext sslContext = null,
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>AddressFamily addressFamily = UNSPECIFIED(),
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>ProtocolType protocolType = UNSPECIFIED(),
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>AddressInfoFlags addressInfoFlags = UNSPECIFIED(),
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>Socket socket = null,
-&nbsp;&nbsp;const(char[]) localHost = null,
-&nbsp;&nbsp;const(char[]) localService = null,
-&nbsp;&nbsp;const(char[]) serverHostname = null
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">auto </span><span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">typecons<wbr/></span><span class="pun">.</span><span class="pln">__T5TupleTC12asynchronous10transports9TransportVAyaa9_7472616e73706f7274TC12asynchronous9protocols8ProtocolVAyaa8_70726f746f636f6cZ<wbr/></span><span class="pun">.</span><span class="typ">Tuple</span> <span class="pln">createConnection</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<a href="../../asynchronous/protocols/Protocol.html"><span class="typ">Protocol</span></a> <span class="kwd">delegate</span><span class="pun">(</span><span class="pun">)</span> <span class="pln">protocolFactory</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">host</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">service</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">asynchronous<wbr/></span><span class="pun">.</span><span class="pln">events<wbr/></span><span class="pun">.</span><span class="typ">SslContext</span> <span class="pln">sslContext</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">AddressFamily</span> <span class="pln">addressFamily</span> <span class="pun">=</span> <span class="pln">UNSPECIFIED</span><span class="pun">()</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">ProtocolType</span> <span class="pln">protocolType</span> <span class="pun">=</span> <span class="pln">UNSPECIFIED</span><span class="pun">()</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">AddressInfoFlags</span> <span class="pln">addressInfoFlags</span> <span class="pun">=</span> <span class="pln">UNSPECIFIED</span><span class="pun">()</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">Socket</span> <span class="pln">socket</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">localHost</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">localService</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">serverHostname</span> <span class="pun">=</span> <span class="kwd">null</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 <section><h3>port</h3>
-<p><a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> family <u>AddressFamily.INET</u> or <u>AddressFamily.INET6</u> depending on <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a> (or family if specified), <a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="prettyprint lang-d">socket</code></a>
+<p><a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="lang-d"><span class="pln">socket</span></code></a> family <u>AddressFamily.INET</u> or <u> AddressFamily.INET6</u> depending on <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="lang-d"><span class="pln">host</span></code></a> (or family if specified), <a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="lang-d"><span class="pln">socket</span></code></a>
  type <u>SocketType.STREAM</u>.
 </p>
 
@@ -100,9 +122,9 @@ auto std.<wbr/>typecons.<wbr/>__T5TupleTC12asynchronous10transports9TransportVAy
 </p>
 
 <p> The connection is established, and a transport is created to represent
- it. <u><a href="../../asynchronous/events/EventLoop.createConnection.html#protocolFactory"><code class="prettyprint lang-d">protocolFactory</code></a></u> is called without arguments and must
+ it. <u><a href="../../asynchronous/events/EventLoop.createConnection.html#protocolFactory"><code class="lang-d"><span class="pln">protocolFactory</span></code></a></u> is called without arguments and must
  return a protocol instance.
- The protocol instance is tied to the transport, and its <u>connectionMade()</u> method is called.
+ The protocol instance is tied to the transport, and its <u> connectionMade()</u> method is called.
  The coroutine returns successfully with the <u>(transport,
  protocol)</u> tuple.
 </p>
@@ -118,19 +140,19 @@ auto std.<wbr/>typecons.<wbr/>__T5TupleTC12asynchronous10transports9TransportVAy
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
 <tr><td id="protocolFactory">protocolFactory</td><td> is a callable returning a protocol instance
 </td></tr>
-<tr><td id="host">host</td><td> if empty then the $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="prettyprint lang-d">socket</code></a>) parameter should be
+<tr><td id="host">host</td><td> if empty then the <u><a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="lang-d"><span class="pln">socket</span></code></a></u> parameter should be
       specified.
 </td></tr>
-<tr><td id="service">service</td><td> <a href="../../asynchronous/events/EventLoop.createConnection.html#service"><code class="prettyprint lang-d">service</code></a> name or port number.
+<tr><td id="service">service</td><td> <a href="../../asynchronous/events/EventLoop.createConnection.html#service"><code class="lang-d"><span class="pln">service</span></code></a> name or port number.
 </td></tr>
-<tr><td id="sslContext">sslContext</td><td> if not $(D_KEYWORD null), a SSL/TLS transport is created
+<tr><td id="sslContext">sslContext</td><td> if not <font color=blue>null</font>, a SSL/TLS transport is created
       (by default a plain TCP transport is created).
 </td></tr>
 <tr><td id="serverHostname">serverHostname</td><td> is only for use together with ssl, and sets or
       overrides the hostname that the target server’s certificate will be
-      matched against. By default the value of the <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a> argument is used.
-      If <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a> is empty, there is no default and you must pass a value for
-      $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#serverHostname"><code class="prettyprint lang-d">serverHostname</code></a>). If $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#serverHostname"><code class="prettyprint lang-d">serverHostname</code></a>) is an
+      matched against. By default the value of the <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="lang-d"><span class="pln">host</span></code></a> argument is used.
+      If <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="lang-d"><span class="pln">host</span></code></a> is empty, there is no default and you must pass a value for
+      <u><a href="../../asynchronous/events/EventLoop.createConnection.html#serverHostname"><code class="lang-d"><span class="pln">serverHostname</span></code></a></u>. If <u><a href="../../asynchronous/events/EventLoop.createConnection.html#serverHostname"><code class="lang-d"><span class="pln">serverHostname</span></code></a></u> is an
       empty, hostname matching is disabled (which is a serious security
       risk, allowing for man-in-the-middle-attacks).
 </td></tr>
@@ -140,20 +162,17 @@ auto std.<wbr/>typecons.<wbr/>__T5TupleTC12asynchronous10transports9TransportVAy
 </td></tr>
 <tr><td id="addressInfoFlags">addressInfoFlags</td><td> optional flags.
 </td></tr>
-<tr><td id="socket">socket</td><td> if not $(D_KEYWORD null), should be an existing, already
-      connected $(D_PSYMBOL Socket) object to be used by the transport. If
-      $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="prettyprint lang-d">socket</code></a>) is given, none of $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a>), $(D_PSYMBOL
-      <a href="../../asynchronous/events/EventLoop.createConnection.html#service"><code class="prettyprint lang-d">service</code></a>), $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#addressFamily"><code class="prettyprint lang-d">addressFamily</code></a>), $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#protocolType"><code class="prettyprint lang-d">protocolType</code></a>),
-      $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#addressInfoFlags"><code class="prettyprint lang-d">addressInfoFlags</code></a>) and $(D_PSYMBOL localAddress) should
+<tr><td id="socket">socket</td><td> if not <font color=blue>null</font>, should be an existing, already
+      connected <u>Socket</u> object to be used by the transport. If
+      <u><a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="lang-d"><span class="pln">socket</span></code></a></u> is given, none of <u><a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="lang-d"><span class="pln">host</span></code></a></u>, <u>      <a href="../../asynchronous/events/EventLoop.createConnection.html#service"><code class="lang-d"><span class="pln">service</span></code></a></u>, <u><a href="../../asynchronous/events/EventLoop.createConnection.html#addressFamily"><code class="lang-d"><span class="pln">addressFamily</span></code></a></u>, <u><a href="../../asynchronous/events/EventLoop.createConnection.html#protocolType"><code class="lang-d"><span class="pln">protocolType</span></code></a></u>,
+      <u><a href="../../asynchronous/events/EventLoop.createConnection.html#addressInfoFlags"><code class="lang-d"><span class="pln">addressInfoFlags</span></code></a></u> and <u>localAddress</u> should
       be specified.
 </td></tr>
-<tr><td id="localHost">localHost</td><td> if given, together with $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#localService"><code class="prettyprint lang-d">localService</code></a>) is used to
-      bind the <a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> to locally. The $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#localHost"><code class="prettyprint lang-d">localHost</code></a>) and
-      $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#localService"><code class="prettyprint lang-d">localService</code></a>) are looked up using $(D_PSYMBOL
-      getAddressInfo()), similarly to <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a> and <a href="../../asynchronous/events/EventLoop.createConnection.html#service"><code class="prettyprint lang-d">service</code></a>.
+<tr><td id="localHost">localHost</td><td> if given, together with <u><a href="../../asynchronous/events/EventLoop.createConnection.html#localService"><code class="lang-d"><span class="pln">localService</span></code></a></u> is used to
+      bind the <a href="../../asynchronous/events/EventLoop.createConnection.html#socket"><code class="lang-d"><span class="pln">socket</span></code></a> to locally. The <u><a href="../../asynchronous/events/EventLoop.createConnection.html#localHost"><code class="lang-d"><span class="pln">localHost</span></code></a></u> and
+      <u><a href="../../asynchronous/events/EventLoop.createConnection.html#localService"><code class="lang-d"><span class="pln">localService</span></code></a></u> are looked up using <u>      getAddressInfo()</u>, similarly to <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="lang-d"><span class="pln">host</span></code></a> and <a href="../../asynchronous/events/EventLoop.createConnection.html#service"><code class="lang-d"><span class="pln">service</span></code></a>.
 </td></tr>
-<tr><td id="localService">localService</td><td> see $(D_PSYMBOL <a href="../../asynchronous/events/EventLoop.createConnection.html#localHost"><code class="prettyprint lang-d">localHost</code></a>).
-</td></tr>
+<tr><td id="localService">localService</td><td> see <u><a href="../../asynchronous/events/EventLoop.createConnection.html#localHost"><code class="lang-d"><span class="pln">localHost</span></code></a></u>.</td></tr>
 </table>
 </section>
 <section><h3>Returns</h3>
@@ -164,14 +183,20 @@ auto std.<wbr/>typecons.<wbr/>__T5TupleTC12asynchronous10transports9TransportVAy
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

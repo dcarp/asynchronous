@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,17 +73,16 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Interface Transport</h1>
 			<section>
-				<p> Interface representing a bidirectional transport.
+				<p>Interface representing a bidirectional transport.
 </p>
-<section>
-<p> There may be several implementations, but typically, the user does not
+<section><p>There may be several implementations, but typically, the user does not
  implement new transports; rather, the platform provides some useful
  transports that are implemented using the platform's best practices.
 </p>
 
 <p> The user never instantiates a transport directly; they call a utility
  function, passing it a protocol factory and other information necessary to
- create the transport and protocol. (E.g. <u>EventLoop.createConnection()</u> or <u>EventLoop.createServer()</u>.)
+ create the transport and protocol. (E.g. <u> EventLoop.createConnection()</u> or <u>EventLoop.createServer()</u>.)
 </p>
 
 <p> The utility function will asynchronously create a transport and a protocol
@@ -89,10 +95,10 @@ $('#symbolSearchPane').show();
 						<h3>Inherits from</h3>
 						<ul>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d"><a href="../../asynchronous/transports/ReadTransport.html">ReadTransport</a></code></code>
+								<code class="prettyprint lang-d"><a href="../../asynchronous/transports/ReadTransport.html"><span class="typ">ReadTransport</span></a></code>
 							</li>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d"><a href="../../asynchronous/transports/WriteTransport.html">WriteTransport</a></code></code>
+								<code class="prettyprint lang-d"><a href="../../asynchronous/transports/WriteTransport.html"><span class="typ">WriteTransport</span></a></code>
 							</li>
 						</ul>
 					</section>
@@ -110,7 +116,7 @@ $('#symbolSearchPane').show();
 										<code>abort</code>
 									</a>
 								</td>
-								<td> Close the transport immediately, without waiting for pending operations
+								<td>Close the transport immediately, without waiting for pending operations
  to complete.
 </td>
 							</tr>
@@ -128,7 +134,7 @@ $('#symbolSearchPane').show();
 										<code>close</code>
 									</a>
 								</td>
-								<td> Close the transport.
+								<td>Close the transport.
 </td>
 							</tr>
 							<tr>
@@ -137,7 +143,7 @@ $('#symbolSearchPane').show();
 										<code>getExtraInfo</code>
 									</a>
 								</td>
-								<td> Get optional transport information.
+								<td>Get optional transport information.
 </td>
 							</tr>
 							<tr>
@@ -146,7 +152,7 @@ $('#symbolSearchPane').show();
 										<code>getWriteBufferLimits</code>
 									</a>
 								</td>
-								<td> Get the high- and low-water limits for <a href="../../asynchronous/transports/WriteTransport.write.html"><code class="prettyprint lang-d">write</code></a> flow control.
+								<td>Get the high- and low-water limits for <a href="../../asynchronous/transports/WriteTransport.write.html"><code class="lang-d"><span class="pln">write</span></code></a> flow control.
 </td>
 							</tr>
 							<tr>
@@ -163,7 +169,7 @@ $('#symbolSearchPane').show();
 										<code>pauseReading</code>
 									</a>
 								</td>
-								<td> Pause the receiving end.
+								<td>Pause the receiving end.
 </td>
 							</tr>
 							<tr>
@@ -172,7 +178,7 @@ $('#symbolSearchPane').show();
 										<code>resumeReading</code>
 									</a>
 								</td>
-								<td> Resume the receiving end.
+								<td>Resume the receiving end.
 </td>
 							</tr>
 							<tr>
@@ -181,7 +187,7 @@ $('#symbolSearchPane').show();
 										<code>setWriteBufferLimits</code>
 									</a>
 								</td>
-								<td> Set the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="prettyprint lang-d">high</code></a>- and <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="prettyprint lang-d">low</code></a>-water limits for <a href="../../asynchronous/transports/WriteTransport.write.html"><code class="prettyprint lang-d">write</code></a> flow control.
+								<td>Set the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln"><a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><span class="pln">high</span></a></span></code></a>- and <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln"><a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><span class="pln">low</span></a></span></code></a>-water limits for <a href="../../asynchronous/transports/WriteTransport.write.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/transports/WriteTransport.write.html"><span class="pln">write</span></a></span></code></a> flow control.
 </td>
 							</tr>
 							<tr>
@@ -190,7 +196,7 @@ $('#symbolSearchPane').show();
 										<code>write</code>
 									</a>
 								</td>
-								<td> Write some <a href="../../asynchronous/transports/WriteTransport.write.html#data"><code class="prettyprint lang-d">data</code></a> bytes to the transport.
+								<td>Write some <a href="../../asynchronous/transports/WriteTransport.write.html#data"><code class="lang-d"><span class="pln"><a href="../../asynchronous/transports/WriteTransport.write.html#data"><span class="pln">data</span></a></span></code></a> bytes to the transport.
 </td>
 							</tr>
 							<tr>
@@ -199,7 +205,7 @@ $('#symbolSearchPane').show();
 										<code>writeEof</code>
 									</a>
 								</td>
-								<td> Close the <a href="../../asynchronous/transports/WriteTransport.write.html"><code class="prettyprint lang-d">write</code></a> end of the transport after flushing buffered data.
+								<td>Close the <a href="../../asynchronous/transports/WriteTransport.write.html"><code class="lang-d"><span class="pln">write</span></code></a> end of the transport after flushing buffered data.
 </td>
 							</tr>
 						</table>
@@ -208,14 +214,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

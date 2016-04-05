@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,21 +73,25 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function DatagramProtocol.errorReceived</h1>
 			<section>
-				<p> Called when a previous send or receive operation raises an <a href="../../asynchronous/protocols/DatagramProtocol.errorReceived.html#exception"><code class="prettyprint lang-d">exception</code></a>.
+				<p>Called when a previous send or receive operation raises an <a href="../../asynchronous/protocols/DatagramProtocol.errorReceived.html#exception"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/DatagramProtocol.errorReceived.html#exception"><span class="pln">exception</span></a></span></code></a>.
 </p>
-<section>
-</section>
+<section></section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-abstract void errorReceived(
-&nbsp;&nbsp;Exception exception
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">abstract </span><span class="typ">void</span> <span class="pln">errorReceived</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">Exception</span> <span class="pln">exception</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 <section><h3>Parameters</h3>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
-<tr><td id="exception">exception</td><td> is the <a href="../../asynchronous/protocols/DatagramProtocol.errorReceived.html#exception"><code class="prettyprint lang-d">exception</code></a> instance.
+<tr><td id="exception">exception</td><td> is the <a href="../../asynchronous/protocols/DatagramProtocol.errorReceived.html#exception"><code class="lang-d"><span class="pln">exception</span></code></a> instance.
 
  This method is called in rare conditions, when the transport (e.g. UDP)
  detects that a datagram couldn’t be delivered to its recipient. In many
@@ -91,14 +102,20 @@ abstract void errorReceived(
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

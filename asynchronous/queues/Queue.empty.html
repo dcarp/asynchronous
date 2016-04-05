@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,27 +73,36 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function Queue.empty</h1>
 			<section>
-				<p> Return <font color=blue>true</font> if the queue is <code class="prettyprint lang-d">empty</code>, <font color=blue>false</font>
+				<p>Return <font color=blue>true</font> if the queue is <code class="lang-d"><span class="pln">empty</span></code>, <font color=blue>false</font>
  otherwise.
 </p>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-bool empty() @property;</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="typ">bool</span> <span class="pln">empty<span class="pun">()</span><span class="pln"> </span><span class="pun">@</span><span class="pln">property</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class="selected module">events</a>
 							</li>
@@ -66,33 +73,48 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function EventLoop.createUnixServer</h1>
 			<section>
-				<p> Similar to <u><a href="../../asynchronous/events/EventLoop.createServer.html"><code class="prettyprint lang-d">EventLoop.createServer</code></a>()</u>, but specific to the
- <a href="../../asynchronous/events/EventLoop.createUnixServer.html#socket"><code class="prettyprint lang-d">socket</code></a> family <u>AddressFamily.UNIX</u>.
+				<p>Similar to <u><a href="../../asynchronous/events/EventLoop.createServer.html"><code class="lang-d"><span class="typ">EventLoop<wbr/></span><span class="pun">.</span><span class="pln">createServer</span></code></a>()</u>, but specific to the
+ <a href="../../asynchronous/events/EventLoop.createUnixServer.html#socket"><code class="lang-d"><span class="pln">socket</span></code></a> family <u>AddressFamily.UNIX</u>.
 </p>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-<a href="../../asynchronous/events/Server.html">Server</a> createUnixServer(
-&nbsp;&nbsp;<a href="../../asynchronous/protocols/Protocol.html">Protocol</a> delegate() protocolFactory,
-&nbsp;&nbsp;const(char[]) path,
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>Socket socket = null,
-&nbsp;&nbsp;int backlog = 100,
-&nbsp;&nbsp;asynchronous.<wbr/>events.<wbr/>SslContext sslContext = null
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<a href="../../asynchronous/events/Server.html"><span class="typ">Server</span></a> <span class="pln">createUnixServer</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<a href="../../asynchronous/protocols/Protocol.html"><span class="typ">Protocol</span></a> <span class="kwd">delegate</span><span class="pun">(</span><span class="pun">)</span> <span class="pln">protocolFactory</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">path</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">Socket</span> <span class="pln">socket</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">int</span> <span class="pln">backlog</span> <span class="pun">=</span> <span class="lit">100</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">asynchronous<wbr/></span><span class="pun">.</span><span class="pln">events<wbr/></span><span class="pun">.</span><span class="typ">SslContext</span> <span class="pln">sslContext</span> <span class="pun">=</span> <span class="kwd">null</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

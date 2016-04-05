@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,36 +73,49 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function sleep</h1>
 			<section>
-				<p> Create a coroutine that completes after a given time. If <u><a href="../../asynchronous/tasks/sleep.html#result"><code class="prettyprint lang-d">result</code></a></u>
+				<p>Create a coroutine that completes after a given time. If <u><a href="../asynchronous/tasks/sleep.html#result"><code class="lang-d"><span class="pln"><a href="../../asynchronous/tasks/sleep.html#result"><span class="pln">result</span></a></span></code></a></u>
  is provided, it is produced to the caller when the coroutine completes.
 </p>
-<section>
-<p> The resolution of the <code class="prettyprint lang-d">sleep</code> depends on the granularity of the event loop.
+<section><p>The resolution of the <code class="lang-d"><span class="pln">sleep</span></code> depends on the granularity of the event loop.
 </p>
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-auto sleep(Result...)(
-&nbsp;&nbsp;<a href="../../asynchronous/events/EventLoop.html">EventLoop</a> eventLoop,
-&nbsp;&nbsp;Duration delay,
-&nbsp;&nbsp;Result result
-)
-if (result.length &lt;= 1);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+auto <span class="pln">sleep</span><span class="pun">(</span><span class="typ">Result</span><span class="pun">...)</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<a href="../../asynchronous/events/EventLoop.html"><span class="typ">EventLoop</span></a> <span class="pln">eventLoop</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">Duration</span> <span class="pln">delay</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">Result</span> <span class="pln">result</span>
+								<br/>
+<span class="pun">)</span>
+								<br/>
+<span class="kwd">if</span> <span class="pun">(</span><span class="pln">result<wbr/></span><span class="pun">.</span><span class="pln">length </span><span class="pun">&lt;= </span><span class="lit">1</span><span class="pun">);</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../styles/ddox.css"/>
 		<link rel="stylesheet" href="../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -65,8 +72,9 @@ $('#symbolSearchPane').show();
 		</nav>
 		<div id="main-contents">
 			<h1>Module asynchronous.queues</h1>
-			<p> Queues.
+			<p>Queues.
 </p>
+<section></section>
 
 			<section></section>
 			<section>
@@ -83,7 +91,7 @@ $('#symbolSearchPane').show();
 								<code>LifoQueue</code>
 							</a>
 						</td>
-						<td> A subclass of <u><a href="../asynchronous/queues/Queue.html"><code class="prettyprint lang-d">Queue</code></a></u> that retrieves most recently added entries
+						<td>A subclass of <u><a href="../asynchronous/queues/Queue.html"><code class="lang-d"><span class="typ">Queue</span></code></a></u> that retrieves most recently added entries
  first.
 </td>
 					</tr>
@@ -93,7 +101,7 @@ $('#symbolSearchPane').show();
 								<code>PriorityQueue</code>
 							</a>
 						</td>
-						<td> A subclass of <u><a href="../asynchronous/queues/Queue.html"><code class="prettyprint lang-d">Queue</code></a></u>; retrieves entries in priority order
+						<td>A subclass of <u><a href="../asynchronous/queues/Queue.html"><code class="lang-d"><span class="typ">Queue</span></code></a></u>; retrieves entries in priority order
  (largest first).
 </td>
 					</tr>
@@ -103,7 +111,7 @@ $('#symbolSearchPane').show();
 								<code>Queue</code>
 							</a>
 						</td>
-						<td> A queue, useful for coordinating producer and consumer coroutines.
+						<td>A queue, useful for coordinating producer and consumer coroutines.
 </td>
 					</tr>
 					<tr>
@@ -112,8 +120,8 @@ $('#symbolSearchPane').show();
 								<code>QueueEmptyException</code>
 							</a>
 						</td>
-						<td> Exception thrown when <u><a href="../asynchronous/queues/Queue.getNowait.html"><code class="prettyprint lang-d">Queue.getNowait</code></a>()</u> is called on a
- <u><a href="../asynchronous/queues/Queue.html"><code class="prettyprint lang-d">Queue</code></a></u> object which is empty.
+						<td>Exception thrown when <u><a href="../asynchronous/queues/Queue.getNowait.html"><code class="lang-d"><span class="typ">Queue<wbr/></span><span class="pun">.</span><span class="pln">getNowait</span></code></a>()</u> is called on a
+ <u><a href="../asynchronous/queues/Queue.html"><code class="lang-d"><span class="typ">Queue</span></code></a></u> object which is empty.
 </td>
 					</tr>
 					<tr>
@@ -122,22 +130,28 @@ $('#symbolSearchPane').show();
 								<code>QueueFullException</code>
 							</a>
 						</td>
-						<td> Exception thrown when <u><a href="../asynchronous/queues/Queue.putNowait.html"><code class="prettyprint lang-d">Queue.putNowait</code></a>()</u> is called on a
- <u><a href="../asynchronous/queues/Queue.html"><code class="prettyprint lang-d">Queue</code></a></u> object which is full.
+						<td>Exception thrown when <u><a href="../asynchronous/queues/Queue.putNowait.html"><code class="lang-d"><span class="typ">Queue<wbr/></span><span class="pun">.</span><span class="pln">putNowait</span></code></a>()</u> is called on a
+ <u><a href="../asynchronous/queues/Queue.html"><code class="lang-d"><span class="typ">Queue</span></code></a></u> object which is full.
 </td>
 					</tr>
 				</table>
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

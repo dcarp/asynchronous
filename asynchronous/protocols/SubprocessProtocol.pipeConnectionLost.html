@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,25 +73,30 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function SubprocessProtocol.pipeConnectionLost</h1>
 			<section>
-				<p> Called when one of the pipes communicating with the child process is
+				<p>Called when one of the pipes communicating with the child process is
  closed.
 </p>
-<section>
-</section>
+<section></section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-abstract void pipeConnectionLost(
-&nbsp;&nbsp;int fd,
-&nbsp;&nbsp;Exception exception
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">abstract </span><span class="typ">void</span> <span class="pln">pipeConnectionLost</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">int</span> <span class="pln">fd</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">Exception</span> <span class="pln">exception</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 <section><h3>Parameters</h3>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
 <tr><td id="fd">fd</td><td> is the file descriptor that was closed.
 </td></tr>
-<tr><td id="exception">exception</td><td> is either an <a href="../../asynchronous/protocols/SubprocessProtocol.pipeConnectionLost.html#exception"><code class="prettyprint lang-d">exception</code></a> object or $(D_KEYWORD null). The
+<tr><td id="exception">exception</td><td> is either an <a href="../../asynchronous/protocols/SubprocessProtocol.pipeConnectionLost.html#exception"><code class="lang-d"><span class="pln">exception</span></code></a> object or <font color=blue>null</font>. The
       latter means a regular EOF is received, or the connection was
       aborted or closed by this side of the connection.</td></tr>
 </table>
@@ -93,14 +105,20 @@ abstract void pipeConnectionLost(
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

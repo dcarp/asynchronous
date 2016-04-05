@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,13 +73,12 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Class Semaphore</h1>
 			<section>
-				<p> A <code class="prettyprint lang-d">Semaphore</code> implementation.
+				<p>A <code class="lang-d"><span class="typ"><span class="typ">Semaphore</span></span></code> implementation.
 </p>
-<section>
-<p> A semaphore manages an internal counter which is decremented by each
- <u><a href="../../asynchronous/locks/Semaphore.acquire.html"><code class="prettyprint lang-d">acquire</code></a>()</u> call and incremented by each <u><a href="../../asynchronous/locks/Semaphore.release.html"><code class="prettyprint lang-d">release</code></a>()</u>
- call. The counter can never go below zero; when <u><a href="../../asynchronous/locks/Semaphore.acquire.html"><code class="prettyprint lang-d">acquire</code></a>()</u> finds
- that it is zero, it blocks, waiting until some other thread calls <u><a href="../../asynchronous/locks/Semaphore.release.html"><code class="prettyprint lang-d">release</code></a>()</u>.
+<section><p>A semaphore manages an internal counter which is decremented by each
+ <u><a href="../../asynchronous/locks/Semaphore.acquire.html"><code class="lang-d"><span class="pln">acquire</span></code></a>()</u> call and incremented by each <u><a href="../../asynchronous/locks/Semaphore.release.html"><code class="lang-d"><span class="pln">release</span></code></a>()</u>
+ call. The counter can never go below zero; when <u><a href="../../asynchronous/locks/Semaphore.acquire.html"><code class="lang-d"><span class="pln">acquire</span></code></a>()</u> finds
+ that it is zero, it blocks, waiting until some other thread calls <u> <a href="../../asynchronous/locks/Semaphore.release.html"><code class="lang-d"><span class="pln">release</span></code></a>()</u>.
 </p>
 
 <p> The optional argument gives the initial value for the internal counter; it
@@ -87,7 +93,7 @@ $('#symbolSearchPane').show();
 						<h3>Inherits from</h3>
 						<ul>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
+								<code class="prettyprint lang-d"><span class="typ">Object</span></code>
  (base class)
 							</li>
 						</ul>
@@ -106,8 +112,8 @@ $('#symbolSearchPane').show();
 									<a href="../../asynchronous/locks/Semaphore.locked.html" class="public property"><code>locked</code></a>
 									<span class="tableEntryAnnotation">[get]</span>
 								</td>
-								<td class="typecol"><code class="prettyprint lang-d">bool</code></td>
-								<td> Returns <font color=blue>true</font> if semaphore can not be acquired immediately.
+								<td class="typecol"><code class="prettyprint lang-d"><span class="typ">bool</span></code></td>
+								<td>Returns <font color=blue>true</font> if semaphore can not be acquired immediately.
 </td>
 							</tr>
 						</table>
@@ -126,7 +132,7 @@ $('#symbolSearchPane').show();
 										<code>acquire</code>
 									</a>
 								</td>
-								<td> Acquire a semaphore.
+								<td>Acquire a semaphore.
 </td>
 							</tr>
 							<tr>
@@ -135,7 +141,7 @@ $('#symbolSearchPane').show();
 										<code>release</code>
 									</a>
 								</td>
-								<td> Release a semaphore, incrementing the internal counter by one. When it
+								<td>Release a semaphore, incrementing the internal counter by one. When it
  was zero on entry and another coroutine is waiting for it to become
  larger than zero again, wake up that coroutine.
 </td>
@@ -146,14 +152,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

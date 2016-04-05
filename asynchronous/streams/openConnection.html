@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,60 +73,81 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function openConnection</h1>
 			<section>
-				<p> A wrapper for <u>createConnection()</u> returning a (reader, writer)
+				<p>A wrapper for <u>createConnection()</u> returning a (reader, writer)
  pair.
 </p>
-<section>
-<p> The reader returned is a <u>StreamReader</u> instance; the writer is a
- <u><a href="../../asynchronous/streams/StreamWriter.html"><code class="prettyprint lang-d">StreamWriter</code></a></u> instance.
+<section><p>The reader returned is a <u>StreamReader</u> instance; the writer is a
+ <u><a href="../../asynchronous/streams/StreamWriter.html"><code class="lang-d"><span class="typ">StreamWriter</span></code></a></u> instance.
 </p>
 
 <p> The arguments are all the usual arguments to <u>createConnection()</u>
- except protocolFactory; most common are <a href="../../asynchronous/streams/openConnection.html#host"><code class="prettyprint lang-d">host</code></a> and port, with various optional
+ except protocolFactory; most common are <a href="../../asynchronous/streams/openConnection.html#host"><code class="lang-d"><span class="pln">host</span></code></a> and port, with various optional
  arguments following.
 </p>
 
-<p> Additional arguments are <u><a href="../../asynchronous/streams/openConnection.html#eventLoop"><code class="prettyprint lang-d">eventLoop</code></a></u> (to set the event loop
- instance to use) and <u><a href="../../asynchronous/streams/openConnection.html#limit"><code class="prettyprint lang-d">limit</code></a></u> (to set the buffer <a href="../../asynchronous/streams/openConnection.html#limit"><code class="prettyprint lang-d">limit</code></a> passed to
+<p> Additional arguments are <u><a href="../../asynchronous/streams/openConnection.html#eventLoop"><code class="lang-d"><span class="pln">eventLoop</span></code></a></u> (to set the event loop
+ instance to use) and <u><a href="../../asynchronous/streams/openConnection.html#limit"><code class="lang-d"><span class="pln">limit</span></code></a></u> (to set the buffer <a href="../../asynchronous/streams/openConnection.html#limit"><code class="lang-d"><span class="pln">limit</span></code></a> passed to
  the <u>StreamReader</u>).
 </p>
 
 <p> (If you want to customize the <u>StreamReader</u> and/or
- <u><a href="../../asynchronous/streams/StreamReaderProtocol.html"><code class="prettyprint lang-d">StreamReaderProtocol</code></a></u> classes, just copy the code -- there's
+ <u><a href="../../asynchronous/streams/StreamReaderProtocol.html"><code class="lang-d"><span class="typ">StreamReaderProtocol</span></code></a></u> classes, just copy the code -- there's
  really nothing special here except some convenience.)
 </p>
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-auto std.<wbr/>typecons.<wbr/>__T5TupleTC12asynchronous7streams12StreamReaderVAyaa6_726561646572TC12asynchronous7streams12StreamWriterVAyaa6_777269746572Z.<wbr/>Tuple openConnection(
-&nbsp;&nbsp;<a href="../../asynchronous/events/EventLoop.html">EventLoop</a> eventLoop,
-&nbsp;&nbsp;const(char[]) host = null,
-&nbsp;&nbsp;const(char[]) service = null,
-&nbsp;&nbsp;ulong limit = 65536LU,
-&nbsp;&nbsp;asynchronous.<wbr/>events.<wbr/>SslContext sslContext = null,
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>AddressFamily addressFamily = UNSPECIFIED(),
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>ProtocolType protocolType = UNSPECIFIED(),
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>AddressInfoFlags addressInfoFlags = UNSPECIFIED(),
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>Socket socket = null,
-&nbsp;&nbsp;const(char[]) localHost = null,
-&nbsp;&nbsp;const(char[]) localService = null,
-&nbsp;&nbsp;const(char[]) serverHostname = null
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">auto </span><span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">typecons<wbr/></span><span class="pun">.</span><span class="pln">__T5TupleTC12asynchronous7streams12StreamReaderVAyaa6_726561646572TC12asynchronous7streams12StreamWriterVAyaa6_777269746572Z<wbr/></span><span class="pun">.</span><span class="typ">Tuple</span> <span class="pln">openConnection</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<a href="../../asynchronous/events/EventLoop.html"><span class="typ">EventLoop</span></a> <span class="pln">eventLoop</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">host</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">service</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">ulong</span> <span class="pln">limit</span> <span class="pun">=</span> <span class="lit">65536LU</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">asynchronous<wbr/></span><span class="pun">.</span><span class="pln">events<wbr/></span><span class="pun">.</span><span class="typ">SslContext</span> <span class="pln">sslContext</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">AddressFamily</span> <span class="pln">addressFamily</span> <span class="pun">=</span> <span class="pln">UNSPECIFIED</span><span class="pun">()</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">ProtocolType</span> <span class="pln">protocolType</span> <span class="pun">=</span> <span class="pln">UNSPECIFIED</span><span class="pun">()</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">AddressInfoFlags</span> <span class="pln">addressInfoFlags</span> <span class="pun">=</span> <span class="pln">UNSPECIFIED</span><span class="pun">()</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">Socket</span> <span class="pln">socket</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">localHost</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">localService</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">serverHostname</span> <span class="pun">=</span> <span class="kwd">null</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

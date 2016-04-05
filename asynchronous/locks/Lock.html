@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,41 +73,39 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Class Lock</h1>
 			<section>
-				<p> Primitive lock objects.
+				<p>Primitive lock objects.
 </p>
-<section>
-<p> A primitive lock is a synchronization primitive that is not owned by a
- particular coroutine when <a href="../../asynchronous/locks/Lock.locked.html"><code class="prettyprint lang-d">locked</code></a>. A primitive lock is in one of two states,
- ‘<a href="../../asynchronous/locks/Lock.locked.html"><code class="prettyprint lang-d">locked</code></a>’ or ‘unlocked’.
+<section><p>A primitive lock is a synchronization primitive that is not owned by a
+ particular coroutine when <a href="../../asynchronous/locks/Lock.locked.html"><code class="lang-d"><span class="pln">locked</span></code></a>. A primitive lock is in one of two states,
+ ‘<a href="../../asynchronous/locks/Lock.locked.html"><code class="lang-d"><span class="pln">locked</span></code></a>’ or ‘unlocked’.
 </p>
 
-<p> It is created in the unlocked state. It has two basic methods, <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="prettyprint lang-d">acquire</code></a>()</u> and <u><a href="../../asynchronous/locks/Lock.release.html"><code class="prettyprint lang-d">release</code></a>()</u>. When the state is unlocked,
- <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="prettyprint lang-d">acquire</code></a>()</u> changes the state to <a href="../../asynchronous/locks/Lock.locked.html"><code class="prettyprint lang-d">locked</code></a> and returns immediately.
- When the state is <a href="../../asynchronous/locks/Lock.locked.html"><code class="prettyprint lang-d">locked</code></a>, <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="prettyprint lang-d">acquire</code></a>()</u> blocks until a call to
- <u><a href="../../asynchronous/locks/Lock.release.html"><code class="prettyprint lang-d">release</code></a>()</u> in another coroutine changes it to unlocked, then the
- <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="prettyprint lang-d">acquire</code></a>()</u> call resets it to <a href="../../asynchronous/locks/Lock.locked.html"><code class="prettyprint lang-d">locked</code></a> and returns. The <u><a href="../../asynchronous/locks/Lock.release.html"><code class="prettyprint lang-d">release</code></a>()</u> method should only be called in the <a href="../../asynchronous/locks/Lock.locked.html"><code class="prettyprint lang-d">locked</code></a> state; it changes the
- state to unlocked and returns immediately. If an attempt is made to <a href="../../asynchronous/locks/Lock.release.html"><code class="prettyprint lang-d">release</code></a>
+<p> It is created in the unlocked state. It has two basic methods, <u> <a href="../../asynchronous/locks/Lock.acquire.html"><code class="lang-d"><span class="pln">acquire</span></code></a>()</u> and <u><a href="../../asynchronous/locks/Lock.release.html"><code class="lang-d"><span class="pln">release</span></code></a>()</u>. When the state is unlocked,
+ <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="lang-d"><span class="pln">acquire</span></code></a>()</u> changes the state to <a href="../../asynchronous/locks/Lock.locked.html"><code class="lang-d"><span class="pln">locked</span></code></a> and returns immediately.
+ When the state is <a href="../../asynchronous/locks/Lock.locked.html"><code class="lang-d"><span class="pln">locked</span></code></a>, <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="lang-d"><span class="pln">acquire</span></code></a>()</u> blocks until a call to
+ <u><a href="../../asynchronous/locks/Lock.release.html"><code class="lang-d"><span class="pln">release</span></code></a>()</u> in another coroutine changes it to unlocked, then the
+ <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="lang-d"><span class="pln">acquire</span></code></a>()</u> call resets it to <a href="../../asynchronous/locks/Lock.locked.html"><code class="lang-d"><span class="pln">locked</span></code></a> and returns. The <u> <a href="../../asynchronous/locks/Lock.release.html"><code class="lang-d"><span class="pln">release</span></code></a>()</u> method should only be called in the <a href="../../asynchronous/locks/Lock.locked.html"><code class="lang-d"><span class="pln">locked</span></code></a> state; it changes the
+ state to unlocked and returns immediately. If an attempt is made to <a href="../../asynchronous/locks/Lock.release.html"><code class="lang-d"><span class="pln">release</span></code></a>
  an unlocked lock, an <u>Exception</u> will be thrown.
 </p>
 
-<p> When more than one coroutine is blocked in <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="prettyprint lang-d">acquire</code></a>()</u> waiting for
- the state to turn to unlocked, only one coroutine proceeds when a <u><a href="../../asynchronous/locks/Lock.release.html"><code class="prettyprint lang-d">release</code></a>()</u> call resets the state to unlocked; first coroutine which is
- blocked in <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="prettyprint lang-d">acquire</code></a>()</u> is being processed.
+<p> When more than one coroutine is blocked in <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="lang-d"><span class="pln">acquire</span></code></a>()</u> waiting for
+ the state to turn to unlocked, only one coroutine proceeds when a <u> <a href="../../asynchronous/locks/Lock.release.html"><code class="lang-d"><span class="pln">release</span></code></a>()</u> call resets the state to unlocked; first coroutine which is
+ blocked in <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="lang-d"><span class="pln">acquire</span></code></a>()</u> is being processed.
 </p>
 
-<p> <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="prettyprint lang-d">acquire</code></a>()</u> is a coroutine.
+<p> <u><a href="../../asynchronous/locks/Lock.acquire.html"><code class="lang-d"><span class="pln">acquire</span></code></a>()</u> is a coroutine.
 </p>
 
 <p> This class is not thread safe.
 </p>
-
 </section>
 
 					<section>
 						<h3>Inherits from</h3>
 						<ul>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
+								<code class="prettyprint lang-d"><span class="typ">Object</span></code>
  (base class)
 							</li>
 						</ul>
@@ -119,8 +124,8 @@ $('#symbolSearchPane').show();
 									<a href="../../asynchronous/locks/Lock.locked.html" class="public property"><code>locked</code></a>
 									<span class="tableEntryAnnotation">[get]</span>
 								</td>
-								<td class="typecol"><code class="prettyprint lang-d">bool</code></td>
-								<td> Return <font color=blue>true</font> if lock is acquired.
+								<td class="typecol"><code class="prettyprint lang-d"><span class="typ">bool</span></code></td>
+								<td>Return <font color=blue>true</font> if lock is acquired.
 </td>
 							</tr>
 						</table>
@@ -139,7 +144,7 @@ $('#symbolSearchPane').show();
 										<code>acquire</code>
 									</a>
 								</td>
-								<td> Acquire a lock.
+								<td>Acquire a lock.
 </td>
 							</tr>
 							<tr>
@@ -148,21 +153,20 @@ $('#symbolSearchPane').show();
 										<code>release</code>
 									</a>
 								</td>
-								<td> Release a lock.
+								<td>Release a lock.
 </td>
 							</tr>
 						</table>
 					</section>
 <section><h3>Usage</h3>
-
-<p>   lock = new <code class="prettyprint lang-d">Lock</code>();
+<p>lock = new <code class="lang-d"><span class="typ">Lock</span></code>();
    ...
    lock.acquire();
    scope (exit) lock.release();
    ...
 </p>
 
-<p> <code class="prettyprint lang-d">Lock</code> objects can be tested for locking state:
+<p> <code class="lang-d"><span class="typ">Lock</span></code> objects can be tested for locking state:
 </p>
 
 <p>   if (!lock.locked)
@@ -176,14 +180,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

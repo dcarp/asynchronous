@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,14 +73,13 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Interface BaseProtocol</h1>
 			<section>
-				<p> Common interface for protocol interfaces.
+				<p>Common interface for protocol interfaces.
 </p>
-<section>
-<p> Usually user implements protocols that derived from <code class="prettyprint lang-d">BaseProtocol</code> like
- <a href="../../asynchronous/protocols/Protocol.html"><code class="prettyprint lang-d">Protocol</code></a> or ProcessProtocol.
+<section><p>Usually user implements protocols that derived from <code class="lang-d"><span class="typ">BaseProtocol</span></code> like
+ <a href="../../asynchronous/protocols/Protocol.html"><code class="lang-d"><span class="typ">Protocol</span></code></a> or ProcessProtocol.
 </p>
 
-<p> The only case when <code class="prettyprint lang-d">BaseProtocol</code> should be implemented directly is write-only
+<p> The only case when <code class="lang-d"><span class="typ">BaseProtocol</span></code> should be implemented directly is write-only
  transport like write pipe
 </p>
 </section>
@@ -92,7 +98,7 @@ $('#symbolSearchPane').show();
 										<code>connectionLost</code>
 									</a>
 								</td>
-								<td> Called when the connection is lost or closed.
+								<td>Called when the connection is lost or closed.
 </td>
 							</tr>
 							<tr>
@@ -101,7 +107,7 @@ $('#symbolSearchPane').show();
 										<code>connectionMade</code>
 									</a>
 								</td>
-								<td> <u><code class="prettyprint lang-d">connectionMade</code>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="prettyprint lang-d">connectionLost</code></a>()</u> are
+								<td><u><code class="lang-d"><span class="pln">connectionMade</span></code>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="lang-d"><span class="pln">connectionLost</span></code></a>()</u> are
  called exactly once per successful connection. All other callbacks will
  be called between those two methods, which allows for easier resource
  management in your protocol implementation.
@@ -113,10 +119,10 @@ $('#symbolSearchPane').show();
 										<code>pauseWriting</code>
 									</a>
 								</td>
-								<td> <u><code class="prettyprint lang-d">pauseWriting</code>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="prettyprint lang-d">resumeWriting</code></a>()</u> calls are
- paired – <u><code class="prettyprint lang-d">pauseWriting</code>()</u> is called once when the buffer goes
+								<td><u><code class="lang-d"><span class="pln">pauseWriting</span></code>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="lang-d"><span class="pln">resumeWriting</span></code></a>()</u> calls are
+ paired – <u><code class="lang-d"><span class="pln">pauseWriting</span></code>()</u> is called once when the buffer goes
  strictly over the high-water mark (even if subsequent writes increases
- the buffer size even more), and eventually <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="prettyprint lang-d">resumeWriting</code></a>()</u>
+ the buffer size even more), and eventually <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="lang-d"><span class="pln">resumeWriting</span></code></a>()</u>
  is called once when the buffer size reaches the low-water mark.
 </td>
 							</tr>
@@ -126,7 +132,7 @@ $('#symbolSearchPane').show();
 										<code>resumeWriting</code>
 									</a>
 								</td>
-								<td> Called when the transport’s buffer drains below the low-water mark.
+								<td>Called when the transport’s buffer drains below the low-water mark.
 </td>
 							</tr>
 						</table>
@@ -135,14 +141,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

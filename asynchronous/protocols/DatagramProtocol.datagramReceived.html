@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,23 +73,28 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function DatagramProtocol.datagramReceived</h1>
 			<section>
-				<p> Called when a datagram is received.
+				<p>Called when a datagram is received.
 </p>
-<section>
-</section>
+<section></section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-abstract void datagramReceived(
-&nbsp;&nbsp;const(void)[] data,
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>Address address
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">abstract </span><span class="typ">void</span> <span class="pln">datagramReceived</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">void</span><span class="pun">)</span><span class="pun">[]</span> <span class="pln">data</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">Address</span> <span class="pln">address</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 <section><h3>Parameters</h3>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
-<tr><td id="data">data</td><td> is an array containing the incoming <a href="../../asynchronous/protocols/DatagramProtocol.datagramReceived.html#data"><code class="prettyprint lang-d">data</code></a>.</td></tr>
-<tr><td id="address">address</td><td> is the <a href="../../asynchronous/protocols/DatagramProtocol.datagramReceived.html#address"><code class="prettyprint lang-d">address</code></a> of the peer sending the <a href="../../asynchronous/protocols/DatagramProtocol.datagramReceived.html#data"><code class="prettyprint lang-d">data</code></a>; the exact format
+<tr><td id="data">data</td><td> is an array containing the incoming <a href="../../asynchronous/protocols/DatagramProtocol.datagramReceived.html#data"><code class="lang-d"><span class="pln">data</span></code></a>.</td></tr>
+<tr><td id="address">address</td><td> is the <a href="../../asynchronous/protocols/DatagramProtocol.datagramReceived.html#address"><code class="lang-d"><span class="pln">address</span></code></a> of the peer sending the <a href="../../asynchronous/protocols/DatagramProtocol.datagramReceived.html#data"><code class="lang-d"><span class="pln">data</span></code></a>; the exact format
             depends on the transport.</td></tr>
 </table>
 </section>
@@ -90,14 +102,20 @@ abstract void datagramReceived(
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

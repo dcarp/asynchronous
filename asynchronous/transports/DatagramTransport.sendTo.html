@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,40 +73,51 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function DatagramTransport.sendTo</h1>
 			<section>
-				<p> Send the <a href="../../asynchronous/transports/DatagramTransport.sendTo.html#data"><code class="prettyprint lang-d">data</code></a> bytes to the remote peer given by <a href="../../asynchronous/transports/DatagramTransport.sendTo.html#address"><code class="prettyprint lang-d">address</code></a> (a
- transport-dependent target <a href="../../asynchronous/transports/DatagramTransport.sendTo.html#address"><code class="prettyprint lang-d">address</code></a>).
+				<p>Send the <a href="../../asynchronous/transports/DatagramTransport.sendTo.html#data"><code class="lang-d"><span class="pln"><a href="../../asynchronous/transports/DatagramTransport.sendTo.html#data"><span class="pln">data</span></a></span></code></a> bytes to the remote peer given by <a href="../../asynchronous/transports/DatagramTransport.sendTo.html#address"><code class="lang-d"><span class="pln"><a href="../../asynchronous/transports/DatagramTransport.sendTo.html#address"><span class="pln">address</span></a></span></code></a> (a
+ transport-dependent target <a href="../../asynchronous/transports/DatagramTransport.sendTo.html#address"><code class="lang-d"><span class="pln"><a href="../../asynchronous/transports/DatagramTransport.sendTo.html#address"><span class="pln">address</span></a></span></code></a>).
 </p>
-<section>
-<p> If <u><a href="../../asynchronous/transports/DatagramTransport.sendTo.html#address"><code class="prettyprint lang-d">address</code></a></u> is <font color=blue>null</font>, the <a href="../../asynchronous/transports/DatagramTransport.sendTo.html#data"><code class="prettyprint lang-d">data</code></a> is sent to the
- target <a href="../../asynchronous/transports/DatagramTransport.sendTo.html#address"><code class="prettyprint lang-d">address</code></a> given on transport
+<section><p>If <u><a href="../../asynchronous/transports/DatagramTransport.sendTo.html#address"><code class="lang-d"><span class="pln">address</span></code></a></u> is <font color=blue>null</font>, the <a href="../../asynchronous/transports/DatagramTransport.sendTo.html#data"><code class="lang-d"><span class="pln">data</span></code></a> is sent to the
+ target <a href="../../asynchronous/transports/DatagramTransport.sendTo.html#address"><code class="lang-d"><span class="pln">address</span></code></a> given on transport
  creation.
 </p>
 
-<p> This method does not block; it buffers the <a href="../../asynchronous/transports/DatagramTransport.sendTo.html#data"><code class="prettyprint lang-d">data</code></a> and arranges for it to be
+<p> This method does not block; it buffers the <a href="../../asynchronous/transports/DatagramTransport.sendTo.html#data"><code class="lang-d"><span class="pln">data</span></code></a> and arranges for it to be
  sent out asynchronously.
 </p>
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-abstract void sendTo(
-&nbsp;&nbsp;const(void)[] data,
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>Address address = null
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">abstract </span><span class="typ">void</span> <span class="pln">sendTo</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">void</span><span class="pun">)</span><span class="pun">[]</span> <span class="pln">data</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">Address</span> <span class="pln">address</span> <span class="pun">=</span> <span class="kwd">null</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

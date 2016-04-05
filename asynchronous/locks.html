@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../styles/ddox.css"/>
 		<link rel="stylesheet" href="../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -65,8 +72,9 @@ $('#symbolSearchPane').show();
 		</nav>
 		<div id="main-contents">
 			<h1>Module asynchronous.locks</h1>
-			<p> Synchronization primitives.
+			<p>Synchronization primitives.
 </p>
+<section></section>
 
 			<section></section>
 			<section>
@@ -83,7 +91,7 @@ $('#symbolSearchPane').show();
 								<code>BoundedSemaphore</code>
 							</a>
 						</td>
-						<td> A bounded semaphore implementation.
+						<td>A bounded semaphore implementation.
 </td>
 					</tr>
 					<tr>
@@ -92,7 +100,7 @@ $('#symbolSearchPane').show();
 								<code>Condition</code>
 							</a>
 						</td>
-						<td> This class implements condition variable objects.
+						<td>This class implements condition variable objects.
 </td>
 					</tr>
 					<tr>
@@ -101,7 +109,7 @@ $('#symbolSearchPane').show();
 								<code>Event</code>
 							</a>
 						</td>
-						<td> Class implementing event objects.
+						<td>Class implementing event objects.
 </td>
 					</tr>
 					<tr>
@@ -110,7 +118,7 @@ $('#symbolSearchPane').show();
 								<code>Lock</code>
 							</a>
 						</td>
-						<td> Primitive lock objects.
+						<td>Primitive lock objects.
 </td>
 					</tr>
 					<tr>
@@ -119,21 +127,27 @@ $('#symbolSearchPane').show();
 								<code>Semaphore</code>
 							</a>
 						</td>
-						<td> A <code class="prettyprint lang-d">Semaphore</code> implementation.
+						<td>A <code class="lang-d"><span class="typ">Semaphore</span></code> implementation.
 </td>
 					</tr>
 				</table>
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

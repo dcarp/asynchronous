@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class="selected module">events</a>
 							</li>
@@ -66,43 +73,53 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function EventLoop.callSoon</h1>
 			<section>
-				<p> Arrange for a callback to be called as soon as possible.
+				<p>Arrange for a callback to be called as soon as possible.
 </p>
-<section>
-<p> This operates as a FIFO queue, callbacks are called in the order in
+<section><p>This operates as a FIFO queue, callbacks are called in the order in
  which they are registered. Each callback will be called exactly once.
 </p>
 
 <p> Any positional arguments after the callback will be passed to the
  callback when it is called.
 </p>
-
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-final auto callSoon(Dg, Args...)(
-&nbsp;&nbsp;Dg dg,
-&nbsp;&nbsp;Args args
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">final </span>auto <span class="pln">callSoon</span><span class="pun">(</span><span class="typ">Dg</span><span class="pun">, </span><span class="typ">Args</span><span class="pun">...)</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">Dg</span> <span class="pln">dg</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">Args</span> <span class="pln">args</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 <section><h3>Returns</h3>
-<p>an instance of <u><a href="../../asynchronous/events/Callback.html"><code class="prettyprint lang-d">Callback</code></a></u>.
+<p>an instance of <u><a href="../../asynchronous/events/Callback.html"><code class="lang-d"><span class="typ">Callback</span></code></a></u>.
 </p>
 </section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

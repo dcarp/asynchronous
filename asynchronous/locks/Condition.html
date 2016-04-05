@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,15 +73,14 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Class Condition</h1>
 			<section>
-				<p> This class implements condition variable objects.
+				<p>This class implements condition variable objects.
 </p>
-<section>
-<p> A condition variable allows one or more coroutines to <a href="../../asynchronous/locks/Condition.wait.html"><code class="prettyprint lang-d">wait</code></a> until they are
+<section><p>A condition variable allows one or more coroutines to <a href="../../asynchronous/locks/Condition.wait.html"><code class="lang-d"><span class="pln">wait</span></code></a> until they are
  notified by another coroutine.
 </p>
 
 <p> If the lock argument is given and not <font color=blue>null</font> then it is used as
- the underlying lock. Otherwise, a new <a href="../../asynchronous/locks/Lock.html"><code class="prettyprint lang-d">Lock</code></a> object is created and used as the
+ the underlying lock. Otherwise, a new <a href="../../asynchronous/locks/Lock.html"><code class="lang-d"><span class="typ">Lock</span></code></a> object is created and used as the
  underlying lock.
 </p>
 
@@ -86,7 +92,7 @@ $('#symbolSearchPane').show();
 						<h3>Inherits from</h3>
 						<ul>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
+								<code class="prettyprint lang-d"><span class="typ">Object</span></code>
  (base class)
 							</li>
 						</ul>
@@ -105,8 +111,8 @@ $('#symbolSearchPane').show();
 									<a href="../../asynchronous/locks/Condition.locked.html" class="public property"><code>locked</code></a>
 									<span class="tableEntryAnnotation">[get]</span>
 								</td>
-								<td class="typecol"><code class="prettyprint lang-d">bool</code></td>
-								<td> Return <font color=blue>true</font> if the underlying lock is acquired.
+								<td class="typecol"><code class="prettyprint lang-d"><span class="typ">bool</span></code></td>
+								<td>Return <font color=blue>true</font> if the underlying lock is acquired.
 </td>
 							</tr>
 						</table>
@@ -125,7 +131,7 @@ $('#symbolSearchPane').show();
 										<code>acquire</code>
 									</a>
 								</td>
-								<td> Acquire the underlying lock.
+								<td>Acquire the underlying lock.
 </td>
 							</tr>
 							<tr>
@@ -134,7 +140,7 @@ $('#symbolSearchPane').show();
 										<code>notify</code>
 									</a>
 								</td>
-								<td> By default, wake up one coroutine waiting on this condition, if any. If
+								<td>By default, wake up one coroutine waiting on this condition, if any. If
  the calling coroutine has not acquired the lock when this method is
  called, an <u>Exception</u> is thrown.
 </td>
@@ -145,8 +151,8 @@ $('#symbolSearchPane').show();
 										<code>notifyAll</code>
 									</a>
 								</td>
-								<td> Wake up all coroutines waiting on this condition. This method acts like
- <u><a href="../../asynchronous/locks/Condition.notify.html"><code class="prettyprint lang-d">notify</code></a>()</u>, but wakes up all waiting coroutines instead of
+								<td>Wake up all coroutines waiting on this condition. This method acts like
+ <u><a href="../../asynchronous/locks/Condition.notify.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/locks/Condition.notify.html"><span class="pln">notify</span></a></span></code></a>()</u>, but wakes up all waiting coroutines instead of
  one. If the calling coroutines has not acquired the lock when this method
  is called, an <u>Exception</u> is thrown.
 </td>
@@ -157,7 +163,7 @@ $('#symbolSearchPane').show();
 										<code>release</code>
 									</a>
 								</td>
-								<td> Release the underlying lock.
+								<td>Release the underlying lock.
 </td>
 							</tr>
 							<tr>
@@ -166,7 +172,7 @@ $('#symbolSearchPane').show();
 										<code>wait</code>
 									</a>
 								</td>
-								<td> Wait until notified.
+								<td>Wait until notified.
 </td>
 							</tr>
 							<tr>
@@ -175,7 +181,7 @@ $('#symbolSearchPane').show();
 										<code>waitFor</code>
 									</a>
 								</td>
-								<td> Wait until a <a href="../../asynchronous/locks/Condition.waitFor.html#predicate"><code class="prettyprint lang-d">predicate</code></a> becomes true.
+								<td>Wait until a <a href="../../asynchronous/locks/Condition.waitFor.html#predicate"><code class="lang-d"><span class="pln"><a href="../../asynchronous/locks/Condition.waitFor.html#predicate"><span class="pln">predicate</span></a></span></code></a> becomes true.
 </td>
 							</tr>
 						</table>
@@ -184,14 +190,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

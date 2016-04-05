@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,34 +73,42 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function Queue.join</h1>
 			<section>
-				<p> Block until all items in the queue have been gotten and processed.
+				<p>Block until all items in the queue have been gotten and processed.
 </p>
-<section>
-<p> The count of unfinished tasks goes up whenever an item is added to the
- queue. The count goes down whenever a consumer calls <u><a href="../../asynchronous/queues/Queue.taskDone.html"><code class="prettyprint lang-d">taskDone</code></a>()</u> to indicate that the item was retrieved and all work on it is
+<section><p>The count of unfinished tasks goes up whenever an item is added to the
+ queue. The count goes down whenever a consumer calls <u> <a href="../../asynchronous/queues/Queue.taskDone.html"><code class="lang-d"><span class="pln">taskDone</span></code></a>()</u> to indicate that the item was retrieved and all work on it is
  complete.
- When the count of unfinished tasks drops to zero, <u><code class="prettyprint lang-d">join</code>()</u>
+ When the count of unfinished tasks drops to zero, <u><code class="lang-d"><span class="pln">join</span></code>()</u>
  unblocks.
 </p>
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-void join();</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="typ">void</span> <span class="pln">join<span class="pun">()</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

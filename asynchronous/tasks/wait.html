@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,31 +73,39 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function wait</h1>
 			<section>
-				<p> Wait for the Future instances given by <a href="../../asynchronous/tasks/wait.html#futures"><code class="prettyprint lang-d">futures</code></a> to complete.
+				<p>Wait for the Future instances given by <a href="../asynchronous/tasks/wait.html#futures"><code class="lang-d"><span class="pln"><a href="../../asynchronous/tasks/wait.html#futures"><span class="pln">futures</span></a></span></code></a> to complete.
 </p>
-<section>
-</section>
+<section></section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-auto wait(Future)(
-&nbsp;&nbsp;<a href="../../asynchronous/events/EventLoop.html">EventLoop</a> eventLoop,
-&nbsp;&nbsp;Future[] futures,
-&nbsp;&nbsp;Duration timeout = Duration.zero,
-&nbsp;&nbsp;ReturnWhen returnWhen = ReturnWhen.ALL_COMPLETED
-)
-if (is(Future : FutureHandle));</pre>
+						<div class="prototype">
+							<code class="lang-d">
+auto <span class="pln">wait</span><span class="pun">(</span><span class="typ">Future</span><span class="pun">)</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<a href="../../asynchronous/events/EventLoop.html"><span class="typ">EventLoop</span></a> <span class="pln">eventLoop</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">Future</span><span class="pun">[]</span> <span class="pln">futures</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">Duration</span> <span class="pln">timeout</span> <span class="pun">=</span> <span class="typ">Duration<wbr/></span><span class="pun">.</span><span class="pln">zero</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">ReturnWhen</span> <span class="pln">returnWhen</span> <span class="pun">=</span> <span class="typ">ReturnWhen<wbr/></span><span class="pun">.</span><span class="pln">ALL_COMPLETED</span>
+								<br/>
+<span class="pun">)</span>
+								<br/>
+<span class="kwd">if</span> <span class="pun">(</span><span class="kwd">is</span><span class="pun">(</span><span class="typ">Future </span><span class="pun">: </span><span class="typ">FutureHandle</span><span class="pun">)</span><span class="pun">);</span>
+							</code>
+						</div>
 					</section>
 <section><h3>Parameters</h3>
 <table><col class="caption"><tr><th>Name</th><th>Description</th></tr>
-<tr><td id="eventLoop">eventLoop</td><td> event loop, $(D_PSYMBOL getEventLoop) if not specified.
+<tr><td id="eventLoop">eventLoop</td><td> event loop, <u>getEventLoop</u> if not specified.
 </td></tr>
-<tr><td id="futures">futures</td><td> <a href="../../asynchronous/tasks/wait.html#futures"><code class="prettyprint lang-d">futures</code></a> to <code class="prettyprint lang-d">wait</code> for.
+<tr><td id="futures">futures</td><td> <a href="../../asynchronous/tasks/wait.html#futures"><code class="lang-d"><span class="pln">futures</span></code></a> to <code class="lang-d"><span class="pln">wait</span></code> for.
 </td></tr>
-<tr><td id="timeout">timeout</td><td> can be used to control the maximum number of seconds to <code class="prettyprint lang-d">wait</code>
-      before returning. If $(PARAM <a href="../../asynchronous/tasks/wait.html#timeout"><code class="prettyprint lang-d">timeout</code></a>) is 0 or negative there is no limit
-      to the <code class="prettyprint lang-d">wait</code> time.
+<tr><td id="timeout">timeout</td><td> can be used to control the maximum number of seconds to <code class="lang-d"><span class="pln">wait</span></code>
+      before returning. If <a href="../../asynchronous/tasks/wait.html#timeout"><code class="lang-d"><span class="pln">timeout</span></code></a> is 0 or negative there is no limit
+      to the <code class="lang-d"><span class="pln">wait</span></code> time.
 </td></tr>
 <tr><td id="returnWhen">returnWhen</td><td> indicates when this function should return. It must be one of
       the following constants:
@@ -99,30 +114,35 @@ if (is(Future : FutureHandle));</pre>
           FIRST_EXCEPTION The function will return when any future finishes by
               raising an exception. If no future raises an exception then it
               is equivalent to ALL_COMPLETED.
-          ALL_COMPLETED The function will return when all <a href="../../asynchronous/tasks/wait.html#futures"><code class="prettyprint lang-d">futures</code></a> finish or
-              are cancelled.
-</td></tr>
+          ALL_COMPLETED The function will return when all <a href="../../asynchronous/tasks/wait.html#futures"><code class="lang-d"><span class="pln">futures</span></code></a> finish or
+              are cancelled.</td></tr>
 </table>
 </section>
 <section><h3>Returns</h3>
 <p>a named 2-tuple of arrays. The first array, named <u>done</u>,
-      contains the <a href="../../asynchronous/tasks/wait.html#futures"><code class="prettyprint lang-d">futures</code></a> that completed (finished or were cancelled) before
-      the <code class="prettyprint lang-d">wait</code> completed. The second array, named <u>notDone</u>,
-      contains uncompleted <a href="../../asynchronous/tasks/wait.html#futures"><code class="prettyprint lang-d">futures</code></a>.
+      contains the <a href="../../asynchronous/tasks/wait.html#futures"><code class="lang-d"><span class="pln">futures</span></code></a> that completed (finished or were cancelled) before
+      the <code class="lang-d"><span class="pln">wait</span></code> completed. The second array, named <u>notDone</u>,
+      contains uncompleted <a href="../../asynchronous/tasks/wait.html#futures"><code class="lang-d"><span class="pln">futures</span></code></a>.
 </p>
 </section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

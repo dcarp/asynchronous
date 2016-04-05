@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Struct ExceptionContext</title>
+		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
+		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
+		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+	</head>
+	<body onload="setupDdox();">
+		<nav id="main-nav">
+						<ul class="tree-view">
+							<li class=" tree-view">
+								<a href="#" class="package">asynchronous</a>
+						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../asynchronous/events.html" class="selected module">events</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/futures.html" class=" module">futures</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/locks.html" class=" module">locks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/protocols.html" class=" module">protocols</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/queues.html" class=" module">queues</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/streams.html" class=" module">streams</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/tasks.html" class=" module">tasks</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/transports.html" class=" module">transports</a>
+							</li>
+							<li>
+								<a href="../../asynchronous/types.html" class=" module">types</a>
+							</li>
+						</ul>
+							</li>
+							<li>
+								<a href="../../asynchronous.html" class=" module">asynchronous</a>
+							</li>
+						</ul>
+				<noscript>
+					<p style="color: red">The search functionality needs JavaScript enabled</p>
+				</noscript>
+				<div id="symbolSearchPane" style="display: none">
+					<p>
+						<input id="symbolSearch" type="text" placeholder="Search for symbols" onchange="performSymbolSearch(24);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+					</p>
+	<ul id="symbolSearchResults" style="display: none"></ul>
+	<script type="application/javascript" src="../../symbols.js"></script>
+	<script type="application/javascript">
+var symbolSearchRootDir = "../../";
+$('#symbolSearchPane').show();
+	</script>
+				</div>
+		</nav>
+		<div id="main-contents">
+			<h1>Struct ExceptionContext</h1>
+			<section>
+				<p>Exception conxtext for event exceptions
+</p>
+
+					<section>
+						<h3>Fields</h3>
+						<table>
+							<col class="caption"/>
+							<tr>
+								<th>Name</th>
+								<th>Type</th>
+								<th>Description</th>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/ExceptionContext.callback.html" class="public"><code>callback</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><span class="pln">asynchronous<wbr/></span><span class="pun">.</span><span class="pln">events<wbr/></span><span class="pun">.</span><span class="typ">CallbackHandle</span></code></td>
+								<td>(optional): CallbackHandle instance.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/ExceptionContext.context.html" class="public"><code>context</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><a href="../../asynchronous/events/ExceptionContext.html"><span class="typ">ExceptionContext</span></a><span class="pun">*</span></code></td>
+								<td>(optional): Chained <code class="lang-d"><span class="pln">context</span></code>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/ExceptionContext.future.html" class="public"><code>future</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><span class="pln">asynchronous<wbr/></span><span class="pun">.</span><span class="pln">futures<wbr/></span><span class="pun">.</span><span class="typ">FutureHandle</span></code></td>
+								<td>(optional) Future instance.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/ExceptionContext.message.html" class="public"><code>message</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><span class="typ">string</span></code></td>
+								<td>Error <code class="lang-d"><span class="pln">message</span></code>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/ExceptionContext.protocol.html" class="public"><code>protocol</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><a href="../../asynchronous/protocols/Protocol.html"><span class="typ">Protocol</span></a></code></td>
+								<td>(optional): Protocol instance.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/ExceptionContext.socket.html" class="public"><code>socket</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">Socket</span></code></td>
+								<td>(optional): Socket instance.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/ExceptionContext.throwable.html" class="public"><code>throwable</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><span class="pln">object<wbr/></span><span class="pun">.</span><span class="typ">Throwable</span></code></td>
+								<td>(optional) Throwable object.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/ExceptionContext.transport.html" class="public"><code>transport</code></a>
+								</td>
+								<td class="typecol"><code class="prettyprint lang-d"><a href="../../asynchronous/transports/Transport.html"><span class="typ">Transport</span></a></code></td>
+								<td>(optional): Transport instance.
+</td>
+							</tr>
+						</table>
+					</section>
+
+			</section>
+			<section>
+				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
+
+			</section>
+			<section>
+				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
+
+			</section>
+			<section>
+				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
+
+			</section>
+		</div>
+	</body>
+</html>

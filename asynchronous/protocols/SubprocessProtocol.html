@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,14 +73,14 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Interface SubprocessProtocol</h1>
 			<section>
-				<p> Interface for protocol for subprocess calls.
+				<p>Interface for protocol for subprocess calls.
 </p>
 
 					<section>
 						<h3>Inherits from</h3>
 						<ul>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d"><a href="../../asynchronous/protocols/BaseProtocol.html">BaseProtocol</a></code></code>
+								<code class="prettyprint lang-d"><a href="../../asynchronous/protocols/BaseProtocol.html"><span class="typ">BaseProtocol</span></a></code>
 							</li>
 						</ul>
 					</section>
@@ -91,7 +98,7 @@ $('#symbolSearchPane').show();
 										<code>pipeConnectionLost</code>
 									</a>
 								</td>
-								<td> Called when one of the pipes communicating with the child process is
+								<td>Called when one of the pipes communicating with the child process is
  closed.
 </td>
 							</tr>
@@ -101,7 +108,7 @@ $('#symbolSearchPane').show();
 										<code>pipeDataReceived</code>
 									</a>
 								</td>
-								<td> Called when the child process writes <a href="../../asynchronous/protocols/SubprocessProtocol.pipeDataReceived.html#data"><code class="prettyprint lang-d">data</code></a> into its stdout or stderr pipe.
+								<td>Called when the child process writes <a href="../../asynchronous/protocols/SubprocessProtocol.pipeDataReceived.html#data"><code class="lang-d"><span class="pln">data</span></code></a> into its stdout or stderr pipe.
 </td>
 							</tr>
 							<tr>
@@ -110,7 +117,7 @@ $('#symbolSearchPane').show();
 										<code>processExited</code>
 									</a>
 								</td>
-								<td> Called when the child process has exited.
+								<td>Called when the child process has exited.
 </td>
 							</tr>
 							<tr>
@@ -119,7 +126,7 @@ $('#symbolSearchPane').show();
 										<code>connectionLost</code>
 									</a>
 								</td>
-								<td> Called when the connection is lost or closed.
+								<td>Called when the connection is lost or closed.
 </td>
 							</tr>
 							<tr>
@@ -128,7 +135,7 @@ $('#symbolSearchPane').show();
 										<code>connectionMade</code>
 									</a>
 								</td>
-								<td> <u><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><code class="prettyprint lang-d">connectionMade</code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="prettyprint lang-d">connectionLost</code></a>()</u> are
+								<td><u><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><span class="pln">connectionMade</span></a></span></code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><span class="pln">connectionLost</span></a></span></code></a>()</u> are
  called exactly once per successful connection. All other callbacks will
  be called between those two methods, which allows for easier resource
  management in your protocol implementation.
@@ -140,10 +147,10 @@ $('#symbolSearchPane').show();
 										<code>pauseWriting</code>
 									</a>
 								</td>
-								<td> <u><a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html"><code class="prettyprint lang-d">pauseWriting</code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="prettyprint lang-d">resumeWriting</code></a>()</u> calls are
- paired – <u><a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html"><code class="prettyprint lang-d">pauseWriting</code></a>()</u> is called once when the buffer goes
+								<td><u><a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html"><span class="pln">pauseWriting</span></a></span></code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><span class="pln">resumeWriting</span></a></span></code></a>()</u> calls are
+ paired – <u><a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html"><span class="pln">pauseWriting</span></a></span></code></a>()</u> is called once when the buffer goes
  strictly over the high-water mark (even if subsequent writes increases
- the buffer size even more), and eventually <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="prettyprint lang-d">resumeWriting</code></a>()</u>
+ the buffer size even more), and eventually <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><span class="pln">resumeWriting</span></a></span></code></a>()</u>
  is called once when the buffer size reaches the low-water mark.
 </td>
 							</tr>
@@ -153,7 +160,7 @@ $('#symbolSearchPane').show();
 										<code>resumeWriting</code>
 									</a>
 								</td>
-								<td> Called when the transport’s buffer drains below the low-water mark.
+								<td>Called when the transport’s buffer drains below the low-water mark.
 </td>
 							</tr>
 						</table>
@@ -162,14 +169,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

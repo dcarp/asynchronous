@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>http://127.0.0.1/index.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/libasync/events.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/Callback.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/Callback.cancel.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/Callback.cancelled.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.callAt.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/EventLoop.callExceptionHandler.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.callLater.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.callSoon.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/EventLoop.callSoonThreadSafe.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.close.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.createConnection.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.createDatagramEndpoint.html</loc></url>
@@ -15,16 +19,27 @@
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.createTask.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.createUnixConnection.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.createUnixServer.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/EventLoop.defaultExceptionHandler.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.isClosed.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.isRunning.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.runForever.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.runUntilComplete.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/EventLoop.setExceptionHandler.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.stop.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoop.time.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoopPolicy.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoopPolicy.getEventLoop.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoopPolicy.newEventLoop.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/EventLoopPolicy.setEventLoop.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/ExceptionContext.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/ExceptionContext.callback.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/ExceptionContext.context.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/ExceptionContext.future.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/ExceptionContext.message.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/ExceptionContext.protocol.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/ExceptionContext.socket.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/ExceptionContext.throwable.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/events/ExceptionContext.transport.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/getEventLoop.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/getEventLoopPolicy.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/newEventLoop.html</loc></url>
@@ -34,6 +49,10 @@
 <url><loc>http://127.0.0.1/asynchronous/events/setEventLoop.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/events/setEventLoopPolicy.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/futures.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/futures/Future.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/futures/Future.result.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/futures/Future.setResult.html</loc></url>
+<url><loc>http://127.0.0.1/asynchronous/futures/Future.setResultUnlessCancelled.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/locks.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/locks/BoundedSemaphore.html</loc></url>
 <url><loc>http://127.0.0.1/asynchronous/locks/Semaphore.acquire.html</loc></url>

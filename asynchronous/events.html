@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../styles/ddox.css"/>
 		<link rel="stylesheet" href="../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../asynchronous/events.html" class="selected module">events</a>
 							</li>
@@ -65,8 +72,9 @@ $('#symbolSearchPane').show();
 		</nav>
 		<div id="main-contents">
 			<h1>Module asynchronous.events</h1>
-			<p> Event loop and event loop policy.
+			<p>Event loop and event loop policy.
 </p>
+<section></section>
 
 			<section></section>
 			<section>
@@ -83,7 +91,7 @@ $('#symbolSearchPane').show();
 								<code>getEventLoop</code>
 							</a>
 						</td>
-						<td> Equivalent to calling getEventLoopPolicy.getEventLoop.
+						<td>Equivalent to calling getEventLoopPolicy.getEventLoop.
 </td>
 					</tr>
 					<tr>
@@ -92,7 +100,7 @@ $('#symbolSearchPane').show();
 								<code>getEventLoopPolicy</code>
 							</a>
 						</td>
-						<td> Get the current event loop policy.
+						<td>Get the current event loop policy.
 </td>
 					</tr>
 					<tr>
@@ -101,7 +109,7 @@ $('#symbolSearchPane').show();
 								<code>newEventLoop</code>
 							</a>
 						</td>
-						<td> Equivalent to calling getEventLoopPolicy.newEventLoop.
+						<td>Equivalent to calling getEventLoopPolicy.newEventLoop.
 </td>
 					</tr>
 					<tr>
@@ -110,7 +118,7 @@ $('#symbolSearchPane').show();
 								<code>setEventLoop</code>
 							</a>
 						</td>
-						<td> Equivalent to calling getEventLoopPolicy.setEventLoop(<a href="../asynchronous/events/setEventLoop.html#loop"><code class="prettyprint lang-d">loop</code></a>).
+						<td>Equivalent to calling getEventLoopPolicy.setEventLoop(<a href="../asynchronous/events/setEventLoop.html#loop"><code class="lang-d"><span class="pln">loop</span></code></a>).
 </td>
 					</tr>
 					<tr>
@@ -119,7 +127,7 @@ $('#symbolSearchPane').show();
 								<code>setEventLoopPolicy</code>
 							</a>
 						</td>
-						<td> Set the current event loop <a href="../asynchronous/events/setEventLoopPolicy.html#policy"><code class="prettyprint lang-d">policy</code></a>.
+						<td>Set the current event loop <a href="../asynchronous/events/setEventLoopPolicy.html#policy"><code class="lang-d"><span class="pln">policy</span></code></a>.
 </td>
 					</tr>
 				</table>
@@ -138,7 +146,7 @@ $('#symbolSearchPane').show();
 								<code>Server</code>
 							</a>
 						</td>
-						<td> Interface server returned by createServer().
+						<td>Interface server returned by createServer().
 </td>
 					</tr>
 				</table>
@@ -157,9 +165,9 @@ $('#symbolSearchPane').show();
 								<code>Callback</code>
 							</a>
 						</td>
-						<td> A callback wrapper object returned by <u><a href="../asynchronous/events/EventLoop.callSoon.html"><code class="prettyprint lang-d">EventLoop.callSoon</code></a></u>,
- <u>EventLoop.callSoonThreadsafe</u>,
- <u><a href="../asynchronous/events/EventLoop.callLater.html"><code class="prettyprint lang-d">EventLoop.callLater</code></a></u>, and <u><a href="../asynchronous/events/EventLoop.callAt.html"><code class="prettyprint lang-d">EventLoop.callAt</code></a></u>.
+						<td>A callback wrapper object returned by <u><a href="../asynchronous/events/EventLoop.callSoon.html"><code class="lang-d"><span class="typ">EventLoop<wbr/></span><span class="pun">.</span><span class="pln">callSoon</span></code></a></u>,
+ <u><a href="../asynchronous/events/EventLoop.callSoonThreadSafe.html"><code class="lang-d"><span class="typ">EventLoop<wbr/></span><span class="pun">.</span><span class="pln">callSoonThreadSafe</span></code></a></u>,
+ <u><a href="../asynchronous/events/EventLoop.callLater.html"><code class="lang-d"><span class="typ">EventLoop<wbr/></span><span class="pun">.</span><span class="pln">callLater</span></code></a></u>, and <u><a href="../asynchronous/events/EventLoop.callAt.html"><code class="lang-d"><span class="typ">EventLoop<wbr/></span><span class="pun">.</span><span class="pln">callAt</span></code></a></u>.
 </td>
 					</tr>
 					<tr>
@@ -168,7 +176,7 @@ $('#symbolSearchPane').show();
 								<code>EventLoop</code>
 							</a>
 						</td>
-						<td> Interface of event loop.
+						<td>Interface of event loop.
 </td>
 					</tr>
 					<tr>
@@ -177,21 +185,46 @@ $('#symbolSearchPane').show();
 								<code>EventLoopPolicy</code>
 							</a>
 						</td>
-						<td> Interface of policy for accessing the event loop.
+						<td>Interface of policy for accessing the event loop.
+</td>
+					</tr>
+				</table>
+			</section>
+			<section>
+				<h2>Structs</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td>
+							<a id="ExceptionContext" class="public" href="../asynchronous/events/ExceptionContext.html">
+								<code>ExceptionContext</code>
+							</a>
+						</td>
+						<td>Exception conxtext for event exceptions
 </td>
 					</tr>
 				</table>
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

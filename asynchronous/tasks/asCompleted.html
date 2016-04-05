@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,48 +73,57 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function asCompleted</h1>
 			<section>
-				<p> Return an generator whose values, when waited for, are Future instances in
+				<p>Return an generator whose values, when waited for, are Future instances in
  the order in which and as soon as they complete.
 </p>
-<section>
-<p> Raises <u>TimeoutException</u> if the <a href="../../asynchronous/tasks/asCompleted.html#timeout"><code class="prettyprint lang-d">timeout</code></a> occurs before all <a href="../../asynchronous/tasks/asCompleted.html#futures"><code class="prettyprint lang-d">futures</code></a>
+<section><p>Raises <u>TimeoutException</u> if the <a href="../../asynchronous/tasks/asCompleted.html#timeout"><code class="lang-d"><span class="pln">timeout</span></code></a> occurs before all <a href="../../asynchronous/tasks/asCompleted.html#futures"><code class="lang-d"><span class="pln">futures</span></code></a>
  are done.
 </p>
-
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-auto <a href="../../asynchronous/tasks/GeneratorTask.html">GeneratorTask</a>!(asynchronous.futures.FutureHandle) asCompleted(
-&nbsp;&nbsp;<a href="../../asynchronous/events/EventLoop.html">EventLoop</a> eventLoop,
-&nbsp;&nbsp;asynchronous.<wbr/>futures.<wbr/>FutureHandle[] futures,
-&nbsp;&nbsp;core.<wbr/>time.<wbr/>Duration timeout = zero()
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">auto </span><a href="../../asynchronous/tasks/GeneratorTask.html"><span class="typ">GeneratorTask</span></a>!(asynchronous.futures.FutureHandle) <span class="pln">asCompleted</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<a href="../../asynchronous/events/EventLoop.html"><span class="typ">EventLoop</span></a> <span class="pln">eventLoop</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">asynchronous<wbr/></span><span class="pun">.</span><span class="pln">futures<wbr/></span><span class="pun">.</span><span class="typ">FutureHandle</span><span class="pun">[]</span> <span class="pln">futures</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">core<wbr/></span><span class="pun">.</span><span class="pln">time<wbr/></span><span class="pun">.</span><span class="typ">Duration</span> <span class="pln">timeout</span> <span class="pun">=</span> <span class="pln">zero</span><span class="pun">()</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 <section><h3>Example</h3>
-
-<p>  foreach (f; getEventLoop.asCompleted(fs))
+<p>foreach (f; getEventLoop.asCompleted(fs))
        // use f.result
 </p>
-
 </section>
 <section><h3>Note</h3>
-<p>The <a href="../../asynchronous/tasks/asCompleted.html#futures"><code class="prettyprint lang-d">futures</code></a> <u>f</u> are not necessarily members of <u>fs</u>.
+<p>The <a href="../../asynchronous/tasks/asCompleted.html#futures"><code class="lang-d"><span class="pln">futures</span></code></a> <u>f</u> are not necessarily members of <u>       fs</u>.
 </p>
 </section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -71,10 +78,9 @@ $('#symbolSearchPane').show();
 			</ul>
 			<section>
 				<h2>Function WriteTransport.writeEof</h2>
-				<p> Close the <a href="../../asynchronous/transports/WriteTransport.write.html"><code class="prettyprint lang-d">write</code></a> end of the transport after flushing buffered data.
+				<p>Close the <a href="../../asynchronous/transports/WriteTransport.write.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/transports/WriteTransport.write.html"><span class="pln">write</span></a></span></code></a> end of the transport after flushing buffered data.
 </p>
-<section>
-<p> Data may still be received.
+<section><p>Data may still be received.
 </p>
 
 <p> This method can throw <u>NotImplementedError</u> if the transport
@@ -84,17 +90,19 @@ $('#symbolSearchPane').show();
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-abstract void writeEof();</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">abstract </span><span class="typ">void</span> <span class="pln">writeEof<span class="pun">()</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Function WriteTransport.writeEof</h2>
-				<p> Close the <a href="../../asynchronous/transports/WriteTransport.write.html"><code class="prettyprint lang-d">write</code></a> end of the transport after flushing buffered data.
+				<p>Close the <a href="../../asynchronous/transports/WriteTransport.write.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/transports/WriteTransport.write.html"><span class="pln">write</span></a></span></code></a> end of the transport after flushing buffered data.
 </p>
-<section>
-<p> Data may still be received.
+<section><p>Data may still be received.
 </p>
 
 <p> This method can throw <u>NotImplementedError</u> if the transport
@@ -104,21 +112,30 @@ abstract void writeEof();</pre>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-abstract void writeEof();</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">abstract </span><span class="typ">void</span> <span class="pln">writeEof<span class="pun">()</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

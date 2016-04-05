@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../styles/ddox.css"/>
 		<link rel="stylesheet" href="../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -65,8 +72,9 @@ $('#symbolSearchPane').show();
 		</nav>
 		<div id="main-contents">
 			<h1>Module asynchronous.transports</h1>
-			<p> <a href="../asynchronous/transports/Transport.html"><code class="prettyprint lang-d">Transport</code></a> interfaces.
+			<p><a href="./asynchronous/transports/Transport.html"><code class="lang-d"><span class="typ"><a href="../asynchronous/transports/Transport.html"><span class="typ">Transport</span></a></span></code></a> interfaces.
 </p>
+<section></section>
 
 			<section></section>
 			<section>
@@ -83,7 +91,7 @@ $('#symbolSearchPane').show();
 								<code>BaseTransport</code>
 							</a>
 						</td>
-						<td> Interface for transports.
+						<td>Interface for transports.
 </td>
 					</tr>
 					<tr>
@@ -92,7 +100,7 @@ $('#symbolSearchPane').show();
 								<code>DatagramTransport</code>
 							</a>
 						</td>
-						<td> Interface for datagram (UDP) transports.
+						<td>Interface for datagram (UDP) transports.
 </td>
 					</tr>
 					<tr>
@@ -101,7 +109,7 @@ $('#symbolSearchPane').show();
 								<code>ReadTransport</code>
 							</a>
 						</td>
-						<td> Interface for read-only transports.
+						<td>Interface for read-only transports.
 </td>
 					</tr>
 					<tr>
@@ -110,7 +118,7 @@ $('#symbolSearchPane').show();
 								<code>Transport</code>
 							</a>
 						</td>
-						<td> Interface representing a bidirectional transport.
+						<td>Interface representing a bidirectional transport.
 </td>
 					</tr>
 					<tr>
@@ -119,21 +127,27 @@ $('#symbolSearchPane').show();
 								<code>WriteTransport</code>
 							</a>
 						</td>
-						<td> Interface for <a href="../asynchronous/transports/WriteTransport.write.html"><code class="prettyprint lang-d">write</code></a>-only transports.
+						<td>Interface for <a href="../asynchronous/transports/WriteTransport.write.html"><code class="lang-d"><span class="pln">write</span></code></a>-only transports.
 </td>
 					</tr>
 				</table>
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../styles/ddox.css"/>
 		<link rel="stylesheet" href="../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -65,8 +72,9 @@ $('#symbolSearchPane').show();
 		</nav>
 		<div id="main-contents">
 			<h1>Module asynchronous.streams</h1>
-			<p> High-level stream API.
+			<p>High-level stream API.
 </p>
+<section></section>
 
 			<section></section>
 			<section>
@@ -83,7 +91,7 @@ $('#symbolSearchPane').show();
 								<code>openConnection</code>
 							</a>
 						</td>
-						<td> A wrapper for <u>createConnection()</u> returning a (reader, writer)
+						<td>A wrapper for <u>createConnection()</u> returning a (reader, writer)
  pair.
 </td>
 					</tr>
@@ -93,7 +101,7 @@ $('#symbolSearchPane').show();
 								<code>openUnixConnection</code>
 							</a>
 						</td>
-						<td> A wrapper for <u>createUnixConnection()</u> returning a (reader,
+						<td>A wrapper for <u>createUnixConnection()</u> returning a (reader,
  writer) pair.
 </td>
 					</tr>
@@ -103,7 +111,7 @@ $('#symbolSearchPane').show();
 								<code>startServer</code>
 							</a>
 						</td>
-						<td> Start a <a href="../asynchronous/streams/startServer.html#socket"><code class="prettyprint lang-d">socket</code></a> server, call back for each client connected.
+						<td>Start a <a href="../asynchronous/streams/startServer.html#socket"><code class="lang-d"><span class="pln">socket</span></code></a> server, call back for each client connected.
 </td>
 					</tr>
 					<tr>
@@ -112,7 +120,7 @@ $('#symbolSearchPane').show();
 								<code>startUnixServer</code>
 							</a>
 						</td>
-						<td> Start a UNIX Domain Socket server, with a callback for each client connected.
+						<td>Start a UNIX Domain Socket server, with a callback for each client connected.
 </td>
 					</tr>
 				</table>
@@ -131,7 +139,7 @@ $('#symbolSearchPane').show();
 								<code>IncompleteReadError</code>
 							</a>
 						</td>
-						<td> Incomplete read error.
+						<td>Incomplete read error.
 </td>
 					</tr>
 					<tr>
@@ -140,7 +148,7 @@ $('#symbolSearchPane').show();
 								<code>StreamReaderProtocol</code>
 							</a>
 						</td>
-						<td> Helper class to adapt between <u>Protocol</u> and <u>StreamReader</u>.
+						<td>Helper class to adapt between <u>Protocol</u> and <u> StreamReader</u>.
 </td>
 					</tr>
 					<tr>
@@ -149,21 +157,27 @@ $('#symbolSearchPane').show();
 								<code>StreamWriter</code>
 							</a>
 						</td>
-						<td> Wraps a Transport.
+						<td>Wraps a Transport.
 </td>
 					</tr>
 				</table>
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

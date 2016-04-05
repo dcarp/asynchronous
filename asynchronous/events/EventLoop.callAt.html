@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class="selected module">events</a>
 							</li>
@@ -66,35 +73,47 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function EventLoop.callAt</h1>
 			<section>
-				<p> Arrange for the callback to be called at the given absolute timestamp
- <a href="../../asynchronous/events/EventLoop.callAt.html#when"><code class="prettyprint lang-d">when</code></a> (an int or float), using the same <a href="../../asynchronous/events/EventLoop.time.html"><code class="prettyprint lang-d">time</code></a> reference as <a href="../../asynchronous/events/EventLoop.time.html"><code class="prettyprint lang-d">time</code></a>().
+				<p>Arrange for the callback to be called at the given absolute timestamp
+ <a href="../../asynchronous/events/EventLoop.callAt.html#when"><code class="lang-d"><span class="pln"><a href="../../asynchronous/events/EventLoop.callAt.html#when"><span class="pln">when</span></a></span></code></a> (an int or float), using the same <a href="../../asynchronous/events/EventLoop.time.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/events/EventLoop.time.html"><span class="pln">time</span></a></span></code></a> reference as <a href="../../asynchronous/events/EventLoop.time.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/events/EventLoop.time.html"><span class="pln">time</span></a></span></code></a>().
 </p>
-<section>
-<p> This method’s behavior is the same as <u><a href="../../asynchronous/events/EventLoop.callLater.html"><code class="prettyprint lang-d">callLater</code></a>()</u>.
+<section><p>This method’s behavior is the same as <u><a href="../../asynchronous/events/EventLoop.callLater.html"><code class="lang-d"><span class="pln">callLater</span></code></a>()</u>.
 </p>
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-final auto callAt(Dg, Args...)(
-&nbsp;&nbsp;SysTime when,
-&nbsp;&nbsp;Dg dg,
-&nbsp;&nbsp;Args args
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">final </span>auto <span class="pln">callAt</span><span class="pun">(</span><span class="typ">Dg</span><span class="pun">, </span><span class="typ">Args</span><span class="pun">...)</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">SysTime</span> <span class="pln">when</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">Dg</span> <span class="pln">dg</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">Args</span> <span class="pln">args</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

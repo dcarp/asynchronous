@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,29 +73,40 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function yieldValue</h1>
 			<section>
-				<p> Yield a <a href="../../asynchronous/tasks/yieldValue.html#value"><code class="prettyprint lang-d">value</code></a> to the caller of the currently executing generator task. The
- type of the yielded <a href="../../asynchronous/tasks/yieldValue.html#value"><code class="prettyprint lang-d">value</code></a> and of type of the generator must be the same;
+				<p>Yield a <a href="../asynchronous/tasks/yieldValue.html#value"><code class="lang-d"><span class="pln"><a href="../../asynchronous/tasks/yieldValue.html#value"><span class="pln">value</span></a></span></code></a> to the caller of the currently executing generator task. The
+ type of the yielded <a href="../asynchronous/tasks/yieldValue.html#value"><code class="lang-d"><span class="pln"><a href="../../asynchronous/tasks/yieldValue.html#value"><span class="pln">value</span></a></span></code></a> and of type of the generator must be the same;
 </p>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-void yieldValue(T)(
-&nbsp;&nbsp;auto ref T value
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="typ">void</span> <span class="pln">yieldValue</span><span class="pun">(</span><span class="pln">T</span><span class="pun">)</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">auto ref </span><span class="pln">T</span> <span class="pln">value</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

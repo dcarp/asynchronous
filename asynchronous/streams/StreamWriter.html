@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,12 +73,11 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Class StreamWriter</h1>
 			<section>
-				<p> Wraps a Transport.
+				<p>Wraps a Transport.
 </p>
-<section>
-<p> This exposes <u><a href="../../asynchronous/streams/StreamWriter.write.html"><code class="prettyprint lang-d">write</code></a>()</u>, <u><a href="../../asynchronous/streams/StreamWriter.writeEof.html"><code class="prettyprint lang-d">writeEof</code></a>()</u>, <u><a href="../../asynchronous/streams/StreamWriter.canWriteEof.html"><code class="prettyprint lang-d">canWriteEof</code></a>()</u>, <u><a href="../../asynchronous/streams/StreamWriter.getExtraInfo.html"><code class="prettyprint lang-d">getExtraInfo</code></a>()</u> and <u><a href="../../asynchronous/streams/StreamWriter.close.html"><code class="prettyprint lang-d">close</code></a>()</u>. It adds
- <u><a href="../../asynchronous/streams/StreamWriter.drain.html"><code class="prettyprint lang-d">drain</code></a>()</u> coroutine for waiting for flow control.  It also adds a
- <u><a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a></u> property which references the Transport directly.
+<section><p>This exposes <u><a href="../../asynchronous/streams/StreamWriter.write.html"><code class="lang-d"><span class="pln">write</span></code></a>()</u>, <u><a href="../../asynchronous/streams/StreamWriter.writeEof.html"><code class="lang-d"><span class="pln">writeEof</span></code></a>()</u>, <u> <a href="../../asynchronous/streams/StreamWriter.canWriteEof.html"><code class="lang-d"><span class="pln">canWriteEof</span></code></a>()</u>, <u><a href="../../asynchronous/streams/StreamWriter.getExtraInfo.html"><code class="lang-d"><span class="pln">getExtraInfo</span></code></a>()</u> and <u><a href="../../asynchronous/streams/StreamWriter.close.html"><code class="lang-d"><span class="pln">close</span></code></a>()</u>. It adds
+ <u><a href="../../asynchronous/streams/StreamWriter.drain.html"><code class="lang-d"><span class="pln">drain</span></code></a>()</u> coroutine for waiting for flow control.  It also adds a
+ <u><a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="lang-d"><span class="pln">transport</span></code></a></u> property which references the Transport directly.
 </p>
 
 <p> This class is not thread safe.
@@ -82,7 +88,7 @@ $('#symbolSearchPane').show();
 						<h3>Inherits from</h3>
 						<ul>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
+								<code class="prettyprint lang-d"><span class="typ">Object</span></code>
  (base class)
 							</li>
 						</ul>
@@ -101,8 +107,8 @@ $('#symbolSearchPane').show();
 									<a href="../../asynchronous/streams/StreamWriter.transport.html" class="public property"><code>transport</code></a>
 									<span class="tableEntryAnnotation">[get]</span>
 								</td>
-								<td class="typecol"><code class="prettyprint lang-d"><a href="../../asynchronous/transports/WriteTransport.html">WriteTransport</a></code></td>
-								<td> Transport.
+								<td class="typecol"><code class="prettyprint lang-d"><a href="../../asynchronous/transports/WriteTransport.html"><span class="typ">WriteTransport</span></a></code></td>
+								<td>Transport.
 </td>
 							</tr>
 						</table>
@@ -121,7 +127,7 @@ $('#symbolSearchPane').show();
 										<code>canWriteEof</code>
 									</a>
 								</td>
-								<td> Return <font color=blue>true</font> if the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a> supports <u><a href="../../asynchronous/streams/StreamWriter.writeEof.html"><code class="prettyprint lang-d">writeEof</code></a>()</u>, <font color=blue>false</font> if not. See <u>WriteTransport.canWriteEof()</u>.
+								<td>Return <font color=blue>true</font> if the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="lang-d"><span class="pln">transport</span></code></a> supports <u> <a href="../../asynchronous/streams/StreamWriter.writeEof.html"><code class="lang-d"><span class="pln">writeEof</span></code></a>()</u>, <font color=blue>false</font> if not. See <u> WriteTransport.canWriteEof()</u>.
 </td>
 							</tr>
 							<tr>
@@ -130,7 +136,7 @@ $('#symbolSearchPane').show();
 										<code>close</code>
 									</a>
 								</td>
-								<td> Close the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a>: see <u>BaseTransport.close()</u>.
+								<td>Close the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="lang-d"><span class="pln">transport</span></code></a>: see <u>BaseTransport.close()</u>.
 </td>
 							</tr>
 							<tr>
@@ -139,7 +145,7 @@ $('#symbolSearchPane').show();
 										<code>drain</code>
 									</a>
 								</td>
-								<td> Let the <a href="../../asynchronous/streams/StreamWriter.write.html"><code class="prettyprint lang-d">write</code></a> buffer of the underlying <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a> a chance to be flushed.
+								<td>Let the <a href="../../asynchronous/streams/StreamWriter.write.html"><code class="lang-d"><span class="pln">write</span></code></a> buffer of the underlying <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="lang-d"><span class="pln">transport</span></code></a> a chance to be flushed.
 </td>
 							</tr>
 							<tr>
@@ -148,7 +154,7 @@ $('#symbolSearchPane').show();
 										<code>getExtraInfo</code>
 									</a>
 								</td>
-								<td> Return optional <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a> information: see <u>BaseTransport.getExtraInfo()</u>.
+								<td>Return optional <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="lang-d"><span class="pln">transport</span></code></a> information: see <u> BaseTransport.getExtraInfo()</u>.
 </td>
 							</tr>
 							<tr>
@@ -157,7 +163,7 @@ $('#symbolSearchPane').show();
 										<code>write</code>
 									</a>
 								</td>
-								<td> Write some <a href="../../asynchronous/streams/StreamWriter.write.html#data"><code class="prettyprint lang-d">data</code></a> bytes to the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a>: see <u>WriteTransport.write()</u>.
+								<td>Write some <a href="../../asynchronous/streams/StreamWriter.write.html#data"><code class="lang-d"><span class="pln">data</span></code></a> bytes to the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="lang-d"><span class="pln">transport</span></code></a>: see <u> WriteTransport.write()</u>.
 </td>
 							</tr>
 							<tr>
@@ -166,7 +172,7 @@ $('#symbolSearchPane').show();
 										<code>writeEof</code>
 									</a>
 								</td>
-								<td> Close the <a href="../../asynchronous/streams/StreamWriter.write.html"><code class="prettyprint lang-d">write</code></a> end of the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a> after flushing buffered data: see
+								<td>Close the <a href="../../asynchronous/streams/StreamWriter.write.html"><code class="lang-d"><span class="pln">write</span></code></a> end of the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="lang-d"><span class="pln">transport</span></code></a> after flushing buffered data: see
  <u>WriteTransport.write_eof()</u>.
 </td>
 							</tr>
@@ -176,14 +182,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

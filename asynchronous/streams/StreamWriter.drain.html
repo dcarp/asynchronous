@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,47 +73,55 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function StreamWriter.drain</h1>
 			<section>
-				<p> Let the <a href="../../asynchronous/streams/StreamWriter.write.html"><code class="prettyprint lang-d">write</code></a> buffer of the underlying <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a> a chance to be flushed.
+				<p>Let the <a href="../../asynchronous/streams/StreamWriter.write.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/streams/StreamWriter.write.html"><span class="pln">write</span></a></span></code></a> buffer of the underlying <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/streams/StreamWriter.transport.html"><span class="pln">transport</span></a></span></code></a> a chance to be flushed.
 </p>
-<section>
-<p> The intended use is to <a href="../../asynchronous/streams/StreamWriter.write.html"><code class="prettyprint lang-d">write</code></a>:
+<section><p>The intended use is to <a href="../../asynchronous/streams/StreamWriter.write.html"><code class="lang-d"><span class="pln">write</span></code></a>:
 </p>
 
 <p> w.write(data)
  w.drain()
 </p>
 
-<p> When the size of the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a> buffer reaches the high-water limit (the
+<p> When the size of the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="lang-d"><span class="pln">transport</span></code></a> buffer reaches the high-water limit (the
  protocol is paused), block until the size of the buffer is drained down
  to the low-water limit and the protocol is resumed. When there is nothing
  to wait for, the continues immediately.
 </p>
 
-<p> Calling <u><code class="prettyprint lang-d">drain</code>()</u> gives the opportunity for the loop to
- schedule the <a href="../../asynchronous/streams/StreamWriter.write.html"><code class="prettyprint lang-d">write</code></a> operation and flush the buffer. It should especially
- be used when a possibly large amount of data is written to the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="prettyprint lang-d">transport</code></a>,
+<p> Calling <u><code class="lang-d"><span class="pln">drain</span></code>()</u> gives the opportunity for the loop to
+ schedule the <a href="../../asynchronous/streams/StreamWriter.write.html"><code class="lang-d"><span class="pln">write</span></code></a> operation and flush the buffer. It should especially
+ be used when a possibly large amount of data is written to the <a href="../../asynchronous/streams/StreamWriter.transport.html"><code class="lang-d"><span class="pln">transport</span></code></a>,
  and the coroutine does not process the event loop between calls to
- <u><a href="../../asynchronous/streams/StreamWriter.write.html"><code class="prettyprint lang-d">write</code></a>()</u>.
+ <u><a href="../../asynchronous/streams/StreamWriter.write.html"><code class="lang-d"><span class="pln">write</span></code></a>()</u>.
 </p>
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-void drain();</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="typ">void</span> <span class="pln">drain<span class="pun">()</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

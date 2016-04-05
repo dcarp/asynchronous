@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,14 +73,14 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Interface Protocol</h1>
 			<section>
-				<p> Interface for stream protocol.
+				<p>Interface for stream protocol.
 </p>
 
 					<section>
 						<h3>Inherits from</h3>
 						<ul>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d"><a href="../../asynchronous/protocols/BaseProtocol.html">BaseProtocol</a></code></code>
+								<code class="prettyprint lang-d"><a href="../../asynchronous/protocols/BaseProtocol.html"><span class="typ">BaseProtocol</span></a></code>
 							</li>
 						</ul>
 					</section>
@@ -91,7 +98,7 @@ $('#symbolSearchPane').show();
 										<code>dataReceived</code>
 									</a>
 								</td>
-								<td> Called when some <a href="../../asynchronous/protocols/Protocol.dataReceived.html#data"><code class="prettyprint lang-d">data</code></a> is received.
+								<td>Called when some <a href="../../asynchronous/protocols/Protocol.dataReceived.html#data"><code class="lang-d"><span class="pln"><a href="../../asynchronous/protocols/Protocol.dataReceived.html#data"><span class="pln">data</span></a></span></code></a> is received.
 </td>
 							</tr>
 							<tr>
@@ -100,9 +107,9 @@ $('#symbolSearchPane').show();
 										<code>eofReceived</code>
 									</a>
 								</td>
-								<td> Calls when the other end signals it won’t send any more data (for example
+								<td>Calls when the other end signals it won’t send any more data (for example
  by calling <u>writeEof()</u>, if the other end also uses
- asynchronous IO).
+ <a href="../../asynchronous.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous.html"><span class="pln">asynchronous</span></a></span></code></a> IO).
 </td>
 							</tr>
 							<tr>
@@ -111,7 +118,7 @@ $('#symbolSearchPane').show();
 										<code>connectionLost</code>
 									</a>
 								</td>
-								<td> Called when the connection is lost or closed.
+								<td>Called when the connection is lost or closed.
 </td>
 							</tr>
 							<tr>
@@ -120,7 +127,7 @@ $('#symbolSearchPane').show();
 										<code>connectionMade</code>
 									</a>
 								</td>
-								<td> <u><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><code class="prettyprint lang-d">connectionMade</code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="prettyprint lang-d">connectionLost</code></a>()</u> are
+								<td><u><a href="../../asynchronous/protocols/BaseProtocol.connectionMade.html"><code class="lang-d"><span class="pln">connectionMade</span></code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.connectionLost.html"><code class="lang-d"><span class="pln">connectionLost</span></code></a>()</u> are
  called exactly once per successful connection. All other callbacks will
  be called between those two methods, which allows for easier resource
  management in your protocol implementation.
@@ -132,10 +139,10 @@ $('#symbolSearchPane').show();
 										<code>pauseWriting</code>
 									</a>
 								</td>
-								<td> <u><a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html"><code class="prettyprint lang-d">pauseWriting</code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="prettyprint lang-d">resumeWriting</code></a>()</u> calls are
- paired – <u><a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html"><code class="prettyprint lang-d">pauseWriting</code></a>()</u> is called once when the buffer goes
+								<td><u><a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html"><code class="lang-d"><span class="pln">pauseWriting</span></code></a>()</u> and <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="lang-d"><span class="pln">resumeWriting</span></code></a>()</u> calls are
+ paired – <u><a href="../../asynchronous/protocols/BaseProtocol.pauseWriting.html"><code class="lang-d"><span class="pln">pauseWriting</span></code></a>()</u> is called once when the buffer goes
  strictly over the high-water mark (even if subsequent writes increases
- the buffer size even more), and eventually <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="prettyprint lang-d">resumeWriting</code></a>()</u>
+ the buffer size even more), and eventually <u><a href="../../asynchronous/protocols/BaseProtocol.resumeWriting.html"><code class="lang-d"><span class="pln">resumeWriting</span></code></a>()</u>
  is called once when the buffer size reaches the low-water mark.
 </td>
 							</tr>
@@ -145,7 +152,7 @@ $('#symbolSearchPane').show();
 										<code>resumeWriting</code>
 									</a>
 								</td>
-								<td> Called when the transport’s buffer drains below the low-water mark.
+								<td>Called when the transport’s buffer drains below the low-water mark.
 </td>
 							</tr>
 						</table>
@@ -154,14 +161,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

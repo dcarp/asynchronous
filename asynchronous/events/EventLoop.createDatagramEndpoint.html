@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class="selected module">events</a>
 							</li>
@@ -66,33 +73,43 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function EventLoop.createDatagramEndpoint</h1>
 			<section>
-				<p> Create datagram connection: socket family <u>AddressFamily.INET</u>
+				<p>Create datagram connection: socket family <u>AddressFamily.INET</u>
  or <u>AddressFamily.INET6</u> depending on host (or family if
  specified), socket type <u>SocketType.DGRAM</u>.
 </p>
-<section>
-<p> This method is a coroutine which will try to establish the connection in
+<section><p>This method is a coroutine which will try to establish the connection in
  the background.
 </p>
 
 <p> See the create_connection() method for parameters.
 </p>
-
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-auto std.<wbr/>typecons.<wbr/>__T5TupleTC12asynchronous10transports17DatagramTransportVAyaa17_646174616772616d5472616e73706f7274TC12asynchronous9protocols16DatagramProtocolVAyaa16_646174616772616d50726f746f636f6cZ.<wbr/>Tuple createDatagramEndpoint(
-&nbsp;&nbsp;<a href="../../asynchronous/protocols/DatagramProtocol.html">DatagramProtocol</a> delegate() datagramProtocolFactory,
-&nbsp;&nbsp;const(char[]) localHost = null,
-&nbsp;&nbsp;const(char[]) localService = null,
-&nbsp;&nbsp;const(char[]) remoteHost = null,
-&nbsp;&nbsp;const(char[]) remoteService = null,
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>AddressFamily addressFamily = UNSPECIFIED(),
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>ProtocolType protocolType = UNSPECIFIED(),
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>AddressInfoFlags addressInfoFlags = UNSPECIFIED()
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">auto </span><span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">typecons<wbr/></span><span class="pun">.</span><span class="pln">__T5TupleTC12asynchronous10transports17DatagramTransportVAyaa17_646174616772616d5472616e73706f7274TC12asynchronous9protocols16DatagramProtocolVAyaa16_646174616772616d50726f746f636f6cZ<wbr/></span><span class="pun">.</span><span class="typ">Tuple</span> <span class="pln">createDatagramEndpoint</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<a href="../../asynchronous/protocols/DatagramProtocol.html"><span class="typ">DatagramProtocol</span></a> <span class="kwd">delegate</span><span class="pun">(</span><span class="pun">)</span> <span class="pln">datagramProtocolFactory</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">localHost</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">localService</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">remoteHost</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">remoteService</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">AddressFamily</span> <span class="pln">addressFamily</span> <span class="pun">=</span> <span class="pln">UNSPECIFIED</span><span class="pun">()</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">ProtocolType</span> <span class="pln">protocolType</span> <span class="pun">=</span> <span class="pln">UNSPECIFIED</span><span class="pun">()</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">AddressInfoFlags</span> <span class="pln">addressInfoFlags</span> <span class="pun">=</span> <span class="pln">UNSPECIFIED</span><span class="pun">()</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 <section><h3>Returns</h3>
 <p>Tuple!(DatagramTransport, "datagramTransport",
@@ -103,14 +120,20 @@ auto std.<wbr/>typecons.<wbr/>__T5TupleTC12asynchronous10transports17DatagramTra
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

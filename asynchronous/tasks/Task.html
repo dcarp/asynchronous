@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,11 +73,10 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Class Task</h1>
 			<section>
-				<p> Schedule the execution of a fiber: wrap it in a future. A task is a
+				<p>Schedule the execution of a fiber: wrap it in a future. A task is a
  subclass of Future.
 </p>
-<section>
-<p> A task is responsible for executing a fiber object in an event loop. If the
+<section><p>A task is responsible for executing a fiber object in an event loop. If the
  wrapped fiber yields from a future, the task suspends the execution of the
  wrapped fiber and waits for the completion of the future. When the future
  is done, the execution of the wrapped fiber restarts with the result or the
@@ -84,8 +90,8 @@ $('#symbolSearchPane').show();
 </p>
 
 <p> The cancellation of a task is different from the cancelation of a future.
- Calling <u><a href="../../asynchronous/tasks/Task.cancel.html"><code class="prettyprint lang-d">cancel</code></a>()</u> will throw a <u>CancelledException</u>
- to the wrapped fiber. <u>cancelled()</u> only returns <font color=blue>true</font> if the wrapped fiber did not catch the <u>CancelledException</u>, or raised a <u>CancelledException</u>.
+ Calling <u><a href="../../asynchronous/tasks/Task.cancel.html"><code class="lang-d"><span class="pln">cancel</span></code></a>()</u> will throw a <u>CancelledException</u>
+ to the wrapped fiber. <u>cancelled()</u> only returns <font color=blue> true</font> if the wrapped fiber did not catch the <u> CancelledException</u>, or raised a <u>CancelledException</u>.
 </p>
 
 <p> If a pending task is destroyed, the execution of its wrapped fiber did not
@@ -93,7 +99,7 @@ $('#symbolSearchPane').show();
  destroyed.
 </p>
 
-<p> Don’t directly create <u><code class="prettyprint lang-d">Task</code></u> instances: use the <u>task()</u> function or the <u>EventLoop.create_task()</u> method.
+<p> Don’t directly create <u><code class="lang-d"><span class="typ">Task</span></code></u> instances: use the <u> task()</u> function or the <u>EventLoop.create_task()</u> method.
 </p>
 </section>
 
@@ -101,7 +107,7 @@ $('#symbolSearchPane').show();
 						<h3>Inherits from</h3>
 						<ul>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
+								<code class="prettyprint lang-d"><span class="typ">Object</span></code>
  (base class)
 							</li>
 						</ul>
@@ -120,7 +126,7 @@ $('#symbolSearchPane').show();
 										<code>cancel</code>
 									</a>
 								</td>
-								<td> Request that this task <code class="prettyprint lang-d">cancel</code> itself.
+								<td>Request that this task <code class="lang-d"><span class="pln"><span class="pln">cancel</span></span></code> itself.
 </td>
 							</tr>
 						</table>
@@ -129,14 +135,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class="selected module">events</a>
 							</li>
@@ -66,28 +73,32 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function EventLoop.createTask</h1>
 			<section>
-				<p> Schedule the execution of a fiber object: wrap it in a future.
+				<p>Schedule the execution of a fiber object: wrap it in a future.
 </p>
-<section>
-<p> Third-party event loops can use their own subclass of Task for
+<section><p>Third-party event loops can use their own subclass of Task for
  interoperability. In this case, the result type is a subclass of Task.
 </p>
-
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-final auto createTask(Coroutine, Args...)(
-&nbsp;&nbsp;Coroutine coroutine,
-&nbsp;&nbsp;Args args
-)
-if (isDelegate!Coroutine);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">final </span>auto <span class="pln">createTask</span><span class="pun">(</span><span class="typ">Coroutine</span><span class="pun">, </span><span class="typ">Args</span><span class="pun">...)</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">Coroutine</span> <span class="pln">coroutine</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">Args</span> <span class="pln">args</span>
+								<br/>
+<span class="pun">)</span>
+								<br/>
+<span class="kwd">if</span> <span class="pun">(</span><span class="pln">isDelegate</span><span class="pun">!</span><span class="typ">Coroutine</span><span class="pun">);</span>
+							</code>
+						</div>
 					</section>
 <section><h3>Returns</h3>
 <p>a <u>Task</u> object.
 </p>
-
 </section>
 <section><h3>See Also</h3>
 <p><u>task()</u>.
@@ -97,14 +108,20 @@ if (isDelegate!Coroutine);</pre>
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

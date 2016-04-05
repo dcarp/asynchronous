@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,39 +73,55 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function startUnixServer</h1>
 			<section>
-				<p> Start a UNIX Domain Socket server, with a callback for each client connected.
+				<p>Start a UNIX Domain Socket server, with a callback for each client connected.
 </p>
-<section>
-<p> See <u><a href="../../asynchronous/streams/startServer.html"><code class="prettyprint lang-d">startServer</code></a>()</u> for information about return value and other
+<section><p>See <u><a href="../../asynchronous/streams/startServer.html"><code class="lang-d"><span class="pln">startServer</span></code></a>()</u> for information about return value and other
  details.
 </p>
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-<a href="../../asynchronous/events/Server.html">Server</a> startUnixServer(
-&nbsp;&nbsp;<a href="../../asynchronous/events/EventLoop.html">EventLoop</a> eventLoop,
-&nbsp;&nbsp;void delegate(asynchronous.<wbr/>streams.<wbr/>StreamReader, <a href="../../asynchronous/streams/StreamWriter.html">StreamWriter</a>) clientConnectedCallback,
-&nbsp;&nbsp;const(char[]) path = null,
-&nbsp;&nbsp;ulong limit = 65536LU,
-&nbsp;&nbsp;std.<wbr/>socket.<wbr/>Socket socket = null,
-&nbsp;&nbsp;int backlog = 100,
-&nbsp;&nbsp;asynchronous.<wbr/>events.<wbr/>SslContext sslContext = null
-);</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<a href="../../asynchronous/events/Server.html"><span class="typ">Server</span></a> <span class="pln">startUnixServer</span><span class="pun">(</span>
+								<br/>
+&nbsp;&nbsp;<a href="../../asynchronous/events/EventLoop.html"><span class="typ">EventLoop</span></a> <span class="pln">eventLoop</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">void</span> <span class="kwd">delegate</span><span class="pun">(</span><span class="pln">asynchronous<wbr/></span><span class="pun">.</span><span class="pln">streams<wbr/></span><span class="pun">.</span><span class="typ">StreamReader</span><span class="pun">, </span><a href="../../asynchronous/streams/StreamWriter.html"><span class="typ">StreamWriter</span></a><span class="pun">)</span> <span class="pln">clientConnectedCallback</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="kwd">const</span><span class="pun">(</span><span class="typ">char</span><span class="pun">[]</span><span class="pun">)</span> <span class="pln">path</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">ulong</span> <span class="pln">limit</span> <span class="pun">=</span> <span class="lit">65536LU</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">socket<wbr/></span><span class="pun">.</span><span class="typ">Socket</span> <span class="pln">socket</span> <span class="pun">=</span> <span class="kwd">null</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="typ">int</span> <span class="pln">backlog</span> <span class="pun">=</span> <span class="lit">100</span><span class="pun">,</span>
+								<br/>
+&nbsp;&nbsp;<span class="pln">asynchronous<wbr/></span><span class="pun">.</span><span class="pln">events<wbr/></span><span class="pun">.</span><span class="typ">SslContext</span> <span class="pln">sslContext</span> <span class="pun">=</span> <span class="kwd">null</span>
+								<br/>
+<span class="pun">)</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

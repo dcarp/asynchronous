@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,14 +73,14 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Interface ReadTransport</h1>
 			<section>
-				<p> Interface for read-only transports.
+				<p>Interface for read-only transports.
 </p>
 
 					<section>
 						<h3>Inherits from</h3>
 						<ul>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d"><a href="../../asynchronous/transports/BaseTransport.html">BaseTransport</a></code></code>
+								<code class="prettyprint lang-d"><a href="../../asynchronous/transports/BaseTransport.html"><span class="typ">BaseTransport</span></a></code>
 							</li>
 						</ul>
 					</section>
@@ -91,7 +98,7 @@ $('#symbolSearchPane').show();
 										<code>pauseReading</code>
 									</a>
 								</td>
-								<td> Pause the receiving end.
+								<td>Pause the receiving end.
 </td>
 							</tr>
 							<tr>
@@ -100,7 +107,7 @@ $('#symbolSearchPane').show();
 										<code>resumeReading</code>
 									</a>
 								</td>
-								<td> Resume the receiving end.
+								<td>Resume the receiving end.
 </td>
 							</tr>
 							<tr>
@@ -109,7 +116,7 @@ $('#symbolSearchPane').show();
 										<code>close</code>
 									</a>
 								</td>
-								<td> Close the transport.
+								<td>Close the transport.
 </td>
 							</tr>
 							<tr>
@@ -118,7 +125,7 @@ $('#symbolSearchPane').show();
 										<code>getExtraInfo</code>
 									</a>
 								</td>
-								<td> Get optional transport information.
+								<td>Get optional transport information.
 </td>
 							</tr>
 						</table>
@@ -127,14 +134,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

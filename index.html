@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="./styles/ddox.css"/>
 		<link rel="stylesheet" href="./prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="./scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="./prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="./scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="./asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="./asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -73,10 +80,19 @@ $('#symbolSearchPane').show();
 				</tr>
 			<tr>
 				<td>
+					<a href="./asynchronous/libasync/events.html">asynchronous.libasync.events</a>
+				</td>
+				<td>
+libasync event loop integration.
+
+				</td>
+			</tr>
+			<tr>
+				<td>
 					<a href="./asynchronous/events.html">asynchronous.events</a>
 				</td>
 				<td>
- Event loop and event loop policy.
+Event loop and event loop policy.
 
 				</td>
 			</tr>
@@ -85,7 +101,7 @@ $('#symbolSearchPane').show();
 					<a href="./asynchronous/futures.html">asynchronous.futures</a>
 				</td>
 				<td>
- Future classes.
+<a href="./asynchronous/futures/Future.html"><code class="lang-d"><span class="typ">Future</span></code></a> classes.
 
 				</td>
 			</tr>
@@ -94,7 +110,7 @@ $('#symbolSearchPane').show();
 					<a href="./asynchronous/locks.html">asynchronous.locks</a>
 				</td>
 				<td>
- Synchronization primitives.
+Synchronization primitives.
 
 				</td>
 			</tr>
@@ -103,7 +119,7 @@ $('#symbolSearchPane').show();
 					<a href="./asynchronous/protocols.html">asynchronous.protocols</a>
 				</td>
 				<td>
- <a href="./asynchronous/protocols/Protocol.html"><code class="prettyprint lang-d">Protocol</code></a> interfaces.
+<a href="./asynchronous/protocols/Protocol.html"><code class="lang-d"><span class="typ">Protocol</span></code></a> interfaces.
 
 				</td>
 			</tr>
@@ -112,7 +128,7 @@ $('#symbolSearchPane').show();
 					<a href="./asynchronous/queues.html">asynchronous.queues</a>
 				</td>
 				<td>
- Queues.
+Queues.
 
 				</td>
 			</tr>
@@ -121,7 +137,7 @@ $('#symbolSearchPane').show();
 					<a href="./asynchronous/streams.html">asynchronous.streams</a>
 				</td>
 				<td>
- High-level stream API.
+High-level stream API.
 
 				</td>
 			</tr>
@@ -130,7 +146,7 @@ $('#symbolSearchPane').show();
 					<a href="./asynchronous/tasks.html">asynchronous.tasks</a>
 				</td>
 				<td>
- Support for tasks, coroutines and the scheduler.
+Support for tasks, coroutines and the scheduler.
 
 				</td>
 			</tr>
@@ -139,7 +155,7 @@ $('#symbolSearchPane').show();
 					<a href="./asynchronous/transports.html">asynchronous.transports</a>
 				</td>
 				<td>
- <a href="./asynchronous/transports/Transport.html"><code class="prettyprint lang-d">Transport</code></a> interfaces.
+<a href="./asynchronous/transports/Transport.html"><code class="lang-d"><span class="typ">Transport</span></code></a> interfaces.
 
 				</td>
 			</tr>
@@ -148,7 +164,7 @@ $('#symbolSearchPane').show();
 					<a href="./asynchronous/types.html">asynchronous.types</a>
 				</td>
 				<td>
- Miscellaneous types.
+Miscellaneous types.
 
 				</td>
 			</tr>
@@ -157,7 +173,7 @@ $('#symbolSearchPane').show();
 					<a href="./asynchronous.html">asynchronous</a>
 				</td>
 				<td>
- Asynchronous library.
+Asynchronous library.
 
 				</td>
 			</tr>

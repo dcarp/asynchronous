@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class="selected module">events</a>
 							</li>
@@ -66,14 +73,14 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Class EventLoop</h1>
 			<section>
-				<p> Interface of event loop.
+				<p>Interface of event loop.
 </p>
 
 					<section>
 						<h3>Inherits from</h3>
 						<ul>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
+								<code class="prettyprint lang-d"><span class="typ">Object</span></code>
  (base class)
 							</li>
 						</ul>
@@ -92,8 +99,17 @@ $('#symbolSearchPane').show();
 										<code>callAt</code>
 									</a>
 								</td>
-								<td> Arrange for the callback to be called at the given absolute timestamp
- <a href="../../asynchronous/events/EventLoop.callAt.html#when"><code class="prettyprint lang-d">when</code></a> (an int or float), using the same <a href="../../asynchronous/events/EventLoop.time.html"><code class="prettyprint lang-d">time</code></a> reference as <a href="../../asynchronous/events/EventLoop.time.html"><code class="prettyprint lang-d">time</code></a>().
+								<td>Arrange for the callback to be called at the given absolute timestamp
+ <a href="../../asynchronous/events/EventLoop.callAt.html#when"><code class="lang-d"><span class="pln">when</span></code></a> (an int or float), using the same <a href="../../asynchronous/events/EventLoop.time.html"><code class="lang-d"><span class="pln">time</span></code></a> reference as <a href="../../asynchronous/events/EventLoop.time.html"><code class="lang-d"><span class="pln">time</span></code></a>().
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.callExceptionHandler.html" class="public">
+										<code>callExceptionHandler</code>
+									</a>
+								</td>
+								<td>Call the current event loop's exception handler.
 </td>
 							</tr>
 							<tr>
@@ -102,7 +118,7 @@ $('#symbolSearchPane').show();
 										<code>callLater</code>
 									</a>
 								</td>
-								<td> Arrange for the callback to be called after the given <a href="../../asynchronous/events/EventLoop.callLater.html#delay"><code class="prettyprint lang-d">delay</code></a>.
+								<td>Arrange for the callback to be called after the given <a href="../../asynchronous/events/EventLoop.callLater.html#delay"><code class="lang-d"><span class="pln">delay</span></code></a>.
 </td>
 							</tr>
 							<tr>
@@ -111,7 +127,16 @@ $('#symbolSearchPane').show();
 										<code>callSoon</code>
 									</a>
 								</td>
-								<td> Arrange for a callback to be called as soon as possible.
+								<td>Arrange for a callback to be called as soon as possible.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.callSoonThreadSafe.html" class="public">
+										<code>callSoonThreadSafe</code>
+									</a>
+								</td>
+								<td>Like <u><a href="../../asynchronous/events/EventLoop.callSoon.html"><code class="lang-d"><span class="pln">callSoon</span></code></a>()</u>, but thread safe.
 </td>
 							</tr>
 							<tr>
@@ -120,7 +145,7 @@ $('#symbolSearchPane').show();
 										<code>close</code>
 									</a>
 								</td>
-								<td> Close the event loop. The loop must not be running.
+								<td>Close the event loop. The loop must not be running.
 </td>
 							</tr>
 							<tr>
@@ -129,7 +154,7 @@ $('#symbolSearchPane').show();
 										<code>createConnection</code>
 									</a>
 								</td>
-								<td> Create a streaming transport connection to a given Internet <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="prettyprint lang-d">host</code></a> and
+								<td>Create a streaming transport connection to a given Internet <a href="../../asynchronous/events/EventLoop.createConnection.html#host"><code class="lang-d"><span class="pln">host</span></code></a> and
 </td>
 							</tr>
 							<tr>
@@ -138,7 +163,7 @@ $('#symbolSearchPane').show();
 										<code>createDatagramEndpoint</code>
 									</a>
 								</td>
-								<td> Create datagram connection: socket family <u>AddressFamily.INET</u>
+								<td>Create datagram connection: socket family <u>AddressFamily.INET</u>
  or <u>AddressFamily.INET6</u> depending on host (or family if
  specified), socket type <u>SocketType.DGRAM</u>.
 </td>
@@ -149,7 +174,7 @@ $('#symbolSearchPane').show();
 										<code>createServer</code>
 									</a>
 								</td>
-								<td> A coroutine which creates a TCP server bound to <a href="../../asynchronous/events/EventLoop.createServer.html#host"><code class="prettyprint lang-d">host</code></a> and port.
+								<td>A coroutine which creates a TCP server bound to <a href="../../asynchronous/events/EventLoop.createServer.html#host"><code class="lang-d"><span class="pln"><a href="../../asynchronous/events/EventLoop.createServer.html#host"><span class="pln">host</span></a></span></code></a> and port.
 </td>
 							</tr>
 							<tr>
@@ -158,7 +183,7 @@ $('#symbolSearchPane').show();
 										<code>createTask</code>
 									</a>
 								</td>
-								<td> Schedule the execution of a fiber object: wrap it in a future.
+								<td>Schedule the execution of a fiber object: wrap it in a future.
 </td>
 							</tr>
 							<tr>
@@ -167,8 +192,8 @@ $('#symbolSearchPane').show();
 										<code>createUnixConnection</code>
 									</a>
 								</td>
-								<td> Create UNIX connection: <a href="../../asynchronous/events/EventLoop.createUnixConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> family <u>AddressFamily.UNIX</u>,
- <a href="../../asynchronous/events/EventLoop.createUnixConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> type <u>SocketType.STREAM</u>. The UNIX <a href="../../asynchronous/events/EventLoop.createUnixConnection.html#socket"><code class="prettyprint lang-d">socket</code></a> family is
+								<td>Create UNIX connection: <a href="../../asynchronous/events/EventLoop.createUnixConnection.html#socket"><code class="lang-d"><span class="pln">socket</span></code></a> family <u>AddressFamily.UNIX</u>,
+ <a href="../../asynchronous/events/EventLoop.createUnixConnection.html#socket"><code class="lang-d"><span class="pln">socket</span></code></a> type <u>SocketType.STREAM</u>. The UNIX <a href="../../asynchronous/events/EventLoop.createUnixConnection.html#socket"><code class="lang-d"><span class="pln">socket</span></code></a> family is
  used to communicate between processes on the same machine efficiently.
 </td>
 							</tr>
@@ -178,8 +203,17 @@ $('#symbolSearchPane').show();
 										<code>createUnixServer</code>
 									</a>
 								</td>
-								<td> Similar to <u><a href="../../asynchronous/events/EventLoop.createServer.html"><code class="prettyprint lang-d">EventLoop.createServer</code></a>()</u>, but specific to the
- <a href="../../asynchronous/events/EventLoop.createUnixServer.html#socket"><code class="prettyprint lang-d">socket</code></a> family <u>AddressFamily.UNIX</u>.
+								<td>Similar to <u><a href="../../asynchronous/events/EventLoop.createServer.html"><code class="lang-d"><span class="typ"><a href="../../asynchronous/events/EventLoop.html"><span class="typ">EventLoop</span></a><wbr/></span><span class="pun">.</span><span class="pln"><a href="../../asynchronous/events/EventLoop.createServer.html"><span class="pln">createServer</span></a></span></code></a>()</u>, but specific to the
+ <a href="../../asynchronous/events/EventLoop.createUnixServer.html#socket"><code class="lang-d"><span class="pln"><a href="../../asynchronous/events/EventLoop.createUnixServer.html#socket"><span class="pln">socket</span></a></span></code></a> family <u>AddressFamily.UNIX</u>.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.defaultExceptionHandler.html" class="public">
+										<code>defaultExceptionHandler</code>
+									</a>
+								</td>
+								<td>Default exception handler.
 </td>
 							</tr>
 							<tr>
@@ -204,7 +238,7 @@ $('#symbolSearchPane').show();
 										<code>runForever</code>
 									</a>
 								</td>
-								<td> Run until <u><a href="../../asynchronous/events/EventLoop.stop.html"><code class="prettyprint lang-d">stop</code></a>()</u> is called.
+								<td>Run until <u><a href="../../asynchronous/events/EventLoop.stop.html"><code class="lang-d"><span class="pln">stop</span></code></a>()</u> is called.
 </td>
 							</tr>
 							<tr>
@@ -213,7 +247,16 @@ $('#symbolSearchPane').show();
 										<code>runUntilComplete</code>
 									</a>
 								</td>
-								<td> Run until <a href="../../asynchronous/events/EventLoop.runUntilComplete.html#future"><code class="prettyprint lang-d">future</code></a> is done.
+								<td>Run until <a href="../../asynchronous/events/EventLoop.runUntilComplete.html#future"><code class="lang-d"><span class="pln">future</span></code></a> is done.
+</td>
+							</tr>
+							<tr>
+								<td>
+									<a href="../../asynchronous/events/EventLoop.setExceptionHandler.html" class="public">
+										<code>setExceptionHandler</code>
+									</a>
+								</td>
+								<td>Set handler as the new event loop exception handler.
 </td>
 							</tr>
 							<tr>
@@ -222,7 +265,7 @@ $('#symbolSearchPane').show();
 										<code>stop</code>
 									</a>
 								</td>
-								<td> Stop running the event loop.
+								<td>Stop running the event loop.
 </td>
 							</tr>
 							<tr>
@@ -231,7 +274,7 @@ $('#symbolSearchPane').show();
 										<code>time</code>
 									</a>
 								</td>
-								<td> Return the current <code class="prettyprint lang-d">time</code> according to the event loop’s internal clock.
+								<td>Return the current <code class="lang-d"><span class="pln"><span class="pln">time</span></span></code> according to the event loop’s internal clock.
 </td>
 							</tr>
 						</table>
@@ -240,14 +283,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,10 +73,9 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Function Task.cancel</h1>
 			<section>
-				<p> Request that this task <code class="prettyprint lang-d">cancel</code> itself.
+				<p>Request that this task <code class="lang-d"><span class="pln">cancel</span></code> itself.
 </p>
-<section>
-<p> This arranges for a <u>CancelledException</u> to be thrown into
+<section><p>This arranges for a <u>CancelledException</u> to be thrown into
  the wrapped coroutine on the next cycle through the event loop. The
  coroutine then has a chance to clean up or even deny the request using
  try/catch/finally.
@@ -84,28 +90,37 @@ $('#symbolSearchPane').show();
 <p> Immediately after this method is called, <u>cancelled()</u> will
  not return <font color=blue>true</font> (unless the task was already cancelled). A
  task will be marked as cancelled when the wrapped coroutine terminates
- with a <u>CancelledException</u> (even if <code class="prettyprint lang-d">cancel</code>() was not
+ with a <u>CancelledException</u> (even if <code class="lang-d"><span class="pln">cancel</span></code>() was not
  called).
 </p>
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-override bool cancel();</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="kwd">override </span><span class="typ">bool</span> <span class="pln">cancel<span class="pun">()</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

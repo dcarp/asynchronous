@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -66,12 +73,11 @@ $('#symbolSearchPane').show();
 		<div id="main-contents">
 			<h1>Class Event</h1>
 			<section>
-				<p> Class implementing event objects.
+				<p>Class implementing event objects.
 </p>
-<section>
-<p> An event manages a flag that can be <a href="../../asynchronous/locks/Event.set.html"><code class="prettyprint lang-d">set</code></a> to true with the <u><a href="../../asynchronous/locks/Event.set.html"><code class="prettyprint lang-d">set</code></a>()</u>
- method and reset to false with the <u><a href="../../asynchronous/locks/Event.clear.html"><code class="prettyprint lang-d">clear</code></a>()</u> method. The
- <u><a href="../../asynchronous/locks/Event.wait.html"><code class="prettyprint lang-d">wait</code></a>()</u> method blocks until the flag is true. The flag is
+<section><p>An event manages a flag that can be <a href="../../asynchronous/locks/Event.set.html"><code class="lang-d"><span class="pln">set</span></code></a> to true with the <u><a href="../../asynchronous/locks/Event.set.html"><code class="lang-d"><span class="pln">set</span></code></a>()</u>
+ method and reset to false with the <u><a href="../../asynchronous/locks/Event.clear.html"><code class="lang-d"><span class="pln">clear</span></code></a>()</u> method. The
+ <u><a href="../../asynchronous/locks/Event.wait.html"><code class="lang-d"><span class="pln">wait</span></code></a>()</u> method blocks until the flag is true. The flag is
  initially false.
 </p>
 
@@ -83,7 +89,7 @@ $('#symbolSearchPane').show();
 						<h3>Inherits from</h3>
 						<ul>
 							<li>
-								<code class="prettyprint lang-d"><code class="prettyprint lang-d">Object</code></code>
+								<code class="prettyprint lang-d"><span class="typ">Object</span></code>
  (base class)
 							</li>
 						</ul>
@@ -102,8 +108,8 @@ $('#symbolSearchPane').show();
 										<code>clear</code>
 									</a>
 								</td>
-								<td> Reset the internal flag to false. Subsequently, coroutines calling
- <u><a href="../../asynchronous/locks/Event.wait.html"><code class="prettyprint lang-d">wait</code></a>()</u> will block until <u><a href="../../asynchronous/locks/Event.set.html"><code class="prettyprint lang-d">set</code></a>()</u> is called to <a href="../../asynchronous/locks/Event.set.html"><code class="prettyprint lang-d">set</code></a>
+								<td>Reset the internal flag to false. Subsequently, coroutines calling
+ <u><a href="../../asynchronous/locks/Event.wait.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/locks/Event.wait.html"><span class="pln">wait</span></a></span></code></a>()</u> will block until <u><a href="../../asynchronous/locks/Event.set.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/locks/Event.set.html"><span class="pln">set</span></a></span></code></a>()</u> is called to <a href="../../asynchronous/locks/Event.set.html"><code class="lang-d"><span class="pln"><a href="../../asynchronous/locks/Event.set.html"><span class="pln">set</span></a></span></code></a>
  the internal flag to true again.
 </td>
 							</tr>
@@ -113,7 +119,7 @@ $('#symbolSearchPane').show();
 										<code>isSet</code>
 									</a>
 								</td>
-								<td> Return <font color=blue>true</font> if and only if the internal flag is true.
+								<td>Return <font color=blue>true</font> if and only if the internal flag is true.
 </td>
 							</tr>
 							<tr>
@@ -122,8 +128,8 @@ $('#symbolSearchPane').show();
 										<code>set</code>
 									</a>
 								</td>
-								<td> Set the internal flag to true. All coroutines waiting for it to become
- true are awakened. Coroutine that call <u><a href="../../asynchronous/locks/Event.wait.html"><code class="prettyprint lang-d">wait</code></a>()</u> once the flag
+								<td>Set the internal flag to true. All coroutines waiting for it to become
+ true are awakened. Coroutine that call <u><a href="../../asynchronous/locks/Event.wait.html"><code class="lang-d"><span class="pln">wait</span></code></a>()</u> once the flag
  is true will not block at all.
 </td>
 							</tr>
@@ -133,7 +139,7 @@ $('#symbolSearchPane').show();
 										<code>wait</code>
 									</a>
 								</td>
-								<td> Block until the internal flag is true.
+								<td>Block until the internal flag is true.
 </td>
 							</tr>
 						</table>
@@ -142,14 +148,20 @@ $('#symbolSearchPane').show();
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

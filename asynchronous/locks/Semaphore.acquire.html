@@ -6,15 +6,22 @@
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script>
-		<script type="text/javascript" src="../../prettify/prettify.js">/**/</script>
 		<script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
 	</head>
-	<body onload="prettyPrint(); setupDdox();">
+	<body onload="setupDdox();">
 		<nav id="main-nav">
 						<ul class="tree-view">
 							<li class=" tree-view">
 								<a href="#" class="package">asynchronous</a>
 						<ul class="tree-view">
+							<li class="collapsed tree-view">
+								<a href="#" class="package">libasync</a>
+						<ul class="tree-view">
+							<li>
+								<a href="../../asynchronous/libasync/events.html" class=" module">events</a>
+							</li>
+						</ul>
+							</li>
 							<li>
 								<a href="../../asynchronous/events.html" class=" module">events</a>
 							</li>
@@ -71,52 +78,62 @@ $('#symbolSearchPane').show();
 			</ul>
 			<section>
 				<h2>Function Semaphore.acquire</h2>
-				<p> Acquire a semaphore.
+				<p>Acquire a semaphore.
 </p>
-<section>
-<p> If the internal counter is larger than zero on entry, decrement it by one
+<section><p>If the internal counter is larger than zero on entry, decrement it by one
  and return <font color=blue>true</font> immediately. If it is zero on entry, block,
- waiting until some other coroutine has called <u><a href="../../asynchronous/locks/Semaphore.release.html"><code class="prettyprint lang-d">release</code></a>()</u> to
+ waiting until some other coroutine has called <u><a href="../../asynchronous/locks/Semaphore.release.html"><code class="lang-d"><span class="pln">release</span></code></a>()</u> to
  make it larger than 0, and then return <font color=blue>true</font>.
 </p>
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-bool acquire();</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="typ">bool</span> <span class="pln">acquire<span class="pun">()</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Function Semaphore.acquire</h2>
-				<p> Acquire a semaphore.
+				<p>Acquire a semaphore.
 </p>
-<section>
-<p> If the internal counter is larger than zero on entry, decrement it by one
+<section><p>If the internal counter is larger than zero on entry, decrement it by one
  and return <font color=blue>true</font> immediately. If it is zero on entry, block,
- waiting until some other coroutine has called <u><a href="../../asynchronous/locks/Semaphore.release.html"><code class="prettyprint lang-d">release</code></a>()</u> to
+ waiting until some other coroutine has called <u><a href="../../asynchronous/locks/Semaphore.release.html"><code class="lang-d"><span class="pln">release</span></code></a>()</u> to
  make it larger than 0, and then return <font color=blue>true</font>.
 </p>
 </section>
 
 					<section>
 						<h3>Prototype</h3>
-						<pre class="code prettyprint lang-d prototype">
-bool acquire();</pre>
+						<div class="prototype">
+							<code class="lang-d">
+<span class="typ">bool</span> <span class="pln">acquire<span class="pun">()</span><span class="pun">;</span>
+							</code>
+						</div>
 					</section>
 
 			</section>
 			<section>
 				<h2>Authors</h2>
+<p>Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>Copyright</h2>
+<p>© 2015-2016 Dragos Carp
+</p>
 
 			</section>
 			<section>
 				<h2>License</h2>
+<p>Boost Software License - Version 1.0
+</p>
 
 			</section>
 		</div>

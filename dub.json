@@ -10,7 +10,7 @@
     "targetPath": "build",
     "workingDirectory": "build",
     "dependencies": {
-        "libasync": "~>0.7.7"
+        "libasync": "~>0.7.9"
     },
     "configurations": [
         {

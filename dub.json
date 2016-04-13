@@ -20,8 +20,7 @@
             "name": "unittest",
             "targetType": "executable",
             "sourcePaths": ["test"],
-            "buildOptions": ["debugInfoC", "unittests"],
-            "dflags": ["-main"]
+            "mainSourceFile": "test/main.d"
         }
     ]
 }

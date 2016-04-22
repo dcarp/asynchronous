@@ -150,7 +150,7 @@ final class Lock
  * initially false.
  *
  * This class is not thread safe.
- */ 
+ */
 final class Event
 {
     private EventLoop eventLoop;
@@ -193,7 +193,7 @@ final class Event
 
     /**
      * Set the internal flag to true. All coroutines waiting for it to become
-     * true are awakened. Coroutine that call $(D_PSYMBOL wait()) once the flag
+     * true are awakened. Coroutines that call $(D_PSYMBOL wait()) once the flag
      * is true will not block at all.
      */
     void set()
@@ -327,7 +327,7 @@ final class Condition
     /**
      * Wake up all coroutines waiting on this condition. This method acts like
      * $(D_PSYMBOL notify()), but wakes up all waiting coroutines instead of
-     * one. If the calling coroutines has not acquired the lock when this method
+     * one. If the calling coroutine has not acquired the lock when this method
      * is called, an $(D_PSYMBOL Exception) is thrown.
      */
     void notifyAll()
@@ -388,8 +388,9 @@ final class Condition
     /**
      * Wait until a predicate becomes true.
      *
-     * The predicate should be a callable returning a boolean value. The final
-     * predicate value is the return value.
+     * The predicate should be a callable returning a boolean value.
+     *
+     * Returns true
      */
     @Coroutine
     bool waitFor(bool delegate() predicate)
@@ -501,7 +502,7 @@ class Semaphore
 
 /**
  * A bounded semaphore implementation.
- * 
+ *
  * This throws an Exception in $(D_PSYMBOL release()) if it would increase the
  * value above the initial value.
  */

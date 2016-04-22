@@ -1,6 +1,6 @@
 {
     "name": "asynchronous",
-    "description": "Asynchonous library for D",
+    "description": "Asynchronous library for D",
     "license": "Boost 1.0",
     "copyright": "Copyright © 2015-2016 Dragoş Carp",
     "authors": [

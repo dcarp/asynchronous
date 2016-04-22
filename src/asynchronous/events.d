@@ -28,7 +28,7 @@ alias Protocol = asynchronous.protocols.Protocol;
 interface CallbackHandle
 {
     /**
-     * Cancel the call. If the callback is already canceled or executed, this
+     * Cancel the call. If the callback is already cancelled or executed, this
      * method has no effect.
      */
     void cancel();
@@ -76,7 +76,7 @@ if (isDelegate!Dg)
     }
 
     /**
-     * Cancel the call. If the callback is already canceled or executed, this
+     * Cancel the call. If the callback is already cancelled or executed, this
      * method has no effect.
      */
     override void cancel()
@@ -334,7 +334,7 @@ abstract class EventLoop
      *
      * Every callback scheduled before $(D_PSYMBOL stop()) is called will run.
      * Callbacks scheduled after $(D_PSYMBOL stop()) is called will not run.
-     * Howerver, those callbacks will run if $(D_PSYMBOL runForever()) is
+     * However, those callbacks will run if $(D_PSYMBOL runForever()) is
      * called again later.
      */
     final void stop()
@@ -538,7 +538,7 @@ abstract class EventLoop
      *      overrides the hostname that the target server’s certificate will be
      *      matched against. By default the value of the host argument is used.
      *      If host is empty, there is no default and you must pass a value for
-     *      $(D_PSYMBOL serverHostname). If $(D_PSYMBOL serverHostname) is an
+     *      $(D_PSYMBOL serverHostname). If $(D_PSYMBOL serverHostname) is
      *      empty, hostname matching is disabled (which is a serious security
      *      risk, allowing for man-in-the-middle-attacks).
      *
@@ -556,7 +556,7 @@ abstract class EventLoop
      *      be specified.
      *
      *  localHost = if given, together with $(D_PSYMBOL localService) is used to
-     *      bind the socket to locally. The $(D_PSYMBOL localHost) and
+     *      bind the socket locally. The $(D_PSYMBOL localHost) and
      *      $(D_PSYMBOL localService) are looked up using $(D_PSYMBOL
      *      getAddressInfo()), similarly to host and service.
      *
@@ -727,7 +727,7 @@ abstract class EventLoop
         else
         {
             enforce(remoteHost.empty,
-                "Remote host parameter not supportored yet");
+                "Remote host parameter not supported yet");
 
             auto addressInfos = getAddressInfo(localHost, localService,
                 addressFamily, SocketType.DGRAM, protocolType,
@@ -846,7 +846,7 @@ abstract class EventLoop
         }
         else
         {
-            enforce(socket !is null, "no path and sock were specified");
+            enforce(socket !is null, "no path and socket were specified");
             enforce(socket.addressFamily == AddressFamily.UNIX,
                 "A UNIX Domain Socket was expected, got %s".format(socket));
             socket.blocking(false);
@@ -865,7 +865,7 @@ abstract class EventLoop
     //path is a str, representing a file systsem path to bind the
     //server socket to.
 
-    //sock can optionally be specified in order to use a preexisting
+    //socket can optionally be specified in order to use a preexisting
     //socket object.
 
     //backlog is the maximum number of queued connections passed to

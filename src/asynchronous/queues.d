@@ -74,7 +74,7 @@ class Queue(T, size_t maxSize = 0)
             this.eventLoop = getEventLoop;
         else
             this.eventLoop = eventLoop;
-        
+
         this.finished = new Event(this.eventLoop);
         this.finished.set;
     }

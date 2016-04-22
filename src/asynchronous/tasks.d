@@ -156,7 +156,7 @@ interface TaskHandle : FutureHandle
 
         if (thisTask.injectException !is null)
             throw thisTask.injectException;
-    }    
+    }
 }
 
 private class TaskFiber : Fiber
@@ -216,7 +216,7 @@ static this()
  * different threads. While a task waits for the completion of a future, the
  * event loop executes a new task.
  *
- * The cancellation of a task is different from the cancelation of a future.
+ * The cancellation of a task is different from the cancellation of a future.
  * Calling $(D_PSYMBOL cancel()) will throw a $(D_PSYMBOL CancelledException)
  * to the wrapped fiber. $(D_PSYMBOL cancelled()) only returns $(D_KEYWORD
  * true) if the wrapped fiber did not catch the $(D_PSYMBOL
@@ -419,8 +419,8 @@ unittest
 }
 
 /**
- * Return an generator whose values, when waited for, are Future instances in
- * the order in which and as soon as they complete.
+ * Return a generator whose values, when waited for, are Future instances in
+ * the order they complete.
  *
  * Raises $(D_PSYMBOL TimeoutException) if the timeout occurs before all futures
  * are done.
@@ -627,7 +627,7 @@ unittest
  * cancel $(D_PSYMBOL shield()).
  *
  * If you want to completely ignore cancellation (not recommended) you can
- * combine $(D_PSYMBOL shield()) with a try/except clause, as follows:
+ * combine $(D_PSYMBOL shield()) with a try/catch clause, as follows:
  *
  * $(D_CODE
  *   try
@@ -880,8 +880,8 @@ unittest
  *
  *  future = future to wait for.
  *
- *  timeout = can be used to control the maximum number of seconds to wait
- *      before returning. If $(PARAM timeout) is 0 or negative, block until the
+ *  timeout = can be used to control the maximum time to wait before
+ *      returning. If $(PARAM timeout) is 0 or negative, block until the
  *      future completes.
  *
  * Returns: result of the future. When a timeout occurs, it cancels the task
@@ -1046,7 +1046,7 @@ class GeneratorTask(T) : Task!(void delegate())
 
 /**
  * Yield a value to the caller of the currently executing generator task. The
- * type of the yielded value and of type of the generator must be the same;
+ * type of the yielded value and the type of the generator must be the same.
  */
 @Coroutine
 void yieldValue(T)(auto ref T value)

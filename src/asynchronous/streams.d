@@ -104,7 +104,7 @@ alias ClientConnectedCallback = void delegate(StreamReader, StreamWriter);
  *
  * The rest of the arguments are all the usual arguments to $(D_PSYMBOL
  * eventLoop.createServer()) except $(D_PSYMBOL protocolFactory). The return
- * value is the same as $(D_PSYMBOL eventLoop.create_server()).
+ * value is the same as $(D_PSYMBOL eventLoop.createServer()).
  *
  * Additional optional keyword arguments are loop (to set the event loop
  * instance to use) and limit (to set the buffer limit passed to the
@@ -325,7 +325,7 @@ class StreamReaderProtocol : FlowControlProtocol
 
         if (clientConnectedCallback !is null)
         {
-            streamWriter = new StreamWriter(eventLoop, transport1, this, 
+            streamWriter = new StreamWriter(eventLoop, transport1, this,
                 streamReader);
             eventLoop.createTask(clientConnectedCallback, streamReader,
                 streamWriter);
@@ -370,7 +370,7 @@ final class StreamReader
             this.eventLoop = getEventLoop;
         else
             this.eventLoop = eventLoop;
-        // The line length limit is  a security feature;
+        // The line length limit is a security feature;
         // it also doubles as half the buffer limit.
         this.limit = limit;
     }
@@ -443,7 +443,7 @@ final class StreamReader
     }
 
     /**
-     * Set the exception.
+     * Set the transport.
      */
     void setTransport(ReadTransport transport)
     in
@@ -487,7 +487,7 @@ final class StreamReader
     {
         // StreamReader uses a future to link the protocol feed_data() method
         // to a read coroutine. Running two read coroutines at the same time
-        // would have an unexpected behaviour. It would not possible to know
+        // would have an unexpected behavior. It would not be possible to know
         // which coroutine would get the next data.
         enforce(flowWaiter is null, functionName
             ~ "() called while another coroutine is already waiting for incoming data");
@@ -604,8 +604,9 @@ final class StreamReader
     /**
      * Read exactly $(D_PSYMBOL n) bytes. Raise an $(D_PSYMBOL
      * IncompleteReadError) if the end of the stream is reached before
-     * $(D_PSYMBOL n) can be read, the $(D_PSYMBOL IncompleteReadError.partial)
-     * attribute of the exception contains the partial read bytes.
+     * $(D_PSYMBOL n) bytes can be read, the $(D_PSYMBOL
+     * IncompleteReadError.partial) attribute of the exception contains the
+     * partial read bytes.
      */
     @Coroutine
     const(void)[] readExactly(size_t n)
@@ -708,7 +709,7 @@ final class StreamWriter
     }
 
     /**
-     * Let the write buffer of the underlying transport a chance to be flushed.
+     * Give the write buffer of the underlying transport a chance to be flushed.
      *
      * The intended use is to write:
      *
@@ -718,7 +719,7 @@ final class StreamWriter
      * When the size of the transport buffer reaches the high-water limit (the
      * protocol is paused), block until the size of the buffer is drained down
      * to the low-water limit and the protocol is resumed. When there is nothing
-     * to wait for, the continues immediately.
+     * to wait for, continue immediately.
      *
      * Calling $(D_PSYMBOL drain()) gives the opportunity for the loop to
      * schedule the write operation and flush the buffer. It should especially

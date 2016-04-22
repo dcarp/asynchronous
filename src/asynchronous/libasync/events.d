@@ -214,7 +214,8 @@ package class LibasyncEventLoop : EventLoop
         ProtocolType protocolType = UNSPECIFIED!ProtocolType,
         AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags)
     {
-        // no async implementation in libasync yet, use the std.socket.getAddresInfo implementation;
+        // no async implementation in libasync yet, use the
+        // std.socket.getAddresInfo implementation;
         return std.socket.getAddressInfo(host, service, addressFamily,
             socketType, protocolType, addressInfoFlags);
     }

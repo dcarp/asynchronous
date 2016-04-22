@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/dcarp/asynchronous.png?branch=master)](https://travis-ci.org/dcarp/asynchronous)
 
-#`asynchonous`#
+#`asynchronous`#
 This library provides infrastructure for writing concurrent code using coroutines, multiplexing I/O access over sockets and other resources, running network clients and servers, and other related primitives.
 
 *It implements most of the python 3 [asyncio API](https://docs.python.org/3/library/asyncio.html).*
@@ -17,7 +17,7 @@ Can be found at: http://dcarp.github.io/asynchronous/index.html
 * Locks and semaphores (done)
 * Queues (done)
 
-####Why yet another async library? What wrong with vibe.d?####
+####Why yet another async library? What is wrong with vibe.d?####
 * `asynchronous` is a library and not a framework
 * it is not web-oriented, compatible with `std.socket`
 * arguably nicer API

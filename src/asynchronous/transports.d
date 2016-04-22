@@ -108,20 +108,20 @@ interface WriteTransport : BaseTransport
     /**
      * Set the high- and low-water limits for write flow control.
      *
-     * These two values control when call the protocol's $(D_PSYMBOL
+     * These two values control when the protocol's $(D_PSYMBOL
      * pauseWriting()) and $(D_PSYMBOL resumeWriting()) methods are called. If
      * specified, the low-water limit must be less than or equal to the
      * high-water limit.
-     * 
-     * The defaults are implementation-specific.  If only the high-water limit
-     * is given, the low-water limit defaults to a implementation-specific value
-     * less than or equal to the high-water limit.  Setting $(D_PSYMBOL high) to
-     * zero forces low to zero as well, and causes $(D_PSYMBOL pauseWriting())
-     * to be called whenever the buffer becomes non-empty. Setting $(D_PSYMBOL
-     * low) to zero causes $(D_PSYMBOL resumeWriting()) to be called only once
-     * the buffer is empty. Use of zero for either limit is generally
-     * sub-optimal as it reduces opportunities for doing I/O and computation
-     * concurrently.
+     *
+     * The defaults are implementation-specific. If only the high-water limit
+     * is given, the low-water limit defaults to an implementation-specific
+     * value less than or equal to the high-water limit. Setting $(D_PSYMBOL
+     * high) to zero forces low to zero as well, and causes $(D_PSYMBOL
+     * pauseWriting()) to be called whenever the buffer becomes
+     * non-empty. Setting $(D_PSYMBOL low) to zero causes $(D_PSYMBOL
+     * resumeWriting()) to be called only once the buffer is empty. Use of
+     * zero for either limit is generally sub-optimal as it reduces
+     * opportunities for doing I/O and computation concurrently.
      */
     void setWriteBufferLimits(Nullable!size_t high = Nullable!size_t(),
         Nullable!size_t low = Nullable!size_t());
@@ -175,8 +175,7 @@ interface DatagramTransport : BaseTransport
      * transport-dependent target address).
      *
      * If $(D_PSYMBOL address) is $(D_KEYWORD null), the data is sent to the
-     * target address given on transport
-     * creation.
+     * target address given on transport creation.
      *
      * This method does not block; it buffers the data and arranges for it to be
      * sent out asynchronously.
@@ -202,7 +201,6 @@ interface SubprocessTransport : BaseTransport
      * Returns: the subprocess process id as an integer.
      */
     Pid getPid();
-
 
     /**
      * Returns: the transport for the communication pipe corresponding to the

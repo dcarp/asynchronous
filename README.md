@@ -22,7 +22,7 @@ Can be found at: http://dcarp.github.io/asynchronous/index.html
 * it is not web-oriented, compatible with `std.socket`
 * arguably nicer API
 * event loop start/stop control
-* uses @Coroutine UDA to mark functions that could trigger a task (fiber) switch, although this is not enforced by the compiler yet.
+* uses `@Coroutine` UDA to mark functions that could trigger a task (fiber) switch, although this is not enforced by the compiler yet.
 
 ####Examples and tutorials####
 Some small examples can be found in the test directory or as unittests.

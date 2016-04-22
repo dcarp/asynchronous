@@ -80,19 +80,17 @@ $('#symbolSearchPane').show();
 				<h2>Function WriteTransport.setWriteBufferLimits</h2>
 				<p>Set the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a>- and <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a>-water limits for <a href="../../asynchronous/transports/WriteTransport.write.html"><code class="lang-d"><span class="pln">write</span></code></a> flow control.
 </p>
-<section><p>These two values control when call the protocol's <u> pauseWriting()</u> and <u>resumeWriting()</u> methods are called. If
+<section><p>These two values control when the protocol's <u> pauseWriting()</u> and <u>resumeWriting()</u> methods are called. If
  specified, the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a>-water limit must be less than or equal to the
  <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a>-water limit.
 </p>
 
-<p> The defaults are implementation-specific.  If only the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a>-water limit
- is given, the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a>-water limit defaults to a implementation-specific value
- less than or equal to the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a>-water limit.  Setting <u><a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a></u> to
- zero forces <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a> to zero as well, and causes <u>pauseWriting()</u>
- to be called whenever the buffer becomes non-empty. Setting <u> <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a></u> to zero causes <u>resumeWriting()</u> to be called only once
- the buffer is empty. Use of zero for either limit is generally
- sub-optimal as it reduces opportunities for doing I/O and computation
- concurrently.
+<p> The defaults are implementation-specific. If only the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a>-water limit
+ is given, the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a>-water limit defaults to an implementation-specific
+ value less than or equal to the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a>-water limit. Setting <u> <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a></u> to zero forces <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a> to zero as well, and causes <u> pauseWriting()</u> to be called whenever the buffer becomes
+ non-empty. Setting <u><a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a></u> to zero causes <u> resumeWriting()</u> to be called only once the buffer is empty. Use of
+ zero for either limit is generally sub-optimal as it reduces
+ opportunities for doing I/O and computation concurrently.
 </p>
 </section>
 
@@ -116,19 +114,17 @@ $('#symbolSearchPane').show();
 				<h2>Function WriteTransport.setWriteBufferLimits</h2>
 				<p>Set the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a>- and <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a>-water limits for <a href="../../asynchronous/transports/WriteTransport.write.html"><code class="lang-d"><span class="pln">write</span></code></a> flow control.
 </p>
-<section><p>These two values control when call the protocol's <u> pauseWriting()</u> and <u>resumeWriting()</u> methods are called. If
+<section><p>These two values control when the protocol's <u> pauseWriting()</u> and <u>resumeWriting()</u> methods are called. If
  specified, the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a>-water limit must be less than or equal to the
  <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a>-water limit.
 </p>
 
-<p> The defaults are implementation-specific.  If only the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a>-water limit
- is given, the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a>-water limit defaults to a implementation-specific value
- less than or equal to the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a>-water limit.  Setting <u><a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a></u> to
- zero forces <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a> to zero as well, and causes <u>pauseWriting()</u>
- to be called whenever the buffer becomes non-empty. Setting <u> <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a></u> to zero causes <u>resumeWriting()</u> to be called only once
- the buffer is empty. Use of zero for either limit is generally
- sub-optimal as it reduces opportunities for doing I/O and computation
- concurrently.
+<p> The defaults are implementation-specific. If only the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a>-water limit
+ is given, the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a>-water limit defaults to an implementation-specific
+ value less than or equal to the <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a>-water limit. Setting <u> <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#high"><code class="lang-d"><span class="pln">high</span></code></a></u> to zero forces <a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a> to zero as well, and causes <u> pauseWriting()</u> to be called whenever the buffer becomes
+ non-empty. Setting <u><a href="../../asynchronous/transports/WriteTransport.setWriteBufferLimits.html#low"><code class="lang-d"><span class="pln">low</span></code></a></u> to zero causes <u> resumeWriting()</u> to be called only once the buffer is empty. Use of
+ zero for either limit is generally sub-optimal as it reduces
+ opportunities for doing I/O and computation concurrently.
 </p>
 </section>
 

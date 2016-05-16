@@ -278,3 +278,135 @@ package abstract class AbstractBaseTransport : BaseTransport
         return socket !is null ? socket.localAddress.toString : null;
     }
 }
+
+/**
+ * All the logic for (write) flow control in a mix-in base class.
+ *
+ * The subclass must implement $(D_PSYMBOL getWriteBufferSize()). It must call
+ * $(D_PSYMBOL maybePauseProtocol()) whenever the write buffer size increases,
+ * and maybeResumeProtocol() whenever it decreases. It may also override
+ * $(D_PSYMBOL setWriteBufferLimits()) (e.g. to specify different defaults).
+ *
+ * The user may call $(D_PSYMBOL setWriteBufferLimits()) and $(D_PSYMBOL 
+ * getWriteBufferSize()), and their protocol's $(D_PSYMBOL pauseWriting())
+ * and $(D_PSYMBOL resumeWriting()) may be called.
+ */
+package mixin template FlowControlTransport()
+{
+    static assert(is(typeof(this) : Transport));
+
+    this(EventLoop loop, ExtraInfo extra = ExtraInfo.init)
+    {
+        this.extra = extra;
+        this.loop = loop;
+        initWriteBufferLimits();
+    }
+
+    /**
+     * Get the high- and low-water limits for write flow control.
+     *
+     * Returns: a tuple (low, high) where low and high are positive number of
+     *          bytes.
+     */
+    override BufferLimits getWriteBufferLimits()
+    {
+        return writeBufferLimits;
+    }
+
+    /**
+     * Set the high- and low-water limits for write flow control.
+     *
+     * These two values control when to call the protocol's
+     * $(D_PSYMBOL pauseWriting()) and $(D_PSYMBOL resumeWriting())
+     *  methods. If specified, the low-water limit must be less than
+     * or equal to the high-water limit.  Neither value can be negative.
+     *
+     * The defaults are implementation-specific. If only the
+     * high-water limit is given, the low-water limit defaults to an
+     * implementation-specific value less than or equal to the high-water
+     * limit.  Setting high to zero forces low to zero as well, and causes
+     * $(D_PSYMBOL pauseWriting()) to be called whenever the buffer becomes
+     * non-empty. Setting low to zero causes $(D_PSYMBOL cresumeWriting())
+     * to be called only once the buffer is empty.
+     * Use of zero for either limit is generally sub-optimal as it
+     * reduces opportunities for doing I/O and computation concurrently.
+     */
+    override void setWriteBufferLimits(Nullable!size_t high = Nullable!size_t(),
+                                       Nullable!size_t low = Nullable!size_t())
+    {
+        initWriteBufferLimits(high, low);
+        maybePauseProtocol();
+    }
+
+protected:
+    void maybePauseProtocol()
+    {
+        auto size = getWriteBufferSize();
+        if (size <= writeBufferLimits.high)
+        {
+            return;
+        }
+        if (!protocolPaused)
+        {
+            protocolPaused = true;
+        }
+        try
+        {
+            protocol.pauseWriting();
+        }
+        catch (Exception e)
+        {
+            ExceptionContext context = {
+                message: "protocol.pauseWriting() failed.",
+                throwable: e,
+                protocol: protocol,
+                transport: this,
+            };
+            loop.callExceptionHandler(context);
+        }
+    }
+
+    void maybeResumeProtocol()
+    {
+        if (protocolPaused && getWriteBufferSize() <= writeBufferLimits.low)
+        {
+            protocolPaused = false;
+        }
+        try
+        {
+            protocol.resumeWriting();
+        }
+        catch (Exception e)
+        {
+            ExceptionContext context = {
+                message: "protocol.resumeWriting() failed.",
+                throwable: e,
+                protocol: protocol,
+                transport: this,
+            };
+            loop.callExceptionHandler(context);
+        }
+    }
+
+    bool protocolPaused;
+    EventLoop loop;
+    BufferLimits writeBufferLimits;
+    ExtraInfo extra;
+
+private:
+    void initWriteBufferLimits(Nullable!size_t high = Nullable!size_t(),
+                               Nullable!size_t low = Nullable!size_t())
+    {
+        if (high.isNull)
+        {
+            high = low.isNull ? 64*1024 : 4*low.get;
+        }
+        if (low.isNull)
+        {
+            low = high / 4;
+        }
+        enforce(high >= low,
+                format("high (%s) must be >= low (%s) must be >= 0", high, low));
+        writeBufferLimits = tuple!("high", "low")(high, low);
+    }
+}

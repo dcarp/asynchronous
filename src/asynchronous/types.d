@@ -11,6 +11,7 @@ import std.algorithm;
 import std.container.array;
 import std.exception;
 import std.traits;
+import std.socket;
 
 struct Coroutine
 {
@@ -206,3 +207,99 @@ unittest
     assert(fooPool.length == 0);
     assert(fooPool.capacity == 110);
 }
+
+/**
+ * Similar to tuple but all fields should be named. The individual fields are
+ * accessible as struct members.
+ *
+ * Params:
+ *     TList = A list of types (or default values) and member names that the
+ *             $(D_PSYMBOL NamedTuple!(TList)) contains.
+ */
+template NamedTuple(TList...)
+{
+    import std.format : format;
+
+    static assert(TList.length % 2 == 0, "Insufficient number of names given.");
+
+    string injectFields()
+    {
+        string members;
+
+        foreach (i, name; TList)
+        {
+            static if (is(typeof(name) : string) && i % 2 == 1 && is(TList[i - 1]))
+            {
+                members ~= format("%s %s;", TList[i - 1].stringof, name);
+            }
+            else static if (is(typeof(name) : string) && i % 2 == 1)
+            {
+                members ~= format("%s %s = %s;",
+                                  typeof(TList[i - 1]).stringof,
+                                  name,
+                                  TList[i - 1].stringof);
+            }
+            else
+            {
+                static assert(i % 2 == 0 || is(typeof(name) : string),
+                              "Wrong name order.");
+            }
+        }
+        return members;
+    }
+
+    struct NamedTuple
+    {
+        /**
+         * Sets multiple members at once. Not mentioned members keep their
+         * values.
+         *
+         * Params:
+         *     Names = A list of strings naming each successive field of the
+         *             $(D_PSYMBOL NamedTuple). Each name matches up with the
+         *             corresponding field given by $(D_PARAM Args).
+         *             Fields can be skipped and can be provided in any order.
+         *     args  = Values to initialize the $(D_PSYMBOL NamedTuple)` fields.
+         *
+         * Returns: The $(D_PSYMBOL NamedTuple) itself after modification.
+         */
+        template opCall(Names...)
+        {
+            ref NamedTuple opCall(Args...)(Args args)
+            {
+                static assert(Names.length == Args.length && Names.length > 0,
+                              "Insufficient number of names given.");
+
+                foreach (i, arg; args)
+                {
+                    auto value = arg;
+                    mixin(format("%s = value;", Names[i]));
+                }
+                return this;
+            }
+
+            ///
+            unittest
+            {
+                NamedTuple!(int, "num", string, "str") ei1;
+                ei1!("string", "num")("8", 9);
+                assert(ei1.str == "8");
+                assert(ei1.num == 9);
+            }
+        }
+
+        mixin(injectFields);
+    }
+}
+
+///
+unittest
+{
+        NamedTuple!(8, "defVal", int, "num") ei1;
+        assert(ei1.defVal == 8);
+        assert(ei1.num == 0);
+}
+
+alias ExtraInfo = NamedTuple!(string, "peername",
+                              Socket, "socket",
+                              string, "sockname");

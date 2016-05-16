@@ -139,7 +139,7 @@ interface WriteTransport : BaseTransport
      *
      * Data may still be received.
      *
-     * This method can throw $(D_PSYMBOL NotImplementedError) if the transport
+     * This method can throw $(D_PSYMBOL NotImplementedException) if the transport
      * (e.g. SSL) doesn’t support half-closes.
      */
     void writeEof();

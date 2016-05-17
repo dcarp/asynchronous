@@ -183,7 +183,7 @@ class BasicTLSCredentialsManager : TLSCredentialsManager
      *  context    = specifies a context relative to type.
      *  identifier = specifies what identifier we want the password
      *               for. This will be a value previously returned
-     *               by $(D_PSYMBOL srp_identifier).
+     *               by $(D_PSYMBOL srpIdentifier).
      *
      * Returns: password for client-side SRP auth, if available
      *          for this identifier/type/context.
@@ -244,8 +244,8 @@ class BasicTLSCredentialsManager : TLSCredentialsManager
      * Params:
      *  type     = specifies the type of operation occuring.
      *  context  = specifies a context relative to type.
-     *  identity = is a PSK identity previously returned by
-     *             psk_identity for the same type and context.
+     *  identity = is a PSK identity previously returned by $(D_PSYMBOL
+     *             pskIdentity) for the same type and context.
      *
      * Returns: the PSK used for identity, or throw new an exception if no
      * key exists.

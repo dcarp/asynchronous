@@ -13,7 +13,6 @@ import std.typecons;
 import std.exception : enforce;
 import asynchronous.protocols : Protocol;
 import asynchronous.events : EventLoop, ExceptionContext;
-import asynchronous.types : ExtraInfo;
 
 /**
  * Interface for transports.
@@ -282,6 +281,10 @@ package abstract class AbstractBaseTransport : BaseTransport
         return socket !is null ? socket.localAddress.toString : null;
     }
 }
+
+alias ExtraInfo = Tuple!(string, "peername",
+                         Socket, "socket",
+                         string, "sockname");
 
 /**
  * All the logic for (write) flow control in a mix-in base class.

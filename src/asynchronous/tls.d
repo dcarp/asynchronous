@@ -255,7 +255,6 @@ class BasicTLSCredentialsManager : TLSCredentialsManager
         return super.psk(type, context, identity);
     }
 
-protected:
     X509Certificate serverCert, CACert;
     Unique!PrivateKey key;
     Vector!CertificateStore stores;

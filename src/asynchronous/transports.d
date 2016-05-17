@@ -10,6 +10,10 @@ module asynchronous.transports;
 import std.process : Pid, Pipe;
 import std.socket : Address, Socket;
 import std.typecons;
+import std.exception : enforce;
+import asynchronous.protocols : Protocol;
+import asynchronous.events : EventLoop, ExceptionContext;
+import asynchronous.types : ExtraInfo;
 
 /**
  * Interface for transports.
@@ -291,10 +295,8 @@ package abstract class AbstractBaseTransport : BaseTransport
  * getWriteBufferSize()), and their protocol's $(D_PSYMBOL pauseWriting())
  * and $(D_PSYMBOL resumeWriting()) may be called.
  */
-package mixin template FlowControlTransport()
+package abstract class FlowControlTransport : Transport
 {
-    static assert(is(typeof(this) : Transport));
-
     this(EventLoop loop, ExtraInfo extra = ExtraInfo.init)
     {
         this.extra = extra;
@@ -340,6 +342,11 @@ package mixin template FlowControlTransport()
 
 protected:
     void maybePauseProtocol()
+    in
+    {
+        assert(protocol !is null);
+    }
+    body
     {
         auto size = getWriteBufferSize();
         if (size <= writeBufferLimits.high)
@@ -367,6 +374,11 @@ protected:
     }
 
     void maybeResumeProtocol()
+    in
+    {
+        assert(protocol !is null);
+    }
+    body
     {
         if (protocolPaused && getWriteBufferSize() <= writeBufferLimits.low)
         {
@@ -392,11 +404,14 @@ protected:
     EventLoop loop;
     BufferLimits writeBufferLimits;
     ExtraInfo extra;
+    Protocol protocol;
 
 private:
     void initWriteBufferLimits(Nullable!size_t high = Nullable!size_t(),
                                Nullable!size_t low = Nullable!size_t())
     {
+        import std.format : format;
+
         if (high.isNull)
         {
             high = low.isNull ? 64*1024 : 4*low.get;

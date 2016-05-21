@@ -9,10 +9,152 @@ module asynchronous.tls;
 
 version (Have_botan):
 
+import std.typecons : Tuple, tuple, Nullable;
 import botan.math.bigint.bigint;
 import botan.algo_base.symkey;
-import botan.tls.credentials_manager;
-import botan.cert.x509.x509cert;
+import botan.tls.credentials_manager : TLSCredentialsManager;
+import botan.cert.x509.x509cert : X509Certificate;
+import botan.rng.auto_rng : RandomNumberGenerator, AutoSeededRNG;
+import botan.pubkey.pkcs8 : loadKey, PrivateKey;
+import botan.tls.channel;
+import botan.tls.server;
+import botan.tls.client;
+import asynchronous.transports;
+import asynchronous.futures : Waiter;
+import asynchronous.events : SslContext, EventLoop;
+import asynchronous.types : NotImplementedException;
+
+/** Supported TLS protocol versions */
+enum ProtocolVersion
+{
+	TLSv1_2,
+}
+
+/**
+ * Creates a new TLS context.
+ *
+ * Params:
+ *  ver = the protocol version.
+ *
+ * See_Also: $(D_PSYMBOL SslVersion)
+ */
+SslContext createSslContext(ProtocolVersion ver = ProtocolVersion.TLSv1_2)
+{
+	version (Have_botan)
+	{
+		return new BotanSslContext(ver);
+	}
+	assert(0);
+}
+
+abstract class SslProtocol : Protocol
+{
+	void startShutdown();
+
+	void abort()
+	{
+	}
+
+	void writeAppData(const(void)[] data)
+	{
+	}
+
+private:
+	Transport transport;
+}
+
+SslProtocol createSslProtocol(EventLoop eventLoop,
+                              Protocol protocol,
+						      SslContext sslContext)
+{
+	version (Have_botan)
+	{
+		return new BotanSslProtocol(eventLoop, protocol, sslContext);
+	}
+	assert(0);
+}
+
+/**
+ * TLS protocol.
+ *
+ * Implementation of TLS.
+ */
+final class BotanSslProtocol : SslProtocol
+{
+	this(EventLoop eventLoop,
+	     Protocol appProtocol,
+		 SslContext sslContext = null,
+		 Waiter waiter = null,
+	     bool serverSide = false,
+		 string serverHostname = null)
+	{
+		auto mgr = new TLSSessionManagerNoop();
+		auto policy = new TLSPolicy();
+
+		this.eventLoop = eventLoop;
+		this.appProtocol = appProtocol;
+		this.appTransport = new SslProtocolTransport(eventLoop,
+		                                             this,
+													 this.appProtocol);
+		this.waiter = waiter;
+
+		this.sslContext = cast(BotanSslContext)sslContext;
+		assert(sslContext !is null);
+
+		this.channel = new TLSServer(delegate void(in ubyte[]) {},
+		                             delegate void(in ubyte[]) {},
+		                             delegate void(in TLSAlert, in ubyte[]) {},
+							         (in TLSSession) => false,
+							         mgr,
+							         this.sslContext,
+							         policy,
+		                             this.sslContext.rng);
+
+	}
+
+	/**
+	 * Called when the low-level connection is made.
+	 * Start the SSL handshake.
+	 */
+	void connectionMade(BaseTransport transport)
+	{
+		this.transport = cast(Transport)transport;
+	}
+
+	void connectionLost(Exception exception)
+	{
+	}
+
+	void pauseWriting()
+	{
+	}
+
+	void resumeWriting()
+	{
+	}
+
+	override void startShutdown()
+	{
+	}
+
+	void dataReceived(const(void)[] data)
+	{
+		channel.receivedData(cast(ubyte*)data, data.length);
+	}
+
+	bool eofReceived()
+	{
+		return true;
+	}
+
+private:
+	EventLoop eventLoop;
+	Protocol appProtocol;
+	SslProtocolTransport appTransport;
+	BotanSslContext sslContext;
+	TLSChannel channel;
+	Waiter waiter;
+}
 
 /**
  * Basic credentials manager.
@@ -22,20 +164,85 @@ import botan.cert.x509.x509cert;
  * and "tls-server". Context represents a hostname, email address,
  * username, or other identifier.
  */
-class BasicTLSCredentialsManager : TLSCredentialsManager
+final class BotanSslContext : TLSCredentialsManager, SslContext
 {
-    this(X509Certificate serverCert, X509Certificate CACert, PrivateKey key) 
-    {
+	/**
+	 * Constructor.
+	 *
+	 * Params:
+	 *  ver = the protocol version.
+	 *
+	 * See_Also: $(D_PSYMBOL SslVersion)
+     */
+	this(ProtocolVersion ver = ProtocolVersion.TLSv1_2)
+	{
+		protocolVersion = ver;
+		rng = new AutoSeededRNG();
+	}
+
+	/**
+	 * Load a set of "certification authority" (CA) certificates used to validate
+	 * other peers' certificates.
+	 *
+	 * Params:
+	 *  CAFile = the path to a file of concatenated CA certificates in PEM format.
+	 */
+	void loadVerifyLocations(in string CAFile)
+	{
         auto cs = new CertificateStoreInMemory();
 
-        this.serverCert = serverCert;
-        this.CACert = CACert;
-        this.key = key;
+		certs.pushBack(X509Certificate(CAFile));
+		cs.addCertificate(certs[$-1]);
+		stores.pushBack(cs);
+	}
 
-        cs.addCertificate(this.CACert);
-        stores.pushBack(cs);
-    }
+	/**
+	 * Load a private key and the corresponding certificate.
+	 *
+	 * If you want, you can load only your certificate with this method and then
+	 * load all CA certificates with $(D_PSYMBOL loadVerifyLocations).
+	 *
+	 * Params:
+	 *  certFile = the path to a single file in PEM format containing the
+	 *             certificate as well as any number of CA certificates needed to
+	 *             establish the certificate's authenticity.
+	 *  keyFile  = a file containing the PKCS#8 format private key.
+	 */
+	void loadCertChain(in string certFile, in string keyFile)
+	{
+        auto cs = new CertificateStoreInMemory();
+		auto inp = DataSourceStream(certFile);
+		Vector!X509Certificate certs;
 
+		this.key = loadKey(keyFile, rng);
+
+		// The first certificate in the chain is the winner.
+		certs.pushBack(X509Certificate(cast(DataSource)inp));
+		// The following ones if available should be just intermediate and probably
+		// root certificates. If it isn't the case it is the user's fault.
+		while (!inp.endOfData())
+		{
+			try
+			{
+				auto cert = X509Certificate(cast(DataSource)inp);
+				certs.pushBack(cert);
+				cs.addCertificate(cert);
+			}
+			catch (Exception e)
+			{
+				// endOfData returns true first after a failed try to read
+			}
+		}
+		if (certs.length > 1)
+		{ // There is at least one intermediate certificate in the store
+			stores.pushBack(cs);
+		}
+		// Prepend the available certificates with the new one(s)
+		certs ~= this.certs;
+		this.certs = certs;
+	}
+
+protected:
     /**
      * Return a list of the certificates of CAs that we trust in this
      * type/context.
@@ -101,13 +308,16 @@ class BasicTLSCredentialsManager : TLSCredentialsManager
                 if (certKeyType == key.algoName)
                 {
                     haveMatch = true;
+					break;
                 }
             }
             
             if (haveMatch)
             {
-                chain.pushBack(serverCert);
-                chain.pushBack(CACert);
+				foreach (cert; certs)
+				{
+					chain.pushBack(cert);
+				}
             }
         }
         
@@ -255,7 +465,151 @@ class BasicTLSCredentialsManager : TLSCredentialsManager
         return super.psk(type, context, identity);
     }
 
-    X509Certificate serverCert, CACert;
+private:
     Unique!PrivateKey key;
+    Vector!X509Certificate certs;
     Vector!CertificateStore stores;
+	ProtocolVersion protocolVersion;
+	AutoSeededRNG rng;
+}
+
+package class SslProtocolTransport : FlowControlTransport
+{
+	this(EventLoop eventLoop, SslProtocol protocol, Protocol appProtocol)
+	{
+		super(eventLoop);
+
+		this._protocol = protocol;
+		this.appProtocol = appProtocol;
+	}
+
+	override @property SslProtocol protocol() pure nothrow @safe
+	{
+		return _protocol;
+	}
+
+	bool isClosing() pure nothrow @safe
+	{
+		return closed;
+	}
+
+	/**
+	 * Close the transport.
+	 *
+     * Buffered data will be flushed asynchronously.  No more data
+     * will be received. After all buffered data is flushed, the
+     * protocol's connectionLost() method will be (eventually) called
+     * with $(D_KEYWORD null) as its argument.
+     */
+	void close()
+	{
+		closed = true;
+		protocol.startShutdown();
+	}
+
+	/**
+	 * Pause the receiving end.
+	 *
+     * No data will be passed to the protocol's data_received()
+     * method until resume_reading() is called.
+     */
+    void pauseReading()
+	{
+        protocol.transport.resumeReading();
+	}
+
+    /**
+	 * Resume the receiving end.
+	 *
+     * Data received will once again be passed to the protocol's
+     * $(D_PSYMBOL data_received()) method.
+     */
+    void resumeReading()
+	{
+        protocol.transport.resumeReading();
+	}
+
+    /**
+     * Set the high- and low-water limits for write flow control.
+     *
+     * These two values control when to call the protocol's
+     * $(D_PSYMBOL pauseWriting()) and $(D_PSYMBOL resumeWriting())
+     *  methods. If specified, the low-water limit must be less than
+     * or equal to the high-water limit.  Neither value can be negative.
+     *
+     * The defaults are implementation-specific. If only the
+     * high-water limit is given, the low-water limit defaults to an
+     * implementation-specific value less than or equal to the high-water
+     * limit.  Setting high to zero forces low to zero as well, and causes
+     * $(D_PSYMBOL pauseWriting()) to be called whenever the buffer becomes
+     * non-empty. Setting low to zero causes $(D_PSYMBOL resumeWriting())
+     * to be called only once the buffer is empty.
+     * Use of zero for either limit is generally sub-optimal as it
+     * reduces opportunities for doing I/O and computation concurrently.
+     */
+    override void setWriteBufferLimits(Nullable!size_t high = Nullable!size_t(),
+                                       Nullable!size_t low = Nullable!size_t())
+	{
+		protocol.transport.setWriteBufferLimits(high, low);
+	}
+
+	/**
+	 * Return the current size of the write buffer.
+	 */
+	size_t getWriteBufferSize()
+	{
+		return protocol.transport.getWriteBufferSize();
+	}
+
+	/**
+	 * Write some data bytes to the transport.
+	 *
+     * This does not block; it buffers the data and arranges for it
+     * to be sent out asynchronously.
+     */
+    void write(const(void)[] data)
+	{
+        if (data)
+		{
+			protocol.writeAppData(data);
+		}
+	}
+
+	/**
+	 * Return $(D_KEYWORD true) if this transport supports
+	 * $(D_PSYMBOL writeEof()), $(D_KEYWORD false) if not.
+	 */
+    bool canWriteEof()
+	{
+		return false;
+	}
+
+	/**
+	 * Close the transport immediately.
+	 *
+     * Buffered data will be lost. No more data will be received.
+     * The protocol's $(D_PSYMBOL connectionLost()) method will
+     * (eventually) be called with $(D_KEYWORD null) as its argument.
+     */
+    void abort()
+	{
+		protocol.abort();
+	}
+
+    /**
+     * Close the write end of the transport after flushing buffered data.
+     *
+     * Data may still be received.
+     *
+     * Throws: $(D_PSYMBOL NotImplementedException).
+     */
+    void writeEof()
+	{
+		throw new NotImplementedException("SSL doesn't support half-closes");
+	}
+
+private:
+	Protocol appProtocol;
+	SslProtocol _protocol;
+	bool closed;
 }

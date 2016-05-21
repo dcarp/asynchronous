@@ -282,10 +282,6 @@ package abstract class AbstractBaseTransport : BaseTransport
     }
 }
 
-alias ExtraInfo = Tuple!(string, "peername",
-                         Socket, "socket",
-                         string, "sockname");
-
 /**
  * All the logic for (write) flow control in a mix-in base class.
  *
@@ -298,12 +294,11 @@ alias ExtraInfo = Tuple!(string, "peername",
  * getWriteBufferSize()), and their protocol's $(D_PSYMBOL pauseWriting())
  * and $(D_PSYMBOL resumeWriting()) may be called.
  */
-package abstract class FlowControlTransport : Transport
+package abstract class FlowControlTransport : AbstractBaseTransport, Transport
 {
-    this(EventLoop loop, ExtraInfo extra = ExtraInfo.init)
+    this(EventLoop eventLoop)
     {
-        this.extra = extra;
-        this.loop = loop;
+        this.eventLoop = eventLoop;
         initWriteBufferLimits();
     }
 
@@ -331,7 +326,7 @@ package abstract class FlowControlTransport : Transport
      * implementation-specific value less than or equal to the high-water
      * limit.  Setting high to zero forces low to zero as well, and causes
      * $(D_PSYMBOL pauseWriting()) to be called whenever the buffer becomes
-     * non-empty. Setting low to zero causes $(D_PSYMBOL cresumeWriting())
+     * non-empty. Setting low to zero causes $(D_PSYMBOL resumeWriting())
      * to be called only once the buffer is empty.
      * Use of zero for either limit is generally sub-optimal as it
      * reduces opportunities for doing I/O and computation concurrently.
@@ -372,7 +367,7 @@ protected:
                 protocol: protocol,
                 transport: this,
             };
-            loop.callExceptionHandler(context);
+            eventLoop.callExceptionHandler(context);
         }
     }
 
@@ -399,15 +394,15 @@ protected:
                 protocol: protocol,
                 transport: this,
             };
-            loop.callExceptionHandler(context);
+            eventLoop.callExceptionHandler(context);
         }
     }
 
+	@property Protocol protocol();
+
     bool protocolPaused;
-    EventLoop loop;
+    EventLoop eventLoop;
     BufferLimits writeBufferLimits;
-    ExtraInfo extra;
-    Protocol protocol;
 
 private:
     void initWriteBufferLimits(Nullable!size_t high = Nullable!size_t(),

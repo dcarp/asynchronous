@@ -175,8 +175,34 @@ unittest
     assert(exceptionContext.toString.canFind("future"));
 }
 
+/**
+ * An SSL context holds various data longer-lived than single SSL connections,
+ * such as SSL configuration options, certificate(s) and private key(s).
+ */
 interface SslContext
 {
+	/**
+	 * Load a set of "certification authority" (CA) certificates used to validate
+	 * other peers' certificates.
+	 *
+	 * Params:
+	 *  CAFile = the path to a file of concatenated CA certificates in PEM format.
+	 */
+	void loadVerifyLocations(in string CAFile);
+
+	/**
+	 * Load a private key and the corresponding certificate.
+	 *
+	 * If you want, you can load only your certificate with this method and then
+	 * load all CA certificates with $(D_PSYMBOL loadVerifyLocations).
+	 *
+	 * Params:
+	 *  certFile = the path to a single file in PEM format containing the
+	 *             certificate as well as any number of CA certificates needed to
+	 *             establish the certificate's authenticity.
+	 *  keyFile  = a file containing the PKCS#8 format private key.
+	 */
+	void loadCertChain(in string certFile, in string keyFile);
 }
 
 /**
@@ -917,8 +943,6 @@ abstract class EventLoop
         Socket socket = null, int backlog = 100, SslContext sslContext = null,
         bool reuseAddress = true)
     {
-        enforce(sslContext is null, "SSL support not implemented yet");
-
         Socket[] sockets;
 
         scope (failure)

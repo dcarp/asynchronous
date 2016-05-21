@@ -28,6 +28,7 @@ import asynchronous.protocols;
 import asynchronous.tasks;
 import asynchronous.transports;
 import asynchronous.types;
+import asynchronous.tls : createSslProtocol;
 
 alias Protocol = asynchronous.protocols.Protocol;
 
@@ -238,9 +239,19 @@ package class LibasyncEventLoop : EventLoop
             auto socket1 = new Socket(cast(socket_t) connection.socket,
                 socket.addressFamily);
 
-            auto transport = new LibasyncTransport(this, socket1, connection);
+            LibasyncTransport transport;
+			if (sslContext is null)
+			{
+				transport =  new LibasyncTransport(this, socket1, connection);
+				transport.setProtocol(protocolFactory());
+			}
+			else
+			{
+				auto sslProtocol = createSslProtocol(this, protocolFactory(), sslContext);
+				transport =  new LibasyncTransport(this, socket1, connection);
+				transport.setProtocol(sslProtocol);
+			}
 
-            transport.setProtocol(protocolFactory());
             return &transport.handleTCPEvent;
         });
         server.attach;

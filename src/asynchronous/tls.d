@@ -9,6 +9,7 @@ module asynchronous.tls;
 
 version (Have_botan):
 
+import std.socket : SocketOSException;
 import std.typecons : Tuple, tuple, Nullable;
 import botan.math.bigint.bigint;
 import botan.algo_base.symkey;
@@ -28,6 +29,29 @@ import asynchronous.types : NotImplementedException;
 enum ProtocolVersion
 {
 	TLSv1_2,
+}
+
+/**
+ * Handshake failed.
+ */
+class HandshakeException : Exception
+{
+    this(string message = null, string file = __FILE__, size_t line = __LINE__,
+        Throwable next = null) @safe pure nothrow
+    {
+		import std.format;
+		if (message)
+		{
+			try {
+				super(format("SSL handshake failed: %s", message), file, line, next);
+				return;
+			}
+			catch (Exception)
+			{
+			}
+		}
+		super("SSL handshake failed.", file, line, next);
+    }
 }
 
 /**
@@ -81,6 +105,14 @@ SslProtocol createSslProtocol(EventLoop eventLoop,
  */
 final class BotanSslProtocol : SslProtocol
 {
+    private EventLoop eventLoop;
+    private Protocol appProtocol;
+    private SslProtocolTransport appTransport;
+    private BotanSslContext sslContext;
+    private TLSChannel channel;
+    private Waiter waiter;
+	private bool inHandshake = true;
+
 	this(EventLoop eventLoop,
 	     Protocol appProtocol,
 		 SslContext sslContext = null,
@@ -101,10 +133,10 @@ final class BotanSslProtocol : SslProtocol
 		this.sslContext = cast(BotanSslContext)sslContext;
 		assert(sslContext !is null);
 
-		this.channel = new TLSServer(delegate void(in ubyte[]) {},
-		                             delegate void(in ubyte[]) {},
+		this.channel = new TLSServer(&outputCb,
+		                             &dataCb,
 		                             delegate void(in TLSAlert, in ubyte[]) {},
-							         (in TLSSession) => false,
+							         &onHandshakeComplete,
 							         mgr,
 							         this.sslContext,
 							         policy,
@@ -147,13 +179,60 @@ final class BotanSslProtocol : SslProtocol
 		return true;
 	}
 
-private:
-	EventLoop eventLoop;
-	Protocol appProtocol;
-	SslProtocolTransport appTransport;
-	BotanSslContext sslContext;
-	TLSChannel channel;
-	Waiter waiter;
+	private void wakeupWaiter(Exception exception)
+	{
+		if (waiter is null)
+		{
+			return;
+		}
+        if (!waiter.cancelled)
+		{
+			waiter.setException(exception);
+		}
+	}
+
+	private void wakeupWaiter()
+	{
+		if (waiter is null)
+		{
+			return;
+		}
+        if (!waiter.cancelled)
+		{
+			waiter.setResult;
+		}
+	}
+
+    private void outputCb(in ubyte[] data)
+	{
+		if (inHandshake)
+		{
+			try
+			{
+				// If Firefox doesn't trust the issuer, it just closes the connection,
+				// that causes a crash with a system error (like "Program exited
+				// with code -13") when trying to write to the transport.
+				transport.getExtraInfo!"peername";
+			}
+			catch (SocketOSException e)
+			{
+				transport.close();
+				wakeupWaiter(new HandshakeException("Peer closed connection."));
+				return;
+			}
+		}
+		transport.write(data);
+	}
+
+    private void dataCb(in ubyte[] data)
+	{
+	}
+
+    private bool onHandshakeComplete(in TLSSession session)
+	{
+		inHandshake = false;
+		return true;
+	}
 }
 
 /**

@@ -13,7 +13,8 @@
         "libasync": "~>0.7.9",
         "botan:tls": {
             "version": "~>1.12.5",
-            "optional": true
+            "optional": true,
+            "default": true
         }
     },
     "configurations": [

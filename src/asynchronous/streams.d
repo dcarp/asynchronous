@@ -71,7 +71,7 @@ class IncompleteReadError : Exception
 @Coroutine
 auto openConnection(EventLoop eventLoop, in char[] host = null,
     in char[] service = null, size_t limit = DEFAULT_LIMIT,
-    SslContext sslContext = null,
+    TLSContext tlsContext = null,
     AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
     ProtocolType protocolType = UNSPECIFIED!ProtocolType,
     AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags,
@@ -84,7 +84,7 @@ auto openConnection(EventLoop eventLoop, in char[] host = null,
     auto streamReader = new StreamReader(eventLoop, limit);
     auto connection = eventLoop.createConnection(
         () => new StreamReaderProtocol(eventLoop, streamReader), host, service,
-        sslContext, addressFamily, protocolType, addressInfoFlags, socket,
+        tlsContext, addressFamily, protocolType, addressInfoFlags, socket,
         localHost, localService, serverHostname);
     auto streamWriter = new StreamWriter(eventLoop, connection.transport,
         connection.protocol, streamReader);
@@ -116,11 +116,11 @@ alias ClientConnectedCallback = void delegate(StreamReader, StreamWriter);
 @Coroutine
 Server startServer(EventLoop eventLoop,
     ClientConnectedCallback clientConnectedCallback, in char[] host = null,
-    in char[] service = null, size_t limit = DEFAULT_LIMIT,
+    in char[] service = null, TLSContext tlsContext = null,
+    size_t limit = DEFAULT_LIMIT,
     AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
     AddressInfoFlags addressInfoFlags = AddressInfoFlags.PASSIVE,
-    Socket socket = null, int backlog = 100, SslContext sslContext = null,
-    bool reuseAddress = true)
+    Socket socket = null, int backlog = 100, bool reuseAddress = true)
 {
     if (eventLoop is null)
         eventLoop = getEventLoop;
@@ -133,7 +133,7 @@ Server startServer(EventLoop eventLoop,
     }
 
     return eventLoop.createServer(&protocolFactory, host, service,
-        addressFamily, addressInfoFlags, socket, backlog, sslContext,
+        tlsContext, addressFamily, addressInfoFlags, socket, backlog,
         reuseAddress);
 }
 
@@ -147,7 +147,7 @@ Server startServer(EventLoop eventLoop,
 version (Posix)
 @Coroutine
 auto openUnixConnection(EventLoop eventLoop, in char[] path = null,
-    size_t limit = DEFAULT_LIMIT, SslContext sslContext = null,
+    size_t limit = DEFAULT_LIMIT, TLSContext tlsContext = null,
     Socket socket = null, in char[] serverHostname = null)
 {
     if (eventLoop is null)
@@ -156,7 +156,7 @@ auto openUnixConnection(EventLoop eventLoop, in char[] path = null,
     auto streamReader = new StreamReader(eventLoop, limit);
     auto connection = eventLoop.createUnixConnection(
         () => new StreamReaderProtocol(eventLoop, streamReader), path,
-        sslContext, socket, serverHostname);
+        tlsContext, socket, serverHostname);
     auto streamWriter = new StreamWriter(eventLoop, connection.transport,
         connection.protocol, streamReader);
 
@@ -174,7 +174,7 @@ version (Posix)
 Server startUnixServer(EventLoop eventLoop,
     ClientConnectedCallback clientConnectedCallback, in char[] path = null,
     size_t limit = DEFAULT_LIMIT, Socket socket = null, int backlog = 100,
-    SslContext sslContext = null)
+    TLSContext tlsContext = null)
 {
     if (eventLoop is null)
         eventLoop = getEventLoop;
@@ -187,7 +187,7 @@ Server startUnixServer(EventLoop eventLoop,
     }
 
     return eventLoop.createUnixServer(&protocolFactory, path, socket, backlog,
-        sslContext);
+        tlsContext);
 }
 
 /**

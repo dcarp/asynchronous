@@ -28,7 +28,7 @@ import asynchronous.protocols;
 import asynchronous.tasks;
 import asynchronous.transports;
 import asynchronous.types;
-import asynchronous.tls : createSslProtocol;
+import asynchronous.tls : createTLSProtocol;
 
 alias Protocol = asynchronous.protocols.Protocol;
 
@@ -222,7 +222,7 @@ package class LibasyncEventLoop : EventLoop
     }
 
     override void startServing(ProtocolFactory protocolFactory, Socket socket,
-            SslContext sslContext, ServerImpl server)
+            TLSContext tlsContext, ServerImpl server)
     {
         auto asyncTCPListener = new AsyncTCPListener(this.eventLoop,
             socket.handle);
@@ -240,17 +240,17 @@ package class LibasyncEventLoop : EventLoop
                 socket.addressFamily);
 
             LibasyncTransport transport;
-			if (sslContext is null)
-			{
-				transport =  new LibasyncTransport(this, socket1, connection);
-				transport.setProtocol(protocolFactory());
-			}
-			else
-			{
-				auto sslProtocol = createSslProtocol(this, protocolFactory(), sslContext);
-				transport =  new LibasyncTransport(this, socket1, connection);
-				transport.setProtocol(sslProtocol);
-			}
+            if (tlsContext is null)
+            {
+                transport =  new LibasyncTransport(this, socket1, connection);
+                transport.setProtocol(protocolFactory());
+            }
+            else
+            {
+                auto tlsProtocol = createTLSProtocol(this, protocolFactory(), tlsContext);
+                transport =  new LibasyncTransport(this, socket1, connection);
+                transport.setProtocol(tlsProtocol);
+            }
 
             return &transport.handleTCPEvent;
         });

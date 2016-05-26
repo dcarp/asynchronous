@@ -398,7 +398,7 @@ protected:
         }
     }
 
-	@property Protocol protocol();
+    @property Protocol protocol();
 
     bool protocolPaused;
     EventLoop eventLoop;
@@ -420,6 +420,6 @@ private:
         }
         enforce(high >= low,
                 format("high (%s) must be >= low (%s) must be >= 0", high, low));
-        writeBufferLimits = tuple!("high", "low")(high, low);
+        writeBufferLimits = BufferLimits(high, low);
     }
 }

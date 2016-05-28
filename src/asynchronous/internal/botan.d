@@ -7,6 +7,8 @@
  */
 module asynchronous.internal.botan;
 
+version (Have_botan):
+
 import std.socket : SocketOSException;
 import std.typecons : Rebindable, rebindable;
 import botan.math.bigint.bigint;

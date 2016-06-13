@@ -196,7 +196,7 @@ interface Server
     void waitClosed();
 }
 
-package class ServerImpl : Server
+final class ServerImpl : Server
 {
     private EventLoop eventLoop;
 
@@ -206,13 +206,13 @@ package class ServerImpl : Server
 
     private Waiter[] waiters;
 
-    this(EventLoop eventLoop, Socket[] sockets)
+    package this(EventLoop eventLoop, Socket[] sockets)
     {
         this.eventLoop = eventLoop;
         this.sockets = sockets;
     }
 
-    package void attach()
+    void attach()
     in
     {
         assert(!this.sockets.empty);
@@ -222,7 +222,7 @@ package class ServerImpl : Server
         ++this.activeCount;
     }
 
-    package void detach()
+    void detach()
     in
     {
         assert(this.activeCount > 0);

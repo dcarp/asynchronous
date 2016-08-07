@@ -22,8 +22,9 @@ Can be found at: http://dcarp.github.io/asynchronous/index.html
 * it is not web-oriented, compatible with `std.socket`
 * arguably nicer API
 * event loop start/stop control
-* uses `@Coroutine` UDA to mark functions that could trigger a task (fiber) switch, although this is not enforced by the compiler yet.
+* uses `@Coroutine` UDA to mark functions that could trigger a task (fiber) switch, although this is not enforced yet by the compiler.
 
 #### Examples and tutorials
-Some small examples can be found in the test directory or as unittests.
-For larger examples please use the python resources. Just keep in mind that in contrast with Python in D a coroutine MUST NOT be called from outside of a task (it causes a run-time error on fiber switch). So you may need to add `ensureFuture` or `EventLoop.createTask` on the first calling level.
+Some small examples can be found in the test directory or as unittests. For larger examples please use the Python/asyncio resources.
+
+Please keep in mind that, in contrast with Python/asyncio, in D a coroutine MUST be called from within a Task, otherwise it causes a run-time error on the fiber switch. Basic rule: if not called from another coroutine, any coroutine call need to be wrapped by `ensureFuture` or `EventLoop.createTask`.

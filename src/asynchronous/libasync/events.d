@@ -334,6 +334,7 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
     private bool writingPaused = false;
     private void[] writeBuffer;
     private BufferLimits writeBufferLimits;
+    private Duration writeRescheduleInterval = 1.msecs;
 
     this(EventLoop eventLoop, Socket socket, AsyncTCPConnection connection)
     in
@@ -604,12 +605,38 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
         else
         {
             this.writeBuffer ~= data;
+            if (!this.writingPaused && this.writeBuffer.length >= this.writeBufferLimits.high)
+            {
+                this.protocol.pauseWriting;
+                this.writingPaused = true;
+            }
+            rescheduleOnWrite;
         }
+    }
 
-        if (this.writeBuffer.length >= this.writeBufferLimits.high)
+    private void rescheduleOnWrite()
+    {
+        if (this.state == State.DISCONNECTED)
+            return;
+
+        if (this.writeBuffer.empty)
+            return;
+
+        auto bufferLength = this.writeBuffer.length;
+
+        onWrite;
+        if (this.writeBuffer.empty)
+            return;
+
+        if (this.writeBuffer.length < bufferLength)
         {
-            this.protocol.pauseWriting;
-            this.writingPaused = true;
+            this.writeRescheduleInterval = 1.msecs;
+            this.eventLoop.callSoon(&this.rescheduleOnWrite);
+        }
+        else
+        {
+            this.writeRescheduleInterval = min(this.writeRescheduleInterval * 2, 2.seconds);
+            this.eventLoop.callLater(this.writeRescheduleInterval, &this.rescheduleOnWrite);
         }
     }
 

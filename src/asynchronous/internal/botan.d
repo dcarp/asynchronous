@@ -25,7 +25,7 @@ import botan.tls.policy;
 import asynchronous.tls;
 import asynchronous.transports : BaseTransport, Transport;
 import asynchronous.protocols : Protocol;
-import asynchronous.events : EventLoop;
+import asynchronous.events : EventLoop, TLSContext;
 import asynchronous.futures : Waiter;
 
 /**
@@ -33,7 +33,7 @@ import asynchronous.futures : Waiter;
  *
  * Implementation of TLS.
  */
-package final class BotanTLSProtocol : TLSProtocol
+final class BotanTLSProtocol : TLSProtocol
 {
     private EventLoop eventLoop;
     private Protocol protocol;
@@ -202,7 +202,7 @@ package final class BotanTLSProtocol : TLSProtocol
  * and "tls-server". Context represents a hostname, email address,
  * username, or other identifier.
  */
-package final class BotanTLSContext : TLSCredentialsManager, TLSContext
+final class BotanTLSContext : TLSCredentialsManager, TLSContext
 {
     private Unique!PrivateKey key;
     private Vector!X509Certificate certs;
@@ -520,5 +520,10 @@ package final class BotanTLSContext : TLSCredentialsManager, TLSContext
         in string context, in string identity)
     {
         return super.psk(type, context, identity);
+    }
+
+    public override bool hasPsk()
+    {
+        return super.hasPsk();
     }
 }

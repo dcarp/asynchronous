@@ -175,8 +175,34 @@ unittest
     assert(exceptionContext.toString.canFind("future"));
 }
 
-interface SslContext
+/**
+ * An SSL context holds various data longer-lived than single SSL connections,
+ * such as SSL configuration options, certificate(s) and private key(s).
+ */
+interface TLSContext
 {
+    /**
+     * Load a set of "certification authority" (CA) certificates used to validate
+     * other peers' certificates.
+     *
+     * Params:
+     *  CAFile = the path to a file of concatenated CA certificates in PEM format.
+     */
+    void loadVerifyLocations(in string CAFile);
+
+    /**
+     * Load a private key and the corresponding certificate.
+     *
+     * If you want, you can load only your certificate with this method and then
+     * load all CA certificates with $(D_PSYMBOL loadVerifyLocations).
+     *
+     * Params:
+     *  certFile = the path to a single file in PEM format containing the
+     *             certificate as well as any number of CA certificates needed to
+     *             establish the certificate's authenticity.
+     *  keyFile  = a file containing the PKCS#8 format private key.
+     */
+    void loadCertChain(in string certFile, in string keyFile);
 }
 
 /**
@@ -531,7 +557,7 @@ abstract class EventLoop
      *
      *  service = service name or port number.
      *
-     *  sslContext = if not $(D_KEYWORD null), a SSL/TLS transport is created
+     *  tlsContext = if not $(D_KEYWORD null), a SSL/TLS transport is created
      *      (by default a plain TCP transport is created).
      *
      *  serverHostname = is only for use together with ssl, and sets or
@@ -567,16 +593,16 @@ abstract class EventLoop
     @Coroutine
     auto createConnection(ProtocolFactory protocolFactory,
         in char[] host = null, in char[] service = null,
-        SslContext sslContext = null,
+        TLSContext tlsContext = null,
         AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
         ProtocolType protocolType = UNSPECIFIED!ProtocolType,
         AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags,
         Socket socket = null, in char[] localHost = null,
         in char[] localService = null, in char[] serverHostname = null)
     {
-        enforce(serverHostname.empty || sslContext !is null,
+        enforce(serverHostname.empty || tlsContext !is null,
             "serverHostname is only meaningful with SSL");
-        enforce(serverHostname.empty || sslContext is null || !host.empty,
+        enforce(serverHostname.empty || tlsContext is null || !host.empty,
             "You must set serverHostname when using SSL without a host");
 
         if (!host.empty || !service.empty)
@@ -685,7 +711,7 @@ abstract class EventLoop
             socket.blocking(false);
         }
 
-        return createConnectionTransport(socket, protocolFactory, sslContext,
+        return createConnectionTransport(socket, protocolFactory, tlsContext,
             serverHostname.empty ? serverHostname : host);
     }
 
@@ -815,10 +841,10 @@ abstract class EventLoop
     version (Posix)
     @Coroutine
     auto createUnixConnection(ProtocolFactory protocolFactory,
-        in char[] path = null, SslContext sslContext = null,
+        in char[] path = null, TLSContext tlsContext = null,
         Socket socket = null, in char[] serverHostname = null)
     {
-        if (sslContext is null)
+        if (tlsContext is null)
             enforce(serverHostname.empty,
                 "serverHostname is only meaningful with ssl");
         else
@@ -852,7 +878,7 @@ abstract class EventLoop
             socket.blocking(false);
         }
 
-        return createConnectionTransport(socket, protocolFactory, sslContext,
+        return createConnectionTransport(socket, protocolFactory, tlsContext,
             serverHostname);
     }
 
@@ -900,7 +926,7 @@ abstract class EventLoop
      *  backlog = the maximum number of queued connections passed to listen()
      *      (defaults to 100).
      *
-     *  sslContext = can be set to an SSLContext to enable SSL over the accepted
+     *  tlsContext = can be set to an TLSContext to enable SSL over the accepted
      *      connections.
      *
      *  reuseAddress = tells the kernel to reuse a local socket in TIME_WAIT
@@ -912,13 +938,11 @@ abstract class EventLoop
     @Coroutine
     Server createServer(ProtocolFactory protocolFactory,
         in char[] host = null, in char[] service = null,
+        TLSContext tlsContext = null,
         AddressFamily addressFamily = UNSPECIFIED!AddressFamily,
         AddressInfoFlags addressInfoFlags = AddressInfoFlags.PASSIVE,
-        Socket socket = null, int backlog = 100, SslContext sslContext = null,
-        bool reuseAddress = true)
+        Socket socket = null, int backlog = 100, bool reuseAddress = true)
     {
-        enforce(sslContext is null, "SSL support not implemented yet");
-
         Socket[] sockets;
 
         scope (failure)
@@ -986,7 +1010,7 @@ abstract class EventLoop
         {
             socket1.listen(backlog);
             socket1.blocking(false);
-            startServing(protocolFactory, socket1, sslContext, server);
+            startServing(protocolFactory, socket1, tlsContext, server);
         }
 
         return server;
@@ -999,7 +1023,7 @@ abstract class EventLoop
     version (Posix)
     @Coroutine
     Server createUnixServer(ProtocolFactory protocolFactory, in char[] path,
-        Socket socket = null, int backlog = 100, SslContext sslContext = null)
+        Socket socket = null, int backlog = 100, TLSContext tlsContext = null)
     {
         if (!path.empty)
         {
@@ -1041,7 +1065,7 @@ abstract class EventLoop
 
         socket.listen(backlog);
         socket.blocking(false);
-        startServing(protocolFactory, socket, sslContext, server);
+        startServing(protocolFactory, socket, tlsContext, server);
 
         return server;
     }
@@ -1209,21 +1233,21 @@ protected:
         Waiter waiter);
 
     void startServing(ProtocolFactory protocolFactory, Socket socket,
-        SslContext sslContext, ServerImpl server);
+        TLSContext tlsContext, ServerImpl server);
 
     void stopServing(Socket socket);
 private:
 
     @Coroutine
     auto createConnectionTransport(Socket socket,
-        ProtocolFactory protocolFactory, SslContext sslContext,
+        ProtocolFactory protocolFactory, TLSContext tlsContext,
         in char[] serverHostname = null)
     {
         Protocol protocol = protocolFactory();
         Transport transport = null;
         auto waiter = new Waiter(this);
 
-        if (sslContext !is null)
+        if (tlsContext !is null)
         {
             assert(0, "SSL support not implemented yet");
             //sslcontext = None if isinstance(ssl, bool) else ssl

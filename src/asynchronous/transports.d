@@ -10,6 +10,9 @@ module asynchronous.transports;
 import std.process : Pid, Pipe;
 import std.socket : Address, Socket;
 import std.typecons;
+import std.exception : enforce;
+import asynchronous.protocols : Protocol;
+import asynchronous.events : EventLoop, ExceptionContext;
 
 /**
  * Interface for transports.
@@ -276,5 +279,147 @@ package abstract class AbstractBaseTransport : BaseTransport
         auto socket = getExtraInfoSocket;
 
         return socket !is null ? socket.localAddress.toString : null;
+    }
+}
+
+/**
+ * All the logic for (write) flow control in a mix-in base class.
+ *
+ * The subclass must implement $(D_PSYMBOL getWriteBufferSize()). It must call
+ * $(D_PSYMBOL maybePauseProtocol()) whenever the write buffer size increases,
+ * and maybeResumeProtocol() whenever it decreases. It may also override
+ * $(D_PSYMBOL setWriteBufferLimits()) (e.g. to specify different defaults).
+ *
+ * The user may call $(D_PSYMBOL setWriteBufferLimits()) and $(D_PSYMBOL 
+ * getWriteBufferSize()), and their protocol's $(D_PSYMBOL pauseWriting())
+ * and $(D_PSYMBOL resumeWriting()) may be called.
+ */
+package abstract class FlowControlTransport : AbstractBaseTransport, Transport
+{
+    this(EventLoop eventLoop)
+    {
+        this.eventLoop = eventLoop;
+        initWriteBufferLimits();
+    }
+
+    /**
+     * Get the high- and low-water limits for write flow control.
+     *
+     * Returns: a tuple (low, high) where low and high are positive number of
+     *          bytes.
+     */
+    override BufferLimits getWriteBufferLimits()
+    {
+        return writeBufferLimits;
+    }
+
+    /**
+     * Set the high- and low-water limits for write flow control.
+     *
+     * These two values control when to call the protocol's
+     * $(D_PSYMBOL pauseWriting()) and $(D_PSYMBOL resumeWriting())
+     *  methods. If specified, the low-water limit must be less than
+     * or equal to the high-water limit.  Neither value can be negative.
+     *
+     * The defaults are implementation-specific. If only the
+     * high-water limit is given, the low-water limit defaults to an
+     * implementation-specific value less than or equal to the high-water
+     * limit.  Setting high to zero forces low to zero as well, and causes
+     * $(D_PSYMBOL pauseWriting()) to be called whenever the buffer becomes
+     * non-empty. Setting low to zero causes $(D_PSYMBOL resumeWriting())
+     * to be called only once the buffer is empty.
+     * Use of zero for either limit is generally sub-optimal as it
+     * reduces opportunities for doing I/O and computation concurrently.
+     */
+    override void setWriteBufferLimits(Nullable!size_t high = Nullable!size_t(),
+                                       Nullable!size_t low = Nullable!size_t())
+    {
+        initWriteBufferLimits(high, low);
+        maybePauseProtocol();
+    }
+
+protected:
+    void maybePauseProtocol()
+    in
+    {
+        assert(protocol !is null);
+    }
+    body
+    {
+        auto size = getWriteBufferSize();
+        if (size <= writeBufferLimits.high)
+        {
+            return;
+        }
+        if (!protocolPaused)
+        {
+            protocolPaused = true;
+        }
+        try
+        {
+            protocol.pauseWriting();
+        }
+        catch (Exception e)
+        {
+            ExceptionContext context = {
+                message: "protocol.pauseWriting() failed.",
+                throwable: e,
+                protocol: protocol,
+                transport: this,
+            };
+            eventLoop.callExceptionHandler(context);
+        }
+    }
+
+    void maybeResumeProtocol()
+    in
+    {
+        assert(protocol !is null);
+    }
+    body
+    {
+        if (protocolPaused && getWriteBufferSize() <= writeBufferLimits.low)
+        {
+            protocolPaused = false;
+        }
+        try
+        {
+            protocol.resumeWriting();
+        }
+        catch (Exception e)
+        {
+            ExceptionContext context = {
+                message: "protocol.resumeWriting() failed.",
+                throwable: e,
+                protocol: protocol,
+                transport: this,
+            };
+            eventLoop.callExceptionHandler(context);
+        }
+    }
+
+    @property Protocol protocol();
+
+    bool protocolPaused;
+    EventLoop eventLoop;
+    BufferLimits writeBufferLimits;
+
+private:
+    void initWriteBufferLimits(Nullable!size_t high = Nullable!size_t(),
+                               Nullable!size_t low = Nullable!size_t())
+    {
+        import std.format : format;
+
+        if (high.isNull)
+        {
+            high = low.isNull ? 64*1024 : 4*low.get;
+        }
+        if (low.isNull)
+        {
+            low = high / 4;
+        }
+        enforce(high >= low,
+                format("high (%s) must be >= low (%s) must be >= 0", high, low));
+        writeBufferLimits = BufferLimits(high, low);
     }
 }

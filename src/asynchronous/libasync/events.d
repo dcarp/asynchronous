@@ -20,7 +20,7 @@ import libasync.events : EventLoop_ = EventLoop, NetworkAddress;
 import libasync.signal : AsyncSignal;
 import libasync.timer : AsyncTimer;
 import libasync.tcp : AsyncTCPConnection, AsyncTCPListener, TCPEvent;
-import libasync.threads : destroyAsyncThreads, gs_threads;
+import libasync.threads : destroyAsyncThreads;
 import libasync.udp : AsyncUDPSocket, UDPEvent;
 import asynchronous.events;
 import asynchronous.futures;

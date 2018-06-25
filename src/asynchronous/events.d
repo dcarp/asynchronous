@@ -98,7 +98,7 @@ if (isDelegate!Dg)
     {
         try
         {
-            enforceEx!CancelledException(!this._cancelled, "Callback cancelled");
+            enforce!CancelledException(!this._cancelled, "Callback cancelled");
 
             this.dg(this.args);
         }
@@ -598,7 +598,7 @@ abstract class EventLoop
 
             auto addressInfos = fs.map!"a.result";
 
-            enforceEx!SocketOSException(addressInfos.all!(a => !a.empty),
+            enforce!SocketOSException(addressInfos.all!(a => !a.empty),
                 "getAddressInfo() returned empty list");
 
             SocketOSException[] exceptions = null;
@@ -733,7 +733,7 @@ abstract class EventLoop
                 addressFamily, SocketType.DGRAM, protocolType,
                 addressInfoFlags);
 
-            enforceEx!SocketOSException(!addressInfos.empty,
+            enforce!SocketOSException(!addressInfos.empty,
                 "getAddressInfo() returned empty list");
 
             foreach (addressInfo; addressInfos)
@@ -936,7 +936,7 @@ abstract class EventLoop
                 addressFamily, SocketType.STREAM, UNSPECIFIED!ProtocolType,
                 addressInfoFlags);
 
-            enforceEx!SocketOSException(!addressInfos.empty,
+            enforce!SocketOSException(!addressInfos.empty,
                 "getAddressInfo() returned empty list");
 
             foreach (addressInfo; addressInfos)

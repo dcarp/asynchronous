@@ -304,7 +304,7 @@ class Future(T : void) : BaseFuture
 
 unittest
 {
-    import std.exception : assertNotThrown, assertThrown, Exception;
+    import std.exception : assertNotThrown, assertThrown;
 
     auto future = new Future!int;
     assert(!future.done);

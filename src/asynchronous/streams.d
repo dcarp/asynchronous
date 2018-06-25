@@ -9,7 +9,7 @@ module asynchronous.streams;
 
 import std.algorithm : findSplit;
 import std.array : Appender, empty;
-import std.exception : enforce, enforceEx;
+import std.exception : enforce;
 import std.socket : AddressFamily, AddressInfoFlags, ProtocolType, Socket,
     SocketOSException;
 import std.typecons : tuple;
@@ -269,7 +269,7 @@ private abstract class FlowControlProtocol : Protocol
     @Coroutine
     protected void drainHelper()
     {
-        enforceEx!SocketOSException(!connectionLost_, "Connection lost");
+        enforce!SocketOSException(!connectionLost_, "Connection lost");
 
         if (!paused)
             return;

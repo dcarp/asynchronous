@@ -194,7 +194,7 @@ class Queue(T, size_t maxSize = 0)
     @Coroutine
     T getNowait()
     {
-        enforceEx!QueueEmptyException(length > 0);
+        enforce!QueueEmptyException(length > 0);
 
         T item = get_;
 
@@ -252,7 +252,7 @@ class Queue(T, size_t maxSize = 0)
     void putNowait(T item)
     {
         static if (maxSize > 0)
-            enforceEx!QueueFullException(qsize < maxSize);
+            enforce!QueueFullException(qsize < maxSize);
 
         ensureCapacity;
         put_(item);

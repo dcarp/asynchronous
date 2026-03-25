@@ -1,0 +1,7 @@
+{
+  "fileVersion": 1,
+  "versions": {
+    "libasync": "0.9.7",
+    "memutils": "1.0.11"
+  }
+}

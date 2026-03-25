@@ -128,7 +128,7 @@ auto callback(Dg, Args...)(EventLoop eventLoop, Dg dg, Args args)
 alias ExceptionHandler = void delegate(EventLoop, ExceptionContext);
 
 /**
- * Exception conxtext for event exceptions
+ * Exception context for event exceptions
  */
 struct ExceptionContext
 {
@@ -542,7 +542,7 @@ abstract class EventLoop
      *      empty, hostname matching is disabled (which is a serious security
      *      risk, allowing for man-in-the-middle-attacks).
      *
-     *  addressFamily = optional adress family.
+     *  addressFamily = optional address family.
      *
      *  protocolType = optional protocol.
      *

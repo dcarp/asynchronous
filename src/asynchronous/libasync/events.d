@@ -215,7 +215,7 @@ package class LibasyncEventLoop : EventLoop
         AddressInfoFlags addressInfoFlags = UNSPECIFIED!AddressInfoFlags)
     {
         // no async implementation in libasync yet, use the
-        // std.socket.getAddresInfo implementation;
+        // std.socket.getAddressInfo implementation;
         return std.socket.getAddressInfo(host, service, addressFamily,
             socketType, protocolType, addressInfoFlags);
     }
@@ -562,17 +562,17 @@ private final class LibasyncTransport : AbstractBaseTransport, Transport
             if (low.isNull)
                 high = 64 * 1024;
             else
-                high = 4 * low;
+                high = 4 * low.get;
         }
 
         if (low.isNull)
-            low = high / 4;
+            low = high.get / 4;
 
-        if (high < low)
-            low = high;
+        if (high.get < low.get)
+            low = high.get;
 
-        this.writeBufferLimits.high = high;
-        this.writeBufferLimits.low = low;
+        this.writeBufferLimits.high = high.get;
+        this.writeBufferLimits.low = low.get;
     }
 
     void write(const(void)[] data)

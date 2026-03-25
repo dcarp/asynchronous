@@ -1,26 +1,24 @@
 {
-    "name": "asynchronous",
-    "description": "Asynchronous library for D",
-    "license": "Boost 1.0",
-    "copyright": "Copyright © 2015-2016 Dragoş Carp",
-    "authors": [
-        "Dragoş Carp"
-    ],
-    "targetType": "library",
-    "targetPath": "build",
-    "workingDirectory": "build",
-    "dependencies": {
-        "libasync": "~>0.8.3"
+  "name": "asynchronous",
+  "description": "Asynchronous library for D",
+  "license": "Boost 1.0",
+  "copyright": "Copyright © 2015-2016 Dragoş Carp",
+  "authors": ["Dragoş Carp"],
+  "targetType": "library",
+  "targetPath": "build",
+  "workingDirectory": "build",
+  "dependencies": {
+    "libasync": "~>0.9.0"
+  },
+  "configurations": [
+    {
+      "name": "library"
     },
-    "configurations": [
-        {
-            "name": "library"
-        },
-        {
-            "name": "unittest",
-            "targetType": "executable",
-            "sourcePaths": ["test"],
-            "mainSourceFile": "test/main.d"
-        }
-    ]
+    {
+      "name": "unittest",
+      "targetType": "executable",
+      "sourcePaths": ["test"],
+      "mainSourceFile": "test/main.d"
+    }
+  ]
 }

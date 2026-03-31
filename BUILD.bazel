@@ -1,0 +1,27 @@
+load("@rules_d//d:defs.bzl", "d_library", "d_test")
+load("@rules_d//dub:defs.bzl", "dub_lock_dependencies")
+
+d_library(
+    name = "asynchronous",
+    srcs = glob(["src/**/*.d"]),
+    imports = ["src"],
+    visibility = ["//visibility:public"],
+    deps = ["@dub//libasync:async"],
+)
+
+d_test(
+    name = "asynchronous_test",
+    srcs = glob([
+        "src/**/*.d",
+        "test/**/*.d",
+    ]),
+    deps = [":asynchronous"],
+)
+
+dub_lock_dependencies(
+    name = "dub_dependencies",
+    src = "dub.selections.json",
+    dub_selections_lock = "dub.selections.lock.json",
+    skip_ssl_verification = True,
+    tags = ["manual"],
+)
